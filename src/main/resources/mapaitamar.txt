@@ -1,0 +1,122 @@
+4.952020121683469E-4
+sol - lua [--] 097,6631 307,4654 = 209,8023
+sol - mer [--] 097,6631 120,9341 = 023,2710
+sol - ven [--] 097,6631 080,1459 = 017,5171
+sol - mar [--] 097,6631 120,4185 = 022,7554
+sol - jup [op] 097,6631 272,8764 = 175,2133
+sol - sat [--] 097,6631 073,6548 = 024,0083
+sol - ura [qd] 097,6631 194,2189 = 096,5558
+sol - net [--] 097,6631 243,0043 = 145,3413
+sol - plu [qd] 097,6631 179,4214 = 081,7584
+sol - asc [--] 097,6631 082,7015 = 014,9615
+sol - mce [--] 097,6631 353,6226 = 255,9595
+lua - mer [op] 307,4654 120,9341 = 186,5313
+lua - ven [--] 307,4654 440,1459 = 132,6806
+lua - mar [op] 307,4654 120,4185 = 187,0469
+lua - jup [--] 307,4654 272,8764 = 034,5890
+lua - sat [tg] 307,4654 433,6548 = 126,1894
+lua - ura [tg] 307,4654 194,2189 = 113,2465
+lua - net [sx] 307,4654 243,0043 = 064,4610
+lua - plu [tg] 307,4654 179,4214 = 128,0440
+lua - asc [--] 307,4654 442,7015 = 135,2362
+lua - mce [--] 307,4654 353,6226 = 046,1572
+mer - ven [--] 120,9341 080,1459 = 040,7882
+mer - mar [cj] 120,9341 120,4185 = 000,5156
+mer - jup [--] 120,9341 272,8764 = 151,9423
+mer - sat [--] 120,9341 073,6548 = 047,2793
+mer - ura [--] 120,9341 194,2189 = 073,2848
+mer - net [tg] 120,9341 243,0043 = 122,0702
+mer - plu [sx] 120,9341 179,4214 = 058,4873
+mer - asc [--] 120,9341 082,7015 = 038,2326
+mer - mce [--] 120,9341 353,6226 = 232,6885
+ven - mar [--] 080,1459 120,4185 = 040,2726
+ven - jup [--] 080,1459 272,8764 = 192,7305
+ven - sat [cj] 080,1459 073,6548 = 006,4911
+ven - ura [tg] 080,1459 194,2189 = 114,0730
+ven - net [--] 080,1459 243,0043 = 162,8584
+ven - plu [--] 080,1459 179,4214 = 099,2755
+ven - asc [cj] 080,1459 082,7015 = 002,5556
+ven - mce [--] 080,1459 353,6226 = 273,4766
+mar - jup [--] 120,4185 272,8764 = 152,4579
+mar - sat [--] 120,4185 073,6548 = 046,7637
+mar - ura [--] 120,4185 194,2189 = 073,8004
+mar - net [tg] 120,4185 243,0043 = 122,5858
+mar - plu [sx] 120,4185 179,4214 = 059,0029
+mar - asc [--] 120,4185 082,7015 = 037,7169
+mar - mce [--] 120,4185 353,6226 = 233,2041
+jup - sat [--] 272,8764 433,6548 = 160,7784
+jup - ura [--] 272,8764 194,2189 = 078,6575
+jup - net [--] 272,8764 243,0043 = 029,8721
+jup - plu [qd] 272,8764 179,4214 = 093,4550
+jup - asc [--] 272,8764 442,7015 = 169,8251
+jup - mce [--] 272,8764 353,6226 = 080,7462
+sat - ura [tg] 073,6548 194,2189 = 120,5641
+sat - net [--] 073,6548 243,0043 = 169,3495
+sat - plu [--] 073,6548 179,4214 = 105,7666
+sat - asc [--] 073,6548 082,7015 = 009,0468
+sat - mce [--] 073,6548 353,6226 = 279,9678
+ura - net [--] 194,2189 243,0043 = 048,7854
+ura - plu [--] 194,2189 179,4214 = 014,7975
+ura - asc [tg] 194,2189 082,7015 = 111,5173
+ura - mce [--] 194,2189 353,6226 = 159,4037
+net - plu [sx] 243,0043 179,4214 = 063,5829
+net - asc [--] 243,0043 082,7015 = 160,3028
+net - mce [--] 243,0043 353,6226 = 110,6182
+plu - asc [qd] 179,4214 082,7015 = 096,7199
+plu - mce [op] 179,4214 353,6226 = 174,2011
+asc - mce [--] 082,7015 353,6226 = 270,9210
+
+{"dados_pessoais": {"nome": "Itamar Rocha Chaves Junior", "data":"29/06/1972", "hora":"05:00", "deltaT":"42,7855", "julDay":"2441497,833829", "lat":"004.51.32S", "lon":"043.21.22W"},
+"planetas_signos":[
+{"planeta":"sol", "signo":"ca", "casa": "01",  "grau": "097.39.46", "gg":"07", "mm":"39", "ss":"46"},
+{"planeta":"lua", "signo":"aq", "casa": "08",  "grau": "307.27.55", "gg":"07", "mm":"27", "ss":"55"},
+{"planeta":"mer", "signo":"le", "casa": "02",  "grau": "120.56.02", "gg":"00", "mm":"56", "ss":"02"},
+{"planeta":"ven", "signo":"ge", "casa": "12",  "grau": "080.08.45", "gg":"20", "mm":"08", "ss":"45"},
+{"planeta":"mar", "signo":"le", "casa": "02",  "grau": "120.25.06", "gg":"00", "mm":"25", "ss":"06"},
+{"planeta":"jup", "signo":"cp", "casa": "07",  "grau": "272.52.35", "gg":"02", "mm":"52", "ss":"35"},
+{"planeta":"sat", "signo":"ge", "casa": "12",  "grau": "073.39.17", "gg":"13", "mm":"39", "ss":"17"},
+{"planeta":"ura", "signo":"li", "casa": "04",  "grau": "194.13.07", "gg":"14", "mm":"13", "ss":"07"},
+{"planeta":"net", "signo":"sg", "casa": "06",  "grau": "243.00.15", "gg":"03", "mm":"00", "ss":"15"},
+{"planeta":"plu", "signo":"vi", "casa": "04",  "grau": "179.25.17", "gg":"29", "mm":"25", "ss":"17"},
+{"planeta":"asc", "signo":"ge", "casa": "01",  "grau": "082.42.05", "gg":"22", "mm":"42", "ss":"05"},
+{"planeta":"mce", "signo":"pe", "casa": "10",  "grau": "353.37.21", "gg":"23", "mm":"37", "ss":"21"}
+],
+"cuspides":[
+{"casa":"01", "signo":"ge", "grau": "082.42.05", "gg":"22", "mm":"42", "ss":"05"},
+{"casa":"02", "signo":"ca", "grau": "111.08.02", "gg":"21", "mm":"08", "ss":"02"},
+{"casa":"03", "signo":"le", "grau": "141.20.46", "gg":"21", "mm":"20", "ss":"46"},
+{"casa":"04", "signo":"vi", "grau": "173.37.21", "gg":"23", "mm":"37", "ss":"21"},
+{"casa":"05", "signo":"li", "grau": "205.44.21", "gg":"25", "mm":"44", "ss":"21"},
+{"casa":"06", "signo":"es", "grau": "235.21.42", "gg":"25", "mm":"21", "ss":"42"},
+{"casa":"07", "signo":"sg", "grau": "262.42.05", "gg":"22", "mm":"42", "ss":"05"},
+{"casa":"08", "signo":"cp", "grau": "291.08.02", "gg":"21", "mm":"08", "ss":"02"},
+{"casa":"09", "signo":"aq", "grau": "321.20.46", "gg":"21", "mm":"20", "ss":"46"},
+{"casa":"10", "signo":"pe", "grau": "353.37.21", "gg":"23", "mm":"37", "ss":"21"},
+{"casa":"11", "signo":"ar", "grau": "025.44.21", "gg":"25", "mm":"44", "ss":"21"},
+{"casa":"12", "signo":"to", "grau": "055.21.42", "gg":"25", "mm":"21", "ss":"42"}
+],
+"aspectos":[
+{"planeta_origem":"sol", "planeta_destino":"jup", "aspecto":"OP", "x":"0", "y":"5"},
+{"planeta_origem":"sol", "planeta_destino":"ura", "aspecto":"QD", "x":"0", "y":"7"},
+{"planeta_origem":"sol", "planeta_destino":"plu", "aspecto":"QD", "x":"0", "y":"9"},
+{"planeta_origem":"lua", "planeta_destino":"mer", "aspecto":"OP", "x":"1", "y":"2"},
+{"planeta_origem":"lua", "planeta_destino":"mar", "aspecto":"OP", "x":"1", "y":"4"},
+{"planeta_origem":"lua", "planeta_destino":"sat", "aspecto":"TG", "x":"1", "y":"6"},
+{"planeta_origem":"lua", "planeta_destino":"ura", "aspecto":"TG", "x":"1", "y":"7"},
+{"planeta_origem":"lua", "planeta_destino":"net", "aspecto":"SX", "x":"1", "y":"8"},
+{"planeta_origem":"lua", "planeta_destino":"plu", "aspecto":"TG", "x":"1", "y":"9"},
+{"planeta_origem":"mer", "planeta_destino":"mar", "aspecto":"CJ", "x":"2", "y":"4"},
+{"planeta_origem":"mer", "planeta_destino":"net", "aspecto":"TG", "x":"2", "y":"8"},
+{"planeta_origem":"mer", "planeta_destino":"plu", "aspecto":"SX", "x":"2", "y":"9"},
+{"planeta_origem":"ven", "planeta_destino":"sat", "aspecto":"CJ", "x":"3", "y":"6"},
+{"planeta_origem":"ven", "planeta_destino":"ura", "aspecto":"TG", "x":"3", "y":"7"},
+{"planeta_origem":"ven", "planeta_destino":"asc", "aspecto":"CJ", "x":"3", "y":"10"},
+{"planeta_origem":"mar", "planeta_destino":"net", "aspecto":"TG", "x":"4", "y":"8"},
+{"planeta_origem":"mar", "planeta_destino":"plu", "aspecto":"SX", "x":"4", "y":"9"},
+{"planeta_origem":"jup", "planeta_destino":"plu", "aspecto":"QD", "x":"5", "y":"9"},
+{"planeta_origem":"sat", "planeta_destino":"ura", "aspecto":"TG", "x":"6", "y":"7"},
+{"planeta_origem":"ura", "planeta_destino":"asc", "aspecto":"TG", "x":"7", "y":"10"},
+{"planeta_origem":"net", "planeta_destino":"plu", "aspecto":"SX", "x":"8", "y":"9"},
+{"planeta_origem":"plu", "planeta_destino":"asc", "aspecto":"QD", "x":"9", "y":"10"},
+{"planeta_origem":"plu", "planeta_destino":"mce", "aspecto":"OP", "x":"9", "y":"11"}
+]}
