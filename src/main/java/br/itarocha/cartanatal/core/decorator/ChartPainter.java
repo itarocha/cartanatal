@@ -18,7 +18,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import br.itarocha.cartanatal.core.Mapa;
+import br.itarocha.cartanatal.core.model.domain.Mapa;
 import br.itarocha.cartanatal.core.model.domain.*;
 
 public class ChartPainter {

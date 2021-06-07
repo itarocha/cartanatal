@@ -1,4 +1,4 @@
-package br.itarocha.cartanatal.core;
+package br.itarocha.cartanatal.core.service;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -13,7 +13,6 @@ import br.itarocha.cartanatal.core.util.Funcoes;
 
 public class MapeadorCidades {
 
-	
 	private static MapeadorCidades instance = null;
 	private static final Map<String, Cidade> mapCidades = new HashMap<String, Cidade>();
 	private static final Map<String,Integer> mapFuso;
@@ -131,36 +130,3 @@ public class MapeadorCidades {
 		}
 	}
 }
-
-/*
-
-	AC,-5
-	AL,-3
-	AM,-4
-	AP,-3
-	BA,-3
-	CE,-3
-	DF,-3
-	ES,-3
-	GO,-3
-	MA,-3
-	MG,-3
-	MS,-4
-	MT,-4
-	PA,-3
-	PB,-3
-	PE,-3
-	PI,-3
-	PR,-3
-	RJ,-3
-	RN,-3
-	RO,-4
-	RR,-4
-	RS,-3
-	SC,-3
-	SE,-3
-	SP,-3
-	TO,-3
-
-
-*/

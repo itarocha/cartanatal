@@ -85,7 +85,7 @@ package br.itarocha.cartanatal.core.testesinternos;
 import java.io.*;
 import java.util.Locale;
 
-import br.itarocha.cartanatal.core.MapeadorCidades;
+import br.itarocha.cartanatal.core.service.MapeadorCidades;
 import de.thmac.swisseph.*;
 
 public class Swemini{

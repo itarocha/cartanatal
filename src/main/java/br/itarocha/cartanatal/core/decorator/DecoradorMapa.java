@@ -2,7 +2,7 @@ package br.itarocha.cartanatal.core.decorator;
 
 import java.text.DecimalFormat;
 
-import br.itarocha.cartanatal.core.Mapa;
+import br.itarocha.cartanatal.core.model.domain.Mapa;
 import br.itarocha.cartanatal.core.model.domain.CuspideCasa;
 import br.itarocha.cartanatal.core.model.domain.ItemAspecto;
 import br.itarocha.cartanatal.core.model.domain.PlanetaAspecto;

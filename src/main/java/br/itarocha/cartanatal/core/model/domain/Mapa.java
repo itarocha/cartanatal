@@ -1,16 +1,10 @@
-package br.itarocha.cartanatal.core;
+package br.itarocha.cartanatal.core.model.domain;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import br.itarocha.cartanatal.core.model.domain.Cidade;
-import br.itarocha.cartanatal.core.model.domain.Coordenada;
-import br.itarocha.cartanatal.core.model.domain.CuspideCasa;
-import br.itarocha.cartanatal.core.model.domain.ItemAspecto;
-import br.itarocha.cartanatal.core.model.domain.PlanetaPosicao;
 
 public class Mapa {
 	private String nome;

@@ -1,14 +1,9 @@
-package br.itarocha.cartanatal.core;
+package br.itarocha.cartanatal.core.service;
 
 import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
-import br.itarocha.cartanatal.core.model.domain.Cidade;
-import br.itarocha.cartanatal.core.model.domain.CuspideCasa;
-import br.itarocha.cartanatal.core.model.domain.EnumAspecto;
-import br.itarocha.cartanatal.core.model.domain.EnumPlaneta;
-import br.itarocha.cartanatal.core.model.domain.ItemAspecto;
-import br.itarocha.cartanatal.core.model.domain.PlanetaPosicao;
+import br.itarocha.cartanatal.core.model.domain.*;
 import br.itarocha.cartanatal.core.util.Funcoes;
 import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SweDate;

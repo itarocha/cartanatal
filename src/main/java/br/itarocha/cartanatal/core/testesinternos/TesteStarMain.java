@@ -1,6 +1,6 @@
 package br.itarocha.cartanatal.core.testesinternos;
 
-import br.itarocha.cartanatal.core.StarMain;
+import br.itarocha.cartanatal.core.service.CartaNatalService;
 import br.itarocha.cartanatal.core.model.presenter.CartaNatal;
 
 public class TesteStarMain {
@@ -37,7 +37,7 @@ public class TesteStarMain {
             uf = args[4];
         }
 
-        StarMain m = new StarMain();
+        CartaNatalService m = new CartaNatalService();
         try {
             CartaNatal mapa = m.buildMapa(nome, data, hora, cidade, uf);
             /*
