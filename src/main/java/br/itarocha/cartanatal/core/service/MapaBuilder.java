@@ -9,6 +9,8 @@ import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SweDate;
 import de.thmac.swisseph.SwissEph;
 
+import static java.util.Objects.isNull;
+
 public class MapaBuilder {
 	
 	private static final Logger	log = Logger.getAnonymousLogger();
@@ -192,17 +194,16 @@ public class MapaBuilder {
 		mapa.getPosicoesPlanetas().add(pp);
 	}
 	
-	// Fabricando de Aspectos
 	private void buildAspectos(Mapa mapa){
 		mapa.getListaAspectos().clear();
-		String aspecto;
+		//String aspecto;
 		for (int x=0; x < 11; x++){
 			for(int y=x+1; y < 12; y++){
 				EnumPlaneta eA = EnumPlaneta.getByCodigo(x);
 				EnumPlaneta eB = EnumPlaneta.getByCodigo(y);
 				
-				aspecto = Funcoes.buildAspect(eA.getSigla(),eB.getSigla(),aspectos_posicoes[x], aspectos_posicoes[y]);
-				if (aspecto != ""){
+				EnumAspecto aspecto = Funcoes.buildAspect(eA.getSigla(),eB.getSigla(),aspectos_posicoes[x], aspectos_posicoes[y]);
+				if (!isNull(aspecto)){
 					ItemAspecto item = new ItemAspecto();
 					
 					item.getPlanetaA().setEnumPlaneta(EnumPlaneta.getByCodigo(x));
@@ -212,9 +213,9 @@ public class MapaBuilder {
 					item.getPlanetaB().setEnumPlaneta(EnumPlaneta.getByCodigo(y));
 					item.getPlanetaB().setPosicao(aspectos_posicoes[y]);
 					
-					EnumAspecto enumAspecto = EnumAspecto.getBySigla(aspecto);
+					//EnumAspecto enumAspecto = EnumAspecto.getBySigla(aspecto);
 					
-					item.setAspecto(enumAspecto);
+					item.setAspecto(aspecto);
 					item.getPlanetaA().setCoordenada(x);
 					item.getPlanetaB().setCoordenada(y);
 
@@ -286,5 +287,5 @@ public class MapaBuilder {
 //%-12s %10.7f\t %10.7f\t %10.7f\t
 //pp.getSiglaPlaneta()
 //pp.getLatitude(),			// Latitude
-//pp.getDistancia(),   		// Dist�ncia
-//pp.getDirecao()   		// Dire��o
+//pp.getDistancia(),   		// Distancia
+//pp.getDirecao()   		// Direcao
