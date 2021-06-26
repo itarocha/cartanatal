@@ -1,13 +1,17 @@
 package br.itarocha.cartanatal.adapter.in.web.controller;
 
+import br.itarocha.cartanatal.core.model.Interpretacao;
 import br.itarocha.cartanatal.core.service.CartaNatalService;
 import br.itarocha.cartanatal.core.model.presenter.CartaNatal;
+import br.itarocha.cartanatal.core.service.GeradorPdfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/mapa")
@@ -16,6 +20,9 @@ public class MapaController {
     @Autowired
     private CartaNatalService service;
 
+    @Autowired
+    private GeradorPdfService geradorPdfService;
+
     @PostMapping
     public ResponseEntity<CartaNatal> getMapa(@RequestBody DadosPessoais model){
         return ResponseEntity.ok(calcular(model));
@@ -23,7 +30,17 @@ public class MapaController {
 
     private CartaNatal calcular(DadosPessoais dados) {
         try {
-            return service.buildMapa(dados.getNome(), dados.getData(), dados.getHora(), dados.getCidade(), dados.getUf());
+            CartaNatal cartaNatal = service.buildMapa(dados.getNome(), dados.getData(), dados.getHora(), dados.getCidade(), dados.getUf());
+
+            List<Interpretacao> interpretacoes = geradorPdfService.createArquivo(true, cartaNatal);
+            interpretacoes.stream().forEach(i -> {
+                ///System.out.println(i.getTitulo());
+                i.getTextos().stream().forEach(t -> {
+                    System.out.println(t);
+                });
+
+            });
+            return cartaNatal;
         } catch (Exception e){
             return CartaNatal.builder().build();
         }
