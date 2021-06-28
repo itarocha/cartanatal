@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Aspecto {
+public class AspectoResponse {
     @JsonProperty(value = "planeta_origem", index = 1)
     private String planetaOrigem;
 

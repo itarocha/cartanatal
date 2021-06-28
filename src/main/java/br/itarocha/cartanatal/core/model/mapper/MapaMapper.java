@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 @Component
 public class MapaMapper {
 
-    public CartaNatal toCartaNatal(Mapa mapa){
-        return CartaNatal.builder()
+    public CartaNatalResponse toCartaNatal(Mapa mapa){
+        return CartaNatalResponse.builder()
                 .dadosPessoais(buildDadosPessoais(mapa))
                 .planetasSignos(buildPlanetasSignos(mapa))
                 .cuspides(buildCuspides(mapa))
@@ -24,13 +24,13 @@ public class MapaMapper {
                 .build();
     }
 
-    private DadoPessoal buildDadosPessoais(Mapa mapa){
+    private DadoPessoalResponse buildDadosPessoais(Mapa mapa){
         double latitude = mapa.getLatitude().Coordenada2Graus();
         double longitude = mapa.getLongitude().Coordenada2Graus();
         String lon = (longitude > 0 ? "E" : "W");
         String lat = (latitude > 0 ? "N" : "S");
 
-        return DadoPessoal.builder()
+        return DadoPessoalResponse.builder()
                 .nome(mapa.getNome())
                 .data(mapa.getData())
                 .hora(mapa.getHora())
@@ -41,15 +41,15 @@ public class MapaMapper {
                 .build();
     }
 
-    private List<PlanetaSigno> buildPlanetasSignos(Mapa mapa) {
+    private List<PlanetaSignoResponse> buildPlanetasSignos(Mapa mapa) {
         return mapa.getPosicoesPlanetas()
                 .stream()
                 .map(this::planetaPosicaoToPlanetaSigno)
                 .collect(Collectors.toList());
     }
 
-    private PlanetaSigno planetaPosicaoToPlanetaSigno(PlanetaPosicao pp){
-        return PlanetaSigno.builder()
+    private PlanetaSignoResponse planetaPosicaoToPlanetaSigno(PlanetaPosicao pp){
+        return PlanetaSignoResponse.builder()
                 .planeta(pp.getEnumPlaneta().getSigla())
                 .signo(pp.getEnumSigno().getSigla())
                 .casa(pp.getCasa())
@@ -60,20 +60,20 @@ public class MapaMapper {
                 .build();
     }
 
-    private List<Cuspide> buildCuspides(Mapa mapa) {
+    private List<CuspideResponse> buildCuspides(Mapa mapa) {
         return mapa.getListaCuspides().stream()
                 .filter(c -> c.getNumero() <= 12)
                 .map(this::cuspideCasaToCuspide)
                 .collect(Collectors.toList());
     }
 
-    private Cuspide cuspideCasaToCuspide(CuspideCasa c){
+    private CuspideResponse cuspideCasaToCuspide(CuspideCasa c){
         String g = c.getGrau();
         String gnc = c.getGrauNaCasa();
         gnc = gnc.replace('.', '-');
         String[] gms = gnc.split("-");
 
-        return Cuspide.builder()
+        return CuspideResponse.builder()
                 .casa(c.getNumero())
                 .signo(c.getEnumSigno().getSigla())
                 .grau(g)
@@ -83,14 +83,14 @@ public class MapaMapper {
                 .build();
     }
 
-    private List<Aspecto> buildAspectos(Mapa mapa) {
+    private List<AspectoResponse> buildAspectos(Mapa mapa) {
         return mapa.getListaAspectos().stream()
                 .map(this::itemAspectoToAspecto)
                 .collect(Collectors.toList());
     }
 
-    private Aspecto itemAspectoToAspecto(ItemAspecto a){
-        return Aspecto.builder()
+    private AspectoResponse itemAspectoToAspecto(ItemAspecto a){
+        return AspectoResponse.builder()
                 .planetaOrigem(a.getPlanetaA().getEnumPlaneta().getSigla())
                 .planetaDestino(a.getPlanetaB().getEnumPlaneta().getSigla())
                 .aspecto(a.getAspecto().getSigla())

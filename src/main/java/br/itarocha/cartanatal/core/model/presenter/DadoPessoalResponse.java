@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class DadoPessoal {
+public class DadoPessoalResponse {
     private String nome;
     private String data;
     private String hora;

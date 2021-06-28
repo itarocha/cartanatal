@@ -1,7 +1,7 @@
 package br.itarocha.cartanatal.core.testesinternos;
 
 import br.itarocha.cartanatal.core.service.CartaNatalService;
-import br.itarocha.cartanatal.core.model.presenter.CartaNatal;
+import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
 
 public class TesteStarMain {
 
@@ -39,7 +39,7 @@ public class TesteStarMain {
 
         CartaNatalService m = new CartaNatalService();
         try {
-            CartaNatal mapa = m.buildMapa(nome, data, hora, cidade, uf);
+            CartaNatalResponse mapa = m.buildMapa(nome, data, hora, cidade, uf);
             /*
             if (mapa != null) {
                 String json = new DecoradorMapa(mapa).getJSON();

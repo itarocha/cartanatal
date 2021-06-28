@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Cuspide {
+public class CuspideResponse {
     private Integer casa;
     private String signo;
     private String grau;

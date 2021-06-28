@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PlanetaSigno {
+public class PlanetaSignoResponse {
     private String planeta;
     private String signo;
     private Integer casa;

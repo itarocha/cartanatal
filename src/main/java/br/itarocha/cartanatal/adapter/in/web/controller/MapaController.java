@@ -2,7 +2,7 @@ package br.itarocha.cartanatal.adapter.in.web.controller;
 
 import br.itarocha.cartanatal.core.model.Interpretacao;
 import br.itarocha.cartanatal.core.service.CartaNatalService;
-import br.itarocha.cartanatal.core.model.presenter.CartaNatal;
+import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
 import br.itarocha.cartanatal.core.service.GeradorPdfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,25 +24,25 @@ public class MapaController {
     private GeradorPdfService geradorPdfService;
 
     @PostMapping
-    public ResponseEntity<CartaNatal> getMapa(@RequestBody DadosPessoais model){
+    public ResponseEntity<CartaNatalResponse> getMapa(@RequestBody DadosPessoais model){
         return ResponseEntity.ok(calcular(model));
     }
 
-    private CartaNatal calcular(DadosPessoais dados) {
+    private CartaNatalResponse calcular(DadosPessoais dados) {
         try {
-            CartaNatal cartaNatal = service.buildMapa(dados.getNome(), dados.getData(), dados.getHora(), dados.getCidade(), dados.getUf());
+            CartaNatalResponse cartaNatal = service.buildMapa(dados.getNome(), dados.getData(), dados.getHora(), dados.getCidade(), dados.getUf());
 
             List<Interpretacao> interpretacoes = geradorPdfService.createArquivo(true, cartaNatal);
             interpretacoes.stream().forEach(i -> {
                 ///System.out.println(i.getTitulo());
-                i.getTextos().stream().forEach(t -> {
+                i.getParagrafos().stream().forEach(t -> {
                     System.out.println(t);
                 });
 
             });
             return cartaNatal;
         } catch (Exception e){
-            return CartaNatal.builder().build();
+            return CartaNatalResponse.builder().build();
         }
     }
 }

@@ -1,6 +1,5 @@
 package br.itarocha.cartanatal.adapter.in.web.controller;
 
-import br.itarocha.cartanatal.core.model.presenter.CartaNatal;
 import br.itarocha.cartanatal.core.service.CartaNatalService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import br.itarocha.cartanatal.core.model.domain.Cidade;
 import br.itarocha.cartanatal.core.model.domain.Mapa;
 import br.itarocha.cartanatal.core.model.mapper.MapaMapper;
-import br.itarocha.cartanatal.core.model.presenter.CartaNatal;
+import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class CartaNatalService {
 	private MapaMapper mapper;
 
 	// ("Itamar","29/06/1972","5.0.0", Caxias, MA
-	public CartaNatal buildMapa(String nome, String data, String hora, String cidade, String uf ) throws Exception{
+	public CartaNatalResponse buildMapa(String nome, String data, String hora, String cidade, String uf ) throws Exception{
 		Mapa retorno = null;
 		MapaBuilder builder = MapaBuilder.getInstance(".");
 		Cidade c = MapeadorCidades.getInstance().getCidade(cidade, uf);

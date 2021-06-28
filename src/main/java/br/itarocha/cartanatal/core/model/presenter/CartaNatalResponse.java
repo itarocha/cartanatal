@@ -8,19 +8,19 @@ import java.util.List;
 
 @Data
 @Builder
-public class CartaNatal {
+public class CartaNatalResponse {
 
     @JsonProperty(value = "dados_pessoais", index = 1)
-    private DadoPessoal dadosPessoais;
+    private DadoPessoalResponse dadosPessoais;
 
     @JsonProperty(value = "planetas_signos", index = 2)
-    private List<PlanetaSigno> planetasSignos;
+    private List<PlanetaSignoResponse> planetasSignos;
 
     @JsonProperty(index = 3)
-    private List<Cuspide> cuspides;
+    private List<CuspideResponse> cuspides;
 
     @JsonProperty(index = 4)
-    private List<Aspecto> aspectos;
+    private List<AspectoResponse> aspectos;
 
 /*
 {"dados_pessoais": {"nome": "Itamar Rocha Chaves Junior", "data":"29/06/1972", "hora":"05:00", "deltaT":"42,7855", "julDay":"2441497,833829", "lat":"004.51.32S", "lon":"043.21.22W"},
