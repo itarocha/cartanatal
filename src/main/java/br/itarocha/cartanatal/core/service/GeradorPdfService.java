@@ -15,7 +15,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.stream.Stream;
+
+import static java.util.Objects.isNull;
 
 @Service
 public class GeradorPdfService {
@@ -27,29 +28,27 @@ public class GeradorPdfService {
 
     private static final String FONT_ASTRO = "src/main/resources/fonts/AstroDotBasic.ttf";
 
-    public List<Interpretacao> createArquivo(boolean isTudo, CartaNatalResponse mapa) throws IOException {
-
-		List<Interpretacao> retorno = new LinkedList<>();
+    public List<Interpretacao> createArquivo(CartaNatalResponse cartaNatal) throws IOException {
 
 		Map<String, String> map = new LinkedHashMap<>();
 
 		// SIGNO SOLAR
-		interpretarSignoSolar(mapa.getPlanetasSignos(), isTudo, retorno, map);
+		map.putAll(interpretarSignoSolar(cartaNatal.getPlanetasSignos()));
 
 		// PLANETAS NOS SIGNOS
-		interpretarPlanetasSignos(mapa.getPlanetasSignos(), isTudo, retorno, map);
+		map.putAll(interpretarPlanetasSignos(cartaNatal.getPlanetasSignos()));
 
 		// CÚSPIDES - TÍTULO GERAL
-		interpretarCuspidesTituloGeral(isTudo, retorno, map);
+		map.putAll(interpretarCuspidesTituloGeral());
 
 		// CÚSPIDES
-		interpretarCuspides(isTudo, mapa.getCuspides(), retorno, map);
+		map.putAll(interpretarCuspides(cartaNatal.getCuspides()));
 
 		// PLANETAS NAS CASAS
-		interpretarPlanetasCasas(isTudo, mapa.getPlanetasSignos(), retorno, map);
+		map.putAll(interpretarPlanetasCasas(cartaNatal.getPlanetasSignos()));
 
 		// ASPECTOS
-		interpretarAspectos(isTudo, mapa.getAspectos(), retorno, map);
+		map.putAll(interpretarAspectos(cartaNatal.getAspectos()));
 
 		/*
 		for(String k : map.keySet()) {
@@ -58,237 +57,123 @@ public class GeradorPdfService {
 
 		//////////////montarArquivoPdf(mapa, map);
 		*/
-		montarArquivoTxt(mapa, map);
+		montarArquivoTxt(cartaNatal, map);
+
+		// para cada chave de pama, tratar paragrafos
+		//retorno.add(this.tratarParagrafos(keyCabecalho, signoSolarCabecalho.getTexto()));
+		List<Interpretacao> retorno = new LinkedList<>();
+
+		map.entrySet().stream().forEach(entry -> {
+			retorno.add(this.tratarParagrafos(entry.getKey(), entry.getValue() ));
+		});
 
 		return retorno;
 	 }
 
-	private void interpretarAspectos(boolean isTudo, List<AspectoResponse> aspectos, List<Interpretacao> retorno, Map<String, String> map) {
-    	aspectos.stream().forEach(ia -> {
-			EnumPlaneta enumPlanetaOrigem = EnumPlaneta.getBySigla(ia.getPlanetaOrigem());
-			EnumPlaneta enumPlanetaDestino = EnumPlaneta.getBySigla(ia.getPlanetaDestino());
+	private Map<String, String> interpretarSignoSolar(List<PlanetaSignoResponse> planetasSignos) {
+		Map<String, String> map = new LinkedHashMap<>();
 
-			String planeta1 = enumPlanetaOrigem.getNome();
-			String planeta2 = enumPlanetaDestino.getNome();
+		planetasSignos.stream()
+				.filter(ps -> EnumPlaneta.SOL.equals( EnumPlaneta.getBySigla(ps.getPlaneta()) ))
+				.forEach( ps -> {
+					SignoSolar signoSolarCabecalho = servico.findSignoSolar("XX");
+					String keyCabecalho = "O Signo Solar";
+					map.put(keyCabecalho, isNull(signoSolarCabecalho) ? NOT_FOUND : signoSolarCabecalho.getTexto() );
 
-			EnumAspecto aspecto = EnumAspecto.CJ.getBySigla(ia.getAspecto());
-
-			String key = String.format("%s em %s com %s", planeta1, aspecto.getNome(), planeta2 );
-			MapaPlanetaAspecto a = servico.findAspecto(ia.getPlanetaOrigem(), ia.getPlanetaDestino(), aspecto.getSigla() );
-			if (a != null) {
-				if (isTudo || (!isTudo && TipoLogico.N.equals(a.getConferido()) ) ) {
-					map.put(key, a.getTexto());
-					retorno.add(this.tratarParagrafos(key, a.getTexto()));
-				}
-			} else {
-				map.put(key, NOT_FOUND);
-				retorno.add(this.tratarParagrafos(key, NOT_FOUND));
-			}
-		});
+					EnumSigno enumSigno = EnumSigno.getBySigla(ps.getSigno());
+					SignoSolar signoSolar = servico.findSignoSolar(enumSigno.getSigla());
+					String key = String.format("%s", enumSigno.getNome());
+					map.put(key, isNull(signoSolar) ? NOT_FOUND : signoSolar.getTexto());
+				});
+		return map;
 	}
 
-	private void interpretarPlanetasCasas(boolean isTudo, List<PlanetaSignoResponse> planetasSignos, List<Interpretacao> retorno, Map<String, String> map) {
-		for(PlanetaSignoResponse pp : planetasSignos){
-			//PlanetaPosicao pp = mapa.getPosicoesPlanetas().get(i);
+	private Map<String, String> interpretarPlanetasSignos(List<PlanetaSignoResponse> planetasSignos) {
+		Map<String, String> map = new LinkedHashMap<>();
 
-			EnumPlaneta enumPlaneta = EnumPlaneta.getBySigla(pp.getPlaneta());
+		EnumPlaneta[] array = {EnumPlaneta.SOL, EnumPlaneta.ASC, EnumPlaneta.MCE};
+		List<EnumPlaneta> desconsiderados = Arrays.asList(array);
 
-			if (EnumPlaneta.SOL.equals(enumPlaneta) ) continue;
-			if (EnumPlaneta.ASC.equals(enumPlaneta) ) continue;
-			if (EnumPlaneta.MCE.equals(enumPlaneta) ) continue;
-
-			String planeta = enumPlaneta.getNome(); //TipoPlaneta.getByString(pp.getEnumPlaneta().getSigla());
-			String casa = Casa.getByNumero((int)pp.getCasa());
-
-			String key = String.format("%s nas Casas", planeta);
-			PlanetaCasa pc = servico.findPlanetaCasa(pp.getPlaneta(), 0);
-			if (pc != null) {
-				if (isTudo || (!isTudo && TipoLogico.N.equals(pc.getConferido())) ) {
-					map.put(key, pc.getTexto());
-					retorno.add(this.tratarParagrafos(key, pc.getTexto()));
-				}
-			} else {
-				map.put(key, NOT_FOUND);
-				retorno.add(this.tratarParagrafos(key, NOT_FOUND));
-			}
-
-			key = String.format("%s na %s Casa", planeta, casa);
-			pc = servico.findPlanetaCasa(pp.getPlaneta(), pp.getCasa());
-			if (pc != null) {
-				if (isTudo || (!isTudo && TipoLogico.N.equals(pc.getConferido()) ) ) {
-					map.put(key, pc.getTexto());
-					retorno.add(this.tratarParagrafos(key, pc.getTexto()));
-				}
-			} else {
-				map.put(key, NOT_FOUND);
-				retorno.add(this.tratarParagrafos(key, NOT_FOUND));
-			}
-		}
-	}
-
-	private void interpretarCuspides(boolean isTudo, List<CuspideResponse> cuspides, List<Interpretacao> retorno, Map<String, String> map) {
-		for( CuspideResponse c : cuspides){
-			if( c.getCasa() > 12 ) continue;
-
-			// CÚSPIDES - TÍTULOS
-			//String casa = Casa.getByNumero(c.getNumero());
-			String key = String.format("Casa %s", c.getCasa());
-			MapaCuspide mc = servico.findCuspide("XX", c.getCasa());
-			if (mc != null) {
-				if (isTudo || (!isTudo) ) { //&& TipoLogico.N.equals(mc.getCon) !mc.getFoiConferido()
-					map.put(key, mc.getTexto());
-					retorno.add(this.tratarParagrafos(key, mc.getTexto()));
-				}
-			} else {
-				map.put(key, NOT_FOUND);
-				retorno.add(this.tratarParagrafos(key, NOT_FOUND));
-			}
-
-			EnumSigno enumSigno = EnumSigno.getBySigla(c.getSigno());
-
-			String _key = String.format("%s.%02d", enumSigno.getSigla(), c.getCasa());
-			String signo = TipoSigno.getByString(enumSigno.getSigla());
-			String casa = Casa.getByNumero(c.getCasa());
-			key = String.format("%s na Cúspide da %s Casa", signo, casa);
-			mc = servico.findCuspide(enumSigno.getSigla(), c.getCasa());
-			if (mc != null) {
-				if (isTudo || (!isTudo ) ) { //&& !mc.getFoiConferido()
-					map.put(key, mc.getTexto());
-					retorno.add(this.tratarParagrafos(key, mc.getTexto()));
-				}
-			} else {
-				map.put(key, NOT_FOUND);
-				retorno.add(this.tratarParagrafos(key, NOT_FOUND));
-			}
-		}
-	}
-
-	private void interpretarCuspidesTituloGeral(boolean isTudo, List<Interpretacao> retorno, Map<String, String> map) {
-		String keyCasas = "As Casas";
-		MapaCuspide mc = servico.findCuspide("XX", 0);
-		if (mc != null) {
-			map.put(keyCasas, mc.getTexto());
-			retorno.add(this.tratarParagrafos(keyCasas, mc.getTexto()));
-		} else {
-			map.put(keyCasas, NOT_FOUND);
-			retorno.add(this.tratarParagrafos(keyCasas, NOT_FOUND));
-		}
-	}
-
-	private void interpretarPlanetasSignos(List<PlanetaSignoResponse> planetasSignos, boolean isTudo,
-										   List<Interpretacao> retorno, Map<String, String> map) {
-    	EnumPlaneta[] array = {EnumPlaneta.SOL, EnumPlaneta.ASC, EnumPlaneta.MCE};
-    	List<EnumPlaneta> desconsiderados = Arrays.asList(array);
-
-    	planetasSignos.stream()
+		planetasSignos.stream()
 				.filter(ps -> !desconsiderados.contains(EnumPlaneta.getBySigla(ps.getPlaneta())) )
 				.forEach(pp -> {
 					EnumPlaneta enumPlaneta = EnumPlaneta.getBySigla(pp.getPlaneta());
+					PlanetaSigno psTitulo = servico.findPlanetaSigno(pp.getPlaneta(), "XX");
+					String keyTitulo = String.format("%s nos Signos", enumPlaneta.getNome());
+					map.put(keyTitulo, isNull(psTitulo) ? NOT_FOUND : psTitulo.getTexto());
 
-					// Apresentação
-					PlanetaSigno ps = servico.findPlanetaSigno(pp.getPlaneta(), "XX");
-					String planeta = enumPlaneta.getNome();
-					String key = String.format("%s nos Signos", planeta);
-					if (ps != null) {
-						if (isTudo || (!isTudo && TipoLogico.N.equals(ps.getConferido())) ) {
-							map.put(key, ps.getTexto());
-							retorno.add(this.tratarParagrafos(key, ps.getTexto()));
-						}
-					} else {
-						map.put(key, NOT_FOUND);
-						retorno.add(this.tratarParagrafos(key, NOT_FOUND));
-					}
-
-					ps = servico.findPlanetaSigno(pp.getPlaneta(), pp.getSigno() );
-					planeta = enumPlaneta.getNome();
+					PlanetaSigno ps = servico.findPlanetaSigno(pp.getPlaneta(), pp.getSigno() );
 					EnumSigno enumSigno = EnumSigno.getBySigla(pp.getSigno());
-
-					String signo = enumSigno.getNome();
-					key = String.format("%s em %s", planeta, signo);
-					if (ps != null) {
-						if (isTudo || (!isTudo && TipoLogico.N.equals(ps.getConferido())) ) {
-							map.put(key, ps.getTexto());
-							retorno.add(this.tratarParagrafos(key, ps.getTexto()));
-						}
-					} else {
-						if ( !EnumPlaneta.SOL.equals(enumPlaneta) ) {
-							map.put(key, NOT_FOUND);
-							retorno.add(this.tratarParagrafos(key, NOT_FOUND));
-						}
-					}
-
+					String key = String.format("%s em %s", enumPlaneta.getNome(), enumSigno.getNome());
+					map.put(key, isNull(ps) ? NOT_FOUND : ps.getTexto());
 				});
+		return map;
 	}
 
-	private void interpretarSignoSolar(List<PlanetaSignoResponse> planetasSignos, boolean isTudo, List<Interpretacao> retorno, Map<String, String> map) {
-	 	planetasSignos.stream()
-				.filter(ps -> EnumPlaneta.SOL.equals( EnumPlaneta.getBySigla(ps.getPlaneta()) ))
-				.forEach( ps -> {
-					EnumPlaneta enumPlaneta = EnumPlaneta.getBySigla(ps.getPlaneta());
+	private Map<String, String> interpretarAspectos(List<AspectoResponse> aspectos) {
+		Map<String, String> map = new LinkedHashMap<>();
 
-					SignoSolar signoSolarCabecalho = servico.findSignoSolar("XX");
-					String key = "O Signo Solar";
+    	aspectos.stream().forEach(ia -> {
+			EnumPlaneta enumPlanetaOrigem = EnumPlaneta.getBySigla(ia.getPlanetaOrigem());
+			EnumPlaneta enumPlanetaDestino = EnumPlaneta.getBySigla(ia.getPlanetaDestino());
+			EnumAspecto aspecto = EnumAspecto.getBySigla(ia.getAspecto());
 
-					if (signoSolarCabecalho != null) {
-						if (isTudo || (!isTudo && TipoLogico.N.equals(signoSolarCabecalho.getConferido())) ) {
-							map.put(key, signoSolarCabecalho.getTexto());
-							retorno.add(this.tratarParagrafos(key, signoSolarCabecalho.getTexto()));
-						}
-					} else {
-						map.put(key, NOT_FOUND);
-						retorno.add(this.tratarParagrafos(key, NOT_FOUND));
-					}
+			String key = String.format("%s em %s com %s", enumPlanetaOrigem.getNome(), aspecto.getNome(), enumPlanetaDestino.getNome() );
+			MapaPlanetaAspecto a = servico.findAspecto(ia.getPlanetaOrigem(), ia.getPlanetaDestino(), aspecto.getSigla() );
+			map.put(key, isNull(a) ? NOT_FOUND : a.getTexto());
+		});
+    	return map;
+	}
 
-					//String signo = ps.getSigno(); //TipoSigno.getByString(pp.getEnumSigno().getSigla());
-					EnumSigno enumSigno = EnumSigno.getBySigla(ps.getSigno());
+	private Map<String, String> interpretarPlanetasCasas(List<PlanetaSignoResponse> planetasSignos) {
+		Map<String, String> map = new LinkedHashMap<>();
 
-					SignoSolar signoSolar = servico.findSignoSolar(enumSigno.getSigla());
-					key = String.format("%s", enumSigno.getNome());
-					if (signoSolar != null) {
-						if (isTudo || (!isTudo && TipoLogico.N.equals(signoSolar.getConferido())) ) {
-							map.put(key, signoSolar.getTexto());
-							retorno.add(this.tratarParagrafos(key, signoSolar.getTexto()));
-						}
-					} else {
-						map.put(key, NOT_FOUND);
-						retorno.add(this.tratarParagrafos(key, NOT_FOUND));
-					}
+		EnumPlaneta[] array = {EnumPlaneta.SOL, EnumPlaneta.ASC, EnumPlaneta.MCE};
+		List<EnumPlaneta> desconsiderados = Arrays.asList(array);
+
+		planetasSignos.stream()
+				.filter(ps -> !desconsiderados.contains(EnumPlaneta.getBySigla(ps.getPlaneta())) )
+				.forEach(pp -> {
+					EnumPlaneta enumPlaneta = EnumPlaneta.getBySigla(pp.getPlaneta());
+					String casa = Casa.getByNumero(pp.getCasa());
+
+					String keyTitulo = String.format("%s nas Casas", enumPlaneta.getNome());
+					PlanetaCasa pcTitulo = servico.findPlanetaCasa(pp.getPlaneta(), 0);
+					map.put(keyTitulo, isNull(pcTitulo) ? NOT_FOUND : pcTitulo.getTexto());
+
+					String key = String.format("%s na %s Casa", enumPlaneta.getNome(), casa);
+					PlanetaCasa pc = servico.findPlanetaCasa(pp.getPlaneta(), pp.getCasa());
+					map.put(key, isNull(pc) ? NOT_FOUND : pc.getTexto());
 				});
-		/*
-    	for(PlanetaSignoResponse pp : planetasSignos){
-			EnumPlaneta enumPlaneta = EnumPlaneta.getBySigla(pp.getPlaneta());
+		return map;
+	}
 
-			//EnumSigno enumSigno = EnumSigno.getBySigla(pp.getSigno());
-			if (!EnumPlaneta.SOL.equals(enumPlaneta)) continue;
+	private Map<String, String> interpretarCuspides(List<CuspideResponse> cuspides) {
+		Map<String, String> map = new LinkedHashMap<>();
 
-			SignoSolar signoSolarCabecalho = servico.findSignoSolar("XX");
-			String key = "O Signo Solar";
+		cuspides.stream()
+				.filter(c -> c.getCasa() <= 12)
+				.forEach(c -> {
+					String keyTitulo = String.format("Casa %s", c.getCasa());
+					MapaCuspide mcTitulo = servico.findCuspide("XX", c.getCasa());
+					map.put(keyTitulo, isNull(mcTitulo) ? NOT_FOUND : mcTitulo.getTexto());
 
-			if (signoSolarCabecalho != null) {
-				if (isTudo || (!isTudo && TipoLogico.N.equals(signoSolarCabecalho.getConferido())) ) {
-					map.put(key, signoSolarCabecalho.getTexto());
-					retorno.add(this.tratarParagrafos(key, signoSolarCabecalho.getTexto()));
-				}
-			} else {
-				map.put(key, NOT_FOUND);
-				retorno.add(this.tratarParagrafos(key, NOT_FOUND));
-			}
+					EnumSigno enumSigno = EnumSigno.getBySigla(c.getSigno());
+					String casa = Casa.getByNumero(c.getCasa());
+					String key = String.format("%s na Cúspide da %s Casa", enumSigno.getNome(), casa);
+					MapaCuspide mc = servico.findCuspide(enumSigno.getSigla(), c.getCasa());
 
-			String signo = pp.getSigno(); //TipoSigno.getByString(pp.getEnumSigno().getSigla());
-			SignoSolar signoSolar = servico.findSignoSolar(signo);
-			key = String.format("%s", signo);
-			if (signoSolar != null) {
-				if (isTudo || (!isTudo && TipoLogico.N.equals(signoSolar.getConferido())) ) {
-					map.put(key, signoSolar.getTexto());
-					retorno.add(this.tratarParagrafos(key, signoSolar.getTexto()));
-				}
-			} else {
-				map.put(key, NOT_FOUND);
-				retorno.add(this.tratarParagrafos(key, NOT_FOUND));
-			}
-			break;
-		}
-    	*/
+					map.put(key, isNull(mc) ? NOT_FOUND : mc.getTexto());
+				});
+		return map;
+	}
+
+	private Map<String, String> interpretarCuspidesTituloGeral() {
+		Map<String, String> map = new LinkedHashMap<>();
+		String keyCasas = "As Casas";
+		MapaCuspide mc = servico.findCuspide("XX", 0);
+		map.put(keyCasas, isNull(mc) ? NOT_FOUND : mc.getTexto());
+		return map;
 	}
 
 	private Interpretacao tratarParagrafos(String titulo, String texto) {

@@ -32,13 +32,12 @@ public class MapaController {
         try {
             CartaNatalResponse cartaNatal = service.buildMapa(dados.getNome(), dados.getData(), dados.getHora(), dados.getCidade(), dados.getUf());
 
-            List<Interpretacao> interpretacoes = geradorPdfService.createArquivo(true, cartaNatal);
+            List<Interpretacao> interpretacoes = geradorPdfService.createArquivo(cartaNatal);
             interpretacoes.stream().forEach(i -> {
                 ///System.out.println(i.getTitulo());
                 i.getParagrafos().stream().forEach(t -> {
                     System.out.println(t);
                 });
-
             });
             return cartaNatal;
         } catch (Exception e){
