@@ -43,6 +43,10 @@ public class ChartPainter {
 	
 	private Mapa mapa;
 	private String pathToSave;
+
+	public ChartPainter(){
+
+	}
 		
 	public ChartPainter(Mapa mapa, String path) {
 		this.mapa = mapa;

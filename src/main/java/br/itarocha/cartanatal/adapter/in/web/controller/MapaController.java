@@ -25,6 +25,11 @@ import java.util.Map;
 public class MapaController {
 
     private static final String FILE_NAME_TXT = "mapa.txt";
+    // Arquivos em endpoints
+    // https://simplesolution.dev/spring-boot-export-download-text-file/
+
+    // Horário de Verão no Brasil
+    //https://pt.wikipedia.org/wiki/Lista_de_per%C3%ADodos_em_que_vigorou_o_hor%C3%A1rio_de_ver%C3%A3o_no_Brasil
 
     @Autowired
     private CartaNatalService service;
