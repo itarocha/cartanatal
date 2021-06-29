@@ -4,16 +4,17 @@ import br.itarocha.cartanatal.core.model.*;
 import br.itarocha.cartanatal.core.model.domain.EnumAspecto;
 import br.itarocha.cartanatal.core.model.domain.EnumPlaneta;
 import br.itarocha.cartanatal.core.model.domain.EnumSigno;
-import br.itarocha.cartanatal.core.model.presenter.AspectoResponse;
-import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
-import br.itarocha.cartanatal.core.model.presenter.CuspideResponse;
-import br.itarocha.cartanatal.core.model.presenter.PlanetaSignoResponse;
+import br.itarocha.cartanatal.core.model.presenter.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 import static java.util.Objects.isNull;
@@ -21,16 +22,22 @@ import static java.util.Objects.isNull;
 @Service
 public class GeradorPdfService {
 
-	private String NOT_FOUND = "<NOT_FOUND>";
+	private static final String NOT_FOUND = "<NOT_FOUND>";
+	private static final String EXPORT_DIRECTORY = "target";
+
+	//private Logger logger = LoggerFactory.getLogger(TextFileExporter.class);
 
 	@Autowired
 	private BuscadorService servico;
 
     private static final String FONT_ASTRO = "src/main/resources/fonts/AstroDotBasic.ttf";
 
-    public List<Interpretacao> createArquivo(CartaNatalResponse cartaNatal) throws IOException {
+    public Map<String, String> createArquivo(CartaNatalResponse cartaNatal) {
 
 		Map<String, String> map = new LinkedHashMap<>();
+
+		// CABECALHO
+		map.putAll(buildDadosPessoais(cartaNatal.getDadosPessoais()));
 
 		// SIGNO SOLAR
 		map.putAll(interpretarSignoSolar(cartaNatal.getPlanetasSignos()));
@@ -57,7 +64,8 @@ public class GeradorPdfService {
 
 		//////////////montarArquivoPdf(mapa, map);
 		*/
-		montarArquivoTxt(cartaNatal, map);
+
+		////////montarArquivoTxt(cartaNatal, map);
 
 		// para cada chave de pama, tratar paragrafos
 		//retorno.add(this.tratarParagrafos(keyCabecalho, signoSolarCabecalho.getTexto()));
@@ -67,8 +75,30 @@ public class GeradorPdfService {
 			retorno.add(this.tratarParagrafos(entry.getKey(), entry.getValue() ));
 		});
 
-		return retorno;
+		return map;
 	 }
+
+	private Map<String, String> buildDadosPessoais(DadoPessoalResponse dadosPessoais) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(dadosPessoais.getNome() + "\r\n\r\n");
+		sb.append(dadosPessoais.getData() + " "  + dadosPessoais.getHora() + "\r\n\r\n");
+		sb.append(dadosPessoais.getCidade() + "\r\n\r\n");
+		Map<String, String> map = new LinkedHashMap<>();
+		map.put("Carta Natal", sb.toString());
+		return map;
+	}
+
+	public Path export(String fileContent, String fileName) {
+		Path filePath = Paths.get(EXPORT_DIRECTORY, fileName);
+		try {
+			Path exportedFilePath = Files.write(filePath, fileContent.getBytes(), StandardOpenOption.CREATE);
+			return exportedFilePath;
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			//logger.error(e.getMessage(), e);
+		}
+		return null;
+	}
 
 	private Map<String, String> interpretarSignoSolar(List<PlanetaSignoResponse> planetasSignos) {
 		Map<String, String> map = new LinkedHashMap<>();
@@ -193,7 +223,43 @@ public class GeradorPdfService {
 		 }
 		 return retorno;
 	 }
-	 
+
+	public String buildConteudoArquivoTxt(CartaNatalResponse mapa, Map<String, String> map) {
+		String  nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toLowerCase();
+
+		//String url = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+		//String dest = String.format("%s/file_%s.txt",url,nome);
+		//String dest = String.format("d:/%s.txt",nome);
+
+		///////FileWriter arq = new FileWriter(dest);
+		///////PrintWriter gravarArq = new PrintWriter(arq);
+
+		StringBuilder sb = new StringBuilder();
+
+		for(String k : map.keySet()) {
+			//Paragraph p = new Paragraph();
+			//p.add(new Text(k)).setFontSize(14).setBold();
+			// título
+			sb.append(k+"\n");
+			sb.append("---------------------------------------------------\n");
+			///////////////document.add(p);
+
+			// Remover enter
+			String texto = map.get(k);
+			texto = texto.replace("\n", "");//.replace("\r", "");
+			sb.append(texto);
+			sb.append("\n\n");
+
+			//p = new Paragraph();
+			//p.add(new Text(texto).setFontSize(10) );
+
+			///////////////document.add(p);
+		}
+		return sb.toString();
+	}
+
+
+
 	 private void montarArquivoTxt(CartaNatalResponse mapa, Map<String, String> map)  throws IOException {
 		 String  nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toLowerCase();
 		 

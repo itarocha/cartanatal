@@ -32,6 +32,7 @@ public class MapaMapper {
 
         return DadoPessoalResponse.builder()
                 .nome(mapa.getNome())
+                .cidade(mapa.getNomeCidade())
                 .data(mapa.getData())
                 .hora(mapa.getHora())
                 .deltaT( new DecimalFormat("#.####").format(mapa.getDeltaTSec()) )

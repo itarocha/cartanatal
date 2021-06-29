@@ -9,6 +9,7 @@ public class DadoPessoalResponse {
     private String nome;
     private String data;
     private String hora;
+    private String cidade;
     private String deltaT; // double
     private String julDay;
     private String lat;

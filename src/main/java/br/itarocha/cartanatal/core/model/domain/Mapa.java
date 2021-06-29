@@ -29,6 +29,7 @@ public class Mapa {
 			this.nome = nome;
 			this.tu = new TempoUniversalLocal(dataHora, cidade.getFuso());
 			this.dataHora = dataHora;
+			this.nomeCidade = cidade.getNomeOriginal() + " - " + cidade.getUF();
 			make(nome, cidade.getFuso(), cidade.getLatitude(), cidade.getLongitude());
 		} catch (ParseException e) {
 			e.printStackTrace();
