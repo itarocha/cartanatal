@@ -11,28 +11,21 @@ import org.springframework.stereotype.Service;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 import static java.util.Objects.isNull;
 
 @Service
-public class GeradorPdfService {
+public class InterpretadorService {
 
 	private static final String NOT_FOUND = "<NOT_FOUND>";
-	private static final String EXPORT_DIRECTORY = "target";
-
-	//private Logger logger = LoggerFactory.getLogger(TextFileExporter.class);
 
 	@Autowired
-	private BuscadorService servico;
+	private BuscadorService buscadorServide;
 
     private static final String FONT_ASTRO = "src/main/resources/fonts/AstroDotBasic.ttf";
 
-    public Map<String, String> createArquivo(CartaNatalResponse cartaNatal) {
+    public Map<String, String> gerarInterpretacoes(CartaNatalResponse cartaNatal) {
 
 		Map<String, String> map = new LinkedHashMap<>();
 
@@ -88,30 +81,18 @@ public class GeradorPdfService {
 		return map;
 	}
 
-	public Path export(String fileContent, String fileName) {
-		Path filePath = Paths.get(EXPORT_DIRECTORY, fileName);
-		try {
-			Path exportedFilePath = Files.write(filePath, fileContent.getBytes(), StandardOpenOption.CREATE);
-			return exportedFilePath;
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			//logger.error(e.getMessage(), e);
-		}
-		return null;
-	}
-
 	private Map<String, String> interpretarSignoSolar(List<PlanetaSignoResponse> planetasSignos) {
 		Map<String, String> map = new LinkedHashMap<>();
 
 		planetasSignos.stream()
 				.filter(ps -> EnumPlaneta.SOL.equals( EnumPlaneta.getBySigla(ps.getPlaneta()) ))
 				.forEach( ps -> {
-					SignoSolar signoSolarCabecalho = servico.findSignoSolar("XX");
+					SignoSolar signoSolarCabecalho = buscadorServide.findSignoSolar("XX");
 					String keyCabecalho = "O Signo Solar";
 					map.put(keyCabecalho, isNull(signoSolarCabecalho) ? NOT_FOUND : signoSolarCabecalho.getTexto() );
 
 					EnumSigno enumSigno = EnumSigno.getBySigla(ps.getSigno());
-					SignoSolar signoSolar = servico.findSignoSolar(enumSigno.getSigla());
+					SignoSolar signoSolar = buscadorServide.findSignoSolar(enumSigno.getSigla());
 					String key = String.format("%s", enumSigno.getNome());
 					map.put(key, isNull(signoSolar) ? NOT_FOUND : signoSolar.getTexto());
 				});
@@ -128,11 +109,11 @@ public class GeradorPdfService {
 				.filter(ps -> !desconsiderados.contains(EnumPlaneta.getBySigla(ps.getPlaneta())) )
 				.forEach(pp -> {
 					EnumPlaneta enumPlaneta = EnumPlaneta.getBySigla(pp.getPlaneta());
-					PlanetaSigno psTitulo = servico.findPlanetaSigno(pp.getPlaneta(), "XX");
+					PlanetaSigno psTitulo = buscadorServide.findPlanetaSigno(pp.getPlaneta(), "XX");
 					String keyTitulo = String.format("%s nos Signos", enumPlaneta.getNome());
 					map.put(keyTitulo, isNull(psTitulo) ? NOT_FOUND : psTitulo.getTexto());
 
-					PlanetaSigno ps = servico.findPlanetaSigno(pp.getPlaneta(), pp.getSigno() );
+					PlanetaSigno ps = buscadorServide.findPlanetaSigno(pp.getPlaneta(), pp.getSigno() );
 					EnumSigno enumSigno = EnumSigno.getBySigla(pp.getSigno());
 					String key = String.format("%s em %s", enumPlaneta.getNome(), enumSigno.getNome());
 					map.put(key, isNull(ps) ? NOT_FOUND : ps.getTexto());
@@ -149,7 +130,7 @@ public class GeradorPdfService {
 			EnumAspecto aspecto = EnumAspecto.getBySigla(ia.getAspecto());
 
 			String key = String.format("%s em %s com %s", enumPlanetaOrigem.getNome(), aspecto.getNome(), enumPlanetaDestino.getNome() );
-			MapaPlanetaAspecto a = servico.findAspecto(ia.getPlanetaOrigem(), ia.getPlanetaDestino(), aspecto.getSigla() );
+			MapaPlanetaAspecto a = buscadorServide.findAspecto(ia.getPlanetaOrigem(), ia.getPlanetaDestino(), aspecto.getSigla() );
 			map.put(key, isNull(a) ? NOT_FOUND : a.getTexto());
 		});
     	return map;
@@ -168,11 +149,11 @@ public class GeradorPdfService {
 					String casa = Casa.getByNumero(pp.getCasa());
 
 					String keyTitulo = String.format("%s nas Casas", enumPlaneta.getNome());
-					PlanetaCasa pcTitulo = servico.findPlanetaCasa(pp.getPlaneta(), 0);
+					PlanetaCasa pcTitulo = buscadorServide.findPlanetaCasa(pp.getPlaneta(), 0);
 					map.put(keyTitulo, isNull(pcTitulo) ? NOT_FOUND : pcTitulo.getTexto());
 
 					String key = String.format("%s na %s Casa", enumPlaneta.getNome(), casa);
-					PlanetaCasa pc = servico.findPlanetaCasa(pp.getPlaneta(), pp.getCasa());
+					PlanetaCasa pc = buscadorServide.findPlanetaCasa(pp.getPlaneta(), pp.getCasa());
 					map.put(key, isNull(pc) ? NOT_FOUND : pc.getTexto());
 				});
 		return map;
@@ -185,13 +166,13 @@ public class GeradorPdfService {
 				.filter(c -> c.getCasa() <= 12)
 				.forEach(c -> {
 					String keyTitulo = String.format("Casa %s", c.getCasa());
-					MapaCuspide mcTitulo = servico.findCuspide("XX", c.getCasa());
+					MapaCuspide mcTitulo = buscadorServide.findCuspide("XX", c.getCasa());
 					map.put(keyTitulo, isNull(mcTitulo) ? NOT_FOUND : mcTitulo.getTexto());
 
 					EnumSigno enumSigno = EnumSigno.getBySigla(c.getSigno());
 					String casa = Casa.getByNumero(c.getCasa());
 					String key = String.format("%s na Cúspide da %s Casa", enumSigno.getNome(), casa);
-					MapaCuspide mc = servico.findCuspide(enumSigno.getSigla(), c.getCasa());
+					MapaCuspide mc = buscadorServide.findCuspide(enumSigno.getSigla(), c.getCasa());
 
 					map.put(key, isNull(mc) ? NOT_FOUND : mc.getTexto());
 				});
@@ -201,7 +182,7 @@ public class GeradorPdfService {
 	private Map<String, String> interpretarCuspidesTituloGeral() {
 		Map<String, String> map = new LinkedHashMap<>();
 		String keyCasas = "As Casas";
-		MapaCuspide mc = servico.findCuspide("XX", 0);
+		MapaCuspide mc = buscadorServide.findCuspide("XX", 0);
 		map.put(keyCasas, isNull(mc) ? NOT_FOUND : mc.getTexto());
 		return map;
 	}
@@ -258,39 +239,39 @@ public class GeradorPdfService {
 		return sb.toString();
 	}
 
+	/*
+	private void montarArquivoTxt(CartaNatalResponse mapa, Map<String, String> map)  throws IOException {
+		String  nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toLowerCase();
 
+		String url = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+		String dest = String.format("%s/file_%s.txt",url,nome);
+		//String dest = String.format("d:/%s.txt",nome);
 
-	 private void montarArquivoTxt(CartaNatalResponse mapa, Map<String, String> map)  throws IOException {
-		 String  nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toLowerCase();
-		 
-		 String url = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-		 String dest = String.format("%s/file_%s.txt",url,nome);		    
-		 //String dest = String.format("d:/%s.txt",nome);
-		 
-		 FileWriter arq = new FileWriter(dest);
-		 PrintWriter gravarArq = new PrintWriter(arq);
-		 
-		 for(String k : map.keySet()) {
+		FileWriter arq = new FileWriter(dest);
+		PrintWriter gravarArq = new PrintWriter(arq);
+
+		for(String k : map.keySet()) {
 			//Paragraph p = new Paragraph();
 			//p.add(new Text(k)).setFontSize(14).setBold();
 			// título
 			gravarArq.printf(k+"\n");
 			gravarArq.printf("---------------------------------------------------\n");
 			///////////////document.add(p);
-			 
+
 			// Remover enter
 			String texto = map.get(k);
 			texto = texto.replace("\n", "");//.replace("\r", "");
 			gravarArq.printf(texto);
 			gravarArq.printf("\n\n");
-			
+
 			//p = new Paragraph();
 			//p.add(new Text(texto).setFontSize(10) );
-			
+
 			///////////////document.add(p);
-		 }
-		 arq.close();
-	 }
+		}
+		arq.close();
+	}
+	*/
 
 	 /*
 	 private void montarArquivoPdf(CartaNatal mapa, Map<String, String> map) throws IOException {

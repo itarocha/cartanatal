@@ -1,9 +1,9 @@
 package br.itarocha.cartanatal.adapter.in.web.controller;
 
-import br.itarocha.cartanatal.core.model.Interpretacao;
 import br.itarocha.cartanatal.core.service.CartaNatalService;
 import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
-import br.itarocha.cartanatal.core.service.GeradorPdfService;
+import br.itarocha.cartanatal.core.service.InterpretadorService;
+import br.itarocha.cartanatal.core.service.TextFileExporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -24,11 +24,16 @@ import java.util.Map;
 @RequestMapping("/api/mapa")
 public class MapaController {
 
+    private static final String FILE_NAME_TXT = "mapa.txt";
+
     @Autowired
     private CartaNatalService service;
 
     @Autowired
-    private GeradorPdfService geradorPdfService;
+    private InterpretadorService interpretador;
+
+    @Autowired
+    private TextFileExporter textFileExporter;
 
     @PostMapping
     @RequestMapping("/single")
@@ -41,15 +46,12 @@ public class MapaController {
     @RequestMapping("/textfile")
     public ResponseEntity<InputStreamResource> getMapaText(@RequestBody DadosPessoais model) throws FileNotFoundException {
         CartaNatalResponse response = calcular(model);
-        Map<String, String> mapa = geradorPdfService.createArquivo(response);
-        //return ResponseEntity.ok(mapa);
+        Map<String, String> mapa = interpretador.gerarInterpretacoes(response);
 
-        String fileName = "arquivo.txt";
-        String fileContent = geradorPdfService.buildConteudoArquivoTxt(response, mapa);
-
+        String fileContent = interpretador.buildConteudoArquivoTxt(response, mapa);
 
         // Create text file
-        Path exportedPath = geradorPdfService.export(fileContent, fileName);
+        Path exportedPath = textFileExporter.export(fileContent, FILE_NAME_TXT);
 
         // Download file with InputStreamResource
         File exportedFile = exportedPath.toFile();
@@ -57,7 +59,7 @@ public class MapaController {
         InputStreamResource inputStreamResource = new InputStreamResource(fileInputStream);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + fileName)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + FILE_NAME_TXT)
                 .contentType(MediaType.TEXT_PLAIN)
                 .contentLength(exportedFile.length())
                 .body(inputStreamResource);
@@ -66,16 +68,7 @@ public class MapaController {
     private CartaNatalResponse calcular(DadosPessoais dados) {
         try {
             CartaNatalResponse cartaNatal = service.buildMapa(dados.getNome(), dados.getData(), dados.getHora(), dados.getCidade(), dados.getUf());
-
-            Map<String, String> mapa = geradorPdfService.createArquivo(cartaNatal);
-            /*
-            interpretacoes.stream().forEach(i -> {
-                ///System.out.println(i.getTitulo());
-                i.getParagrafos().stream().forEach(t -> {
-                    System.out.println(t);
-                });
-            });
-             */
+            Map<String, String> mapa = interpretador.gerarInterpretacoes(cartaNatal);
             return cartaNatal;
         } catch (Exception e){
             return CartaNatalResponse.builder().build();
