@@ -11,10 +11,12 @@ import java.util.Map;
 import br.itarocha.cartanatal.core.model.domain.Cidade;
 import br.itarocha.cartanatal.core.util.Funcoes;
 
+import static br.itarocha.cartanatal.core.service.ArquivosConstantes.ARQUIVO_CIDADES_BRASIL;
+
 public class MapeadorCidades {
 
 	private static MapeadorCidades instance = null;
-	private static final Map<String, Cidade> mapCidades = new HashMap<String, Cidade>();
+	private static final Map<String, Cidade> mapCidades = new HashMap<>();
 	private static final Map<String,Integer> mapFuso;
 	static
 	{
@@ -53,7 +55,6 @@ public class MapeadorCidades {
 			instance = new MapeadorCidades();
 		return instance;
 	}
-	
 
 	private MapeadorCidades() {
 		this.carregarArquivoCidades();
@@ -76,7 +77,7 @@ public class MapeadorCidades {
 	}
 	
 	private void carregarArquivoCidades() {
-		URL arquivoCSV = MapeadorCidades.class.getClassLoader().getResource("ephe/cidades_brasil.csv");
+		URL arquivoCSV = this.getClass().getClassLoader().getResource(ARQUIVO_CIDADES_BRASIL);
 		BufferedReader br = null;
 		String linha = "";
 		String csvDivisor = ",";

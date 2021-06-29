@@ -45,17 +45,7 @@ public class InterpretadorService {
 		// ASPECTOS
 		map.putAll(interpretarAspectos(cartaNatal.getAspectos()));
 
-		/*
-		for(String k : map.keySet()) {
-		System.out.println(k + (NOT_FOUND.equals(map.get(k)) ? " - NÃO ENCONTRADO" : ""));
-		}
-
-		//////////////montarArquivoPdf(mapa, map);
-		*/
-
-		////////montarArquivoTxt(cartaNatal, map);
-
-		// para cada chave de pama, tratar paragrafos
+		// para cada chave de mapa, tratar paragrafos
 		//retorno.add(this.tratarParagrafos(keyCabecalho, signoSolarCabecalho.getTexto()));
 		List<Interpretacao> retorno = new LinkedList<>();
 

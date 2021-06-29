@@ -2,10 +2,12 @@ package br.itarocha.cartanatal.core.service;
 
 public class ArquivosConstantes {
 
-    public static final String ARQUIVO_SIGNOS_SOLARES = "/home/itamar/astrologia/signos_solares.json";
-    public static final String ARQUIVO_CUSPIDES = "/home/itamar/astrologia/cuspides.json";
-    public static final String ARQUIVO_ASPECTOS = "/home/itamar/astrologia/aspectos.json";
-    public static final String ARQUIVO_PLANETAS_CASAS = "/home/itamar/astrologia/planetas_casas.json";
-    public static final String ARQUIVO_PLANETAS_SIGNOS = "/home/itamar/astrologia/planetas_signos.json";
+    public static final String ARQUIVO_SIGNOS_SOLARES   = "book/signos_solares.json";
+    public static final String ARQUIVO_CUSPIDES         = "book/cuspides.json";
+    public static final String ARQUIVO_ASPECTOS         = "book/aspectos.json";
+    public static final String ARQUIVO_PLANETAS_CASAS   = "book/planetas_casas.json";
+    public static final String ARQUIVO_PLANETAS_SIGNOS  = "book/planetas_signos.json";
+
+    public static final String ARQUIVO_CIDADES_BRASIL   = "ephe/cidades_brasil.csv";
 
 }

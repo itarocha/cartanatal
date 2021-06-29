@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 import static br.itarocha.cartanatal.core.service.ArquivosConstantes.*;
@@ -75,9 +77,10 @@ public class BuscadorService {
     private void restaurarSignosSolares() {
         ObjectMapper om = new ObjectMapper();
         try {
-            listaSignosSolares = om.readValue(new File(ARQUIVO_SIGNOS_SOLARES), new TypeReference<List<SignoSolar>>(){});
+            URL url = this.getClass().getClassLoader().getResource(ARQUIVO_SIGNOS_SOLARES);
+            listaSignosSolares = om.readValue(new File(url.toURI()), new TypeReference<List<SignoSolar>>(){});
             System.out.println("SIGNOS SOLARES RESTAURADO COM SUCESSO");
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -85,9 +88,10 @@ public class BuscadorService {
     private void restaurarCuspides() {
         ObjectMapper om = new ObjectMapper();
         try {
-            listaCuspides = om.readValue(new File(ARQUIVO_CUSPIDES), new TypeReference<List<MapaCuspide>>(){});
+            URL url = this.getClass().getClassLoader().getResource(ARQUIVO_CUSPIDES);
+            listaCuspides = om.readValue(new File(url.toURI()), new TypeReference<List<MapaCuspide>>(){});
             System.out.println("CUSPIDES RESTAURADO COM SUCESSO");
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -95,9 +99,10 @@ public class BuscadorService {
     private void restaurarAspectos() {
         ObjectMapper om = new ObjectMapper();
         try {
-            listaAspectos = om.readValue(new File(ARQUIVO_ASPECTOS), new TypeReference<List<MapaPlanetaAspecto>>(){});
+            URL url = this.getClass().getClassLoader().getResource(ARQUIVO_ASPECTOS);
+            listaAspectos = om.readValue(new File(url.toURI()), new TypeReference<List<MapaPlanetaAspecto>>(){});
             System.out.println("ASPECTOS RESTAURADO COM SUCESSO");
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -105,9 +110,10 @@ public class BuscadorService {
     private void restaurarPlanetasCasas() {
         ObjectMapper om = new ObjectMapper();
         try {
-            listaPlanetasCasas = om.readValue(new File(ARQUIVO_PLANETAS_CASAS), new TypeReference<List<PlanetaCasa>>(){});
+            URL url = this.getClass().getClassLoader().getResource(ARQUIVO_PLANETAS_CASAS);
+            listaPlanetasCasas = om.readValue(new File(url.toURI()), new TypeReference<List<PlanetaCasa>>(){});
             System.out.println("PLANETAS CASAS RESTAURADO COM SUCESSO");
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -115,9 +121,10 @@ public class BuscadorService {
     private void restaurarPlanetasSignos() {
         ObjectMapper om = new ObjectMapper();
         try {
-            listaPlanetasSignos = om.readValue(new File(ARQUIVO_PLANETAS_SIGNOS), new TypeReference<List<PlanetaSigno>>(){});
+            URL url = this.getClass().getClassLoader().getResource(ARQUIVO_PLANETAS_SIGNOS);
+            listaPlanetasSignos = om.readValue(new File(url.toURI()), new TypeReference<List<PlanetaSigno>>(){});
             System.out.println("PLANETAS SIGNOS RESTAURADO COM SUCESSO");
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }

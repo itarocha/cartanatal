@@ -2,7 +2,6 @@ package br.itarocha.cartanatal.core.util;
 
 import br.itarocha.cartanatal.core.model.domain.EnumAspecto;
 
-import java.text.DecimalFormat;
 import java.text.Normalizer;
 import java.util.TimeZone;
 
@@ -83,12 +82,14 @@ public class Funcoes {
 		double resultado = Math.abs(b-a);
 
 		EnumAspecto aspecto = EnumAspecto.getByAngulo(resultado);
+		/*
 		System.out.println(String.format("%s - %s [%s] %s %s => %s",planetaA, planetaB,
 				aspecto == null ? "--" : aspecto.getSigla(),
 				new DecimalFormat("000.0000").format(a),
 				new DecimalFormat("000.0000").format(b),
 				new DecimalFormat("000.0000").format(resultado)
 		));
+		 */
 		return aspecto;
 	}
     
