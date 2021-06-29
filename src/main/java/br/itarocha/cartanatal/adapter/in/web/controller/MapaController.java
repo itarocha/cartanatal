@@ -50,6 +50,14 @@ public class MapaController {
 
         String fileContent = interpretador.buildConteudoArquivoTxt(response, mapa);
 
+        /*
+        try {
+            interpretador.montarArquivoPdf(response, mapa);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
+
         // Create text file
         Path exportedPath = textFileExporter.export(fileContent, FILE_NAME_TXT);
 

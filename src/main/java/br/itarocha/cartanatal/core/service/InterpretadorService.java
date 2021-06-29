@@ -8,9 +8,6 @@ import br.itarocha.cartanatal.core.model.presenter.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 import static java.util.Objects.isNull;
@@ -22,8 +19,6 @@ public class InterpretadorService {
 
 	@Autowired
 	private BuscadorService buscadorServide;
-
-    private static final String FONT_ASTRO = "src/main/resources/fonts/AstroDotBasic.ttf";
 
     public Map<String, String> gerarInterpretacoes(CartaNatalResponse cartaNatal) {
 
@@ -206,7 +201,7 @@ public class InterpretadorService {
 	 }
 
 	public String buildConteudoArquivoTxt(CartaNatalResponse mapa, Map<String, String> map) {
-		String  nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toLowerCase();
+		//String  nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toLowerCase();
 
 		//String url = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 		//String dest = String.format("%s/file_%s.txt",url,nome);
@@ -273,62 +268,4 @@ public class InterpretadorService {
 	}
 	*/
 
-	 /*
-	 private void montarArquivoPdf(CartaNatal mapa, Map<String, String> map) throws IOException {
-		 String  nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toLowerCase();
-
-		 String url = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-		 String dest = String.format("%s/file_%s.pdf",url,nome);		    
-		 
-		 PdfDocument pdf = new PdfDocument(new PdfWriter(dest));
-		 Document document = new Document(pdf);
-		 document.setTextAlignment(TextAlignment.JUSTIFIED);
-		 
-		 PdfFont font = PdfFontFactory.createFont(FONT_ASTRO, true);
-		 PdfFont bold = PdfFontFactory.createFont(FONT_ASTRO, true);
-		 
-		 PdfFont fontCourier = PdfFontFactory.createFont(FontConstants.COURIER);
-		 
-		 List<PlanetaPosicao> planetas = mapa.getPosicoesPlanetas();
-		 
-		 Paragraph pa = new Paragraph();
-		 for(EnumPlaneta x : EnumPlaneta.values()) {
-			 //System.out.println("buscando "+x.getId());
-			 PlanetaPosicao pp = planetas.stream().filter(obj -> obj.getEnumPlaneta().getSigla().equals(x.getSigla())).findAny().orElse(null);
-			 if (pp != null) {
-				 
-				 /////////EnumSigno eSigno = EnumSigno.getById(pp.getEnumSigno().getSigla());
-				 //EnumPlaneta ePlaneta = EnumPlaneta.getBySigla(pp.getEnumPlaneta().getSigla());
-				 
-				 Text tLetraPlaneta = new Text(pp.getEnumPlaneta().getLetra()).setFontSize(12).setFont(font);
-				 Text tLetraSigno = new Text(pp.getEnumSigno().getLetra()).setFontSize(12).setFont(font);
-				 
-				 String tmp = String.format(" %s°%s'%s\" casa %s ", pp.getGnc(), pp.getM(), pp.getS(), (int)pp.getCasa());
-				 pa.add(tLetraPlaneta)
-				 .add(new Text(" "+pp.getEnumPlaneta().getNome()+" ").setFontSize(8))
-				 .add(tLetraSigno)
-				 .add(new Text(tmp).setFontSize(8))
-				 .add("\n");
-			 }
-		 }
-		 document.add(pa);
-
-		for(String k : map.keySet()) {
-			//System.out.println(k + (NOT_FOUND.equals(map.get(k)) ? " - NÃO ENCONTRADO" : ""));
-			Paragraph p = new Paragraph();
-			p.add(new Text(k)).setFontSize(14).setBold();
-			document.add(p);
-			
-			// Remover enter
-			String texto = map.get(k);
-			texto = texto.replace("\n", "");//.replace("\r", "");
-			p = new Paragraph();
-			p.add(new Text(texto).setFontSize(10) );
-			
-			document.add(p);
-		}
-		 
-		 document.close();		 
-	 }
-	*/
 }

@@ -20,7 +20,9 @@ import javax.imageio.ImageIO;
 
 import br.itarocha.cartanatal.core.model.domain.Mapa;
 import br.itarocha.cartanatal.core.model.domain.*;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ChartPainter {
 
 	private static final int SIZE = 600;
