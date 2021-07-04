@@ -55,14 +55,6 @@ public class MapaController {
 
         String fileContent = interpretador.buildConteudoArquivoTxt(response, mapa);
 
-        /*
-        try {
-            interpretador.montarArquivoPdf(response, mapa);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
-
         // Create text file
         Path exportedPath = textFileExporter.export(fileContent, FILE_NAME_TXT);
 
@@ -76,6 +68,12 @@ public class MapaController {
                 .contentType(MediaType.TEXT_PLAIN)
                 .contentLength(exportedFile.length())
                 .body(inputStreamResource);
+    }
+
+    @PostMapping
+    @RequestMapping("/atualizar")
+    public ResponseEntity<String> atualizar(){
+        return ResponseEntity.ok("Atualizado com sucesso");
     }
 
     private CartaNatalResponse calcular(DadosPessoais dados) {

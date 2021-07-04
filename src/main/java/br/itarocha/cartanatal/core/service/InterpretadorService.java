@@ -5,6 +5,7 @@ import br.itarocha.cartanatal.core.model.domain.EnumAspecto;
 import br.itarocha.cartanatal.core.model.domain.EnumPlaneta;
 import br.itarocha.cartanatal.core.model.domain.EnumSigno;
 import br.itarocha.cartanatal.core.model.presenter.*;
+import br.itarocha.cartanatal.core.util.Simbolos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -78,7 +79,7 @@ public class InterpretadorService {
 
 					EnumSigno enumSigno = EnumSigno.getBySigla(ps.getSigno());
 					SignoSolar signoSolar = buscadorServide.findSignoSolar(enumSigno.getSigla());
-					String key = String.format("%s", enumSigno.getNome());
+					String key = String.format("%s %s", enumSigno.getNome(), Simbolos.getSimboloSigno(enumSigno.getSigla()));
 					map.put(key, isNull(signoSolar) ? NOT_FOUND : signoSolar.getTexto());
 				});
 		return map;
@@ -100,7 +101,10 @@ public class InterpretadorService {
 
 					PlanetaSigno ps = buscadorServide.findPlanetaSigno(pp.getPlaneta(), pp.getSigno() );
 					EnumSigno enumSigno = EnumSigno.getBySigla(pp.getSigno());
-					String key = String.format("%s em %s", enumPlaneta.getNome(), enumSigno.getNome());
+					String key = String.format("%s em %s (%s %s)", 	enumPlaneta.getNome(),
+																	enumSigno.getNome(),
+																	Simbolos.getSimboloPlaneta(enumPlaneta.getSigla()),
+																	Simbolos.getSimboloSigno(enumSigno.getSigla()));
 					map.put(key, isNull(ps) ? NOT_FOUND : ps.getTexto());
 				});
 		return map;
@@ -112,10 +116,18 @@ public class InterpretadorService {
     	aspectos.stream().forEach(ia -> {
 			EnumPlaneta enumPlanetaOrigem = EnumPlaneta.getBySigla(ia.getPlanetaOrigem());
 			EnumPlaneta enumPlanetaDestino = EnumPlaneta.getBySigla(ia.getPlanetaDestino());
-			EnumAspecto aspecto = EnumAspecto.getBySigla(ia.getAspecto());
+			EnumAspecto enumAspecto = EnumAspecto.getBySigla(ia.getAspecto());
 
-			String key = String.format("%s em %s com %s", enumPlanetaOrigem.getNome(), aspecto.getNome(), enumPlanetaDestino.getNome() );
-			MapaPlanetaAspecto a = buscadorServide.findAspecto(ia.getPlanetaOrigem(), ia.getPlanetaDestino(), aspecto.getSigla() );
+			String key = String.format("%s em %s com %s (%s %s %s)", 	enumPlanetaOrigem.getNome(),
+																	enumAspecto.getNome(),
+																	enumPlanetaDestino.getNome(),
+
+																	Simbolos.getSimboloPlaneta(enumPlanetaOrigem.getSigla()),
+																	Simbolos.getSimboloAspecto(enumAspecto.getSigla()),
+																	Simbolos.getSimboloPlaneta(enumPlanetaDestino.getSigla())
+
+																	);
+			MapaPlanetaAspecto a = buscadorServide.findAspecto(ia.getPlanetaOrigem(), ia.getPlanetaDestino(), enumAspecto.getSigla() );
 			map.put(key, isNull(a) ? NOT_FOUND : a.getTexto());
 		});
     	return map;
@@ -133,11 +145,11 @@ public class InterpretadorService {
 					EnumPlaneta enumPlaneta = EnumPlaneta.getBySigla(pp.getPlaneta());
 					String casa = Casa.getByNumero(pp.getCasa());
 
-					String keyTitulo = String.format("%s nas Casas", enumPlaneta.getNome());
+					String keyTitulo = String.format("%s nas Casas %s", enumPlaneta.getNome(), Simbolos.getSimboloPlaneta(enumPlaneta.getSigla()) );
 					PlanetaCasa pcTitulo = buscadorServide.findPlanetaCasa(pp.getPlaneta(), 0);
 					map.put(keyTitulo, isNull(pcTitulo) ? NOT_FOUND : pcTitulo.getTexto());
 
-					String key = String.format("%s na %s Casa", enumPlaneta.getNome(), casa);
+					String key = String.format("%s na %s Casa %s", enumPlaneta.getNome(), casa, Simbolos.getSimboloPlaneta(enumPlaneta.getSigla()));
 					PlanetaCasa pc = buscadorServide.findPlanetaCasa(pp.getPlaneta(), pp.getCasa());
 					map.put(key, isNull(pc) ? NOT_FOUND : pc.getTexto());
 				});
@@ -156,7 +168,7 @@ public class InterpretadorService {
 
 					EnumSigno enumSigno = EnumSigno.getBySigla(c.getSigno());
 					String casa = Casa.getByNumero(c.getCasa());
-					String key = String.format("%s na Cúspide da %s Casa", enumSigno.getNome(), casa);
+					String key = String.format("%s na Cúspide da %s Casa (%s %s)", enumSigno.getNome(), casa, Simbolos.getSimboloSigno(enumSigno.getSigla()), c.getCasa() );
 					MapaCuspide mc = buscadorServide.findCuspide(enumSigno.getSigla(), c.getCasa());
 
 					map.put(key, isNull(mc) ? NOT_FOUND : mc.getTexto());
