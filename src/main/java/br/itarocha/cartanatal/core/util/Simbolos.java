@@ -42,6 +42,8 @@ public class Simbolos {
         charAspectos.put("tg", '\u25B3');
         charAspectos.put("op", '\u260D');
 
+        //wget -A pdf,jpg -m -p -E -k -K -np https://unicode.org/charts/PDF/
+        //wget --accept pdf,jpg --mirror --page-requisites --adjust-extension --convert-links --backup-converted --no-parent https://unicode.org/charts/PDF/
         // https://unicode.org/charts/PDF/ diversas tabelas pdf
     }
 

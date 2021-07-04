@@ -10,6 +10,7 @@ public class PlanetaSignoResponse {
     private String signo;
     private Integer casa;
     private String grau;
+    private Integer g360;
     private Integer gg;
     private Integer mm;
     private Integer ss;

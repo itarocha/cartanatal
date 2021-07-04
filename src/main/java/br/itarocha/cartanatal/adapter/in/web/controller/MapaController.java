@@ -1,5 +1,6 @@
 package br.itarocha.cartanatal.adapter.in.web.controller;
 
+import br.itarocha.cartanatal.core.decorator.ChartDraw;
 import br.itarocha.cartanatal.core.service.CartaNatalService;
 import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
 import br.itarocha.cartanatal.core.service.InterpretadorService;
@@ -51,6 +52,9 @@ public class MapaController {
     @RequestMapping("/textfile")
     public ResponseEntity<InputStreamResource> getMapaText(@RequestBody DadosPessoais model) throws FileNotFoundException {
         CartaNatalResponse response = calcular(model);
+
+        ChartDraw cd = new ChartDraw(response, "target");
+
         Map<String, String> mapa = interpretador.gerarInterpretacoes(response);
 
         String fileContent = interpretador.buildConteudoArquivoTxt(response, mapa);

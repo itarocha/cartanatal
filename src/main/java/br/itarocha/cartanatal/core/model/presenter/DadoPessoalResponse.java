@@ -14,4 +14,5 @@ public class DadoPessoalResponse {
     private String julDay;
     private String lat;
     private String lon;
+    private Integer grausDefasagemAscendente;
 }

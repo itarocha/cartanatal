@@ -39,6 +39,7 @@ public class MapaMapper {
                 .julDay( new DecimalFormat("#.######").format(mapa.getJulDay()) )
                 .lat(Funcoes.grau(latitude)+lat)
                 .lon(Funcoes.grau(longitude)+lon)
+                .grausDefasagemAscendente(mapa.getGrausDefasagemAscendente())
                 .build();
     }
 
@@ -55,6 +56,7 @@ public class MapaMapper {
                 .signo(pp.getEnumSigno().getSigla())
                 .casa(pp.getCasa())
                 .grau(pp.getGrau())
+                .g360(Integer.parseInt(pp.getG()))
                 .gg(Integer.parseInt(pp.getGnc()))
                 .mm(Integer.parseInt(pp.getM()))
                 .ss(Integer.parseInt(pp.getS()))
