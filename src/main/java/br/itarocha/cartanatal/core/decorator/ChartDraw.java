@@ -13,10 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // É para ser @Service
 public class ChartDraw {
@@ -53,8 +52,7 @@ public class ChartDraw {
 	
 			Graphics2D g = bi.createGraphics();
 	    
-			g.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
-	            				RenderingHints.VALUE_ANTIALIAS_ON);
+			g.setRenderingHint(	RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	
 		    drawMapaFundo(g);
 		    drawMapaPosicoes(g);
@@ -74,7 +72,6 @@ public class ChartDraw {
   
 	private void drawAspectos() {
 		try {
-			
 			int largura = 500 + 300;
 			int altura = 300;
 			
@@ -82,8 +79,7 @@ public class ChartDraw {
 	
 			Graphics2D g = bi.createGraphics();
 	    
-			g.setRenderingHint(	RenderingHints.KEY_ANTIALIASING,
-	            				RenderingHints.VALUE_ANTIALIAS_ON);
+			g.setRenderingHint(	RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	
 		    drawAspectosFundo(g, largura, altura);
 		    //desenharPosicoesPlanetas(g);
@@ -184,14 +180,11 @@ public class ChartDraw {
 
 	      // Aspectos
 	      for (AspectoResponse ite : mapa.getAspectos()) {
-			  //EnumPlaneta enumPlanetaOrigem = EnumPlaneta.getBySigla(ite.getPlanetaOrigem());
-			  //EnumPlaneta enumPlanetaDestino = EnumPlaneta.getBySigla(ite.getPlanetaDestino());
 			  EnumAspecto enumAspecto = EnumAspecto.getBySigla(ite.getAspecto());
 
 			  int x = ite.getX();
 	    	  int y = ite.getY();
-	    	  //EnumAspecto aspecto = ite.getAspecto();
-	    	  
+
 	    	  g.drawString(enumAspecto.getLetra(),
 	    			       margemX + (x * w) +10,
 	    			       30 + ((y+1) * h)  -4);
@@ -199,133 +192,126 @@ public class ChartDraw {
 	  }
 	
 	private void drawMapaFundo(Graphics2D g) {
-      g.setStroke(new BasicStroke(1));
-      g.setColor(Color.white );
-      g.fillOval(MARGEM, MARGEM, SIZE, SIZE);
-      
-      g.setColor(Color.black);
-      // Circulo Grande
-      g.drawOval(MARGEM, MARGEM, SIZE, SIZE);
-      
-      g.setColor(Color.black);
-      // Maior
-      int RAIO_MAIOR = MARGEM + (MARGEM_CASA / 2); 
-      int RAIO_MAIOR_B = SIZE - MARGEM_CASA;
-      g.drawOval(RAIO_MAIOR, RAIO_MAIOR, RAIO_MAIOR_B, RAIO_MAIOR_B);
+		g.setStroke(new BasicStroke(1));
+		g.setColor(Color.WHITE);
+		g.fillOval(MARGEM, MARGEM, SIZE, SIZE);
 
-      // Media
-      int RAIO_MEDIO = MARGEM + (MARGEM_INTERNA / 2);
-      int RAIO_MEDIO_B = SIZE - MARGEM_INTERNA;
-      g.drawOval(RAIO_MEDIO, RAIO_MEDIO, RAIO_MEDIO_B, RAIO_MEDIO_B);
+		g.setColor(Color.BLACK);
+		// Circulo Grande
+		g.drawOval(MARGEM, MARGEM, SIZE, SIZE);
 
-      g.drawOval(	MARGEM + (MARGEM_ASPECTOS / 2), 
-    		  		MARGEM + (MARGEM_ASPECTOS / 2), 
-    		  		SIZE - MARGEM_ASPECTOS, 
-    		  		SIZE - MARGEM_ASPECTOS);
+		// Maior
+		int RAIO_MAIOR = MARGEM + (MARGEM_CASA / 2);
+		int RAIO_MAIOR_B = SIZE - MARGEM_CASA;
+		g.drawOval(RAIO_MAIOR, RAIO_MAIOR, RAIO_MAIOR_B, RAIO_MAIOR_B);
 
-      // CASAS
-      Font font = new Font("TimesRoman", Font.BOLD, 14);
-      g.setFont(font);
-      for (int i = 0; i <= 11; i++) {
+		// Media
+		int RAIO_MEDIO = MARGEM + (MARGEM_INTERNA / 2);
+		int RAIO_MEDIO_B = SIZE - MARGEM_INTERNA;
+		g.drawOval(RAIO_MEDIO, RAIO_MEDIO, RAIO_MEDIO_B, RAIO_MEDIO_B);
 
-    	  Point ptAlfa = minToLocation(i*30, DISTANCE_ALFA);
-          Point ptBeta = minToLocation(i*30, DISTANCE_BETA);
-          
-          Point ptLetra = minToLocation(i*30+15, DISTANCE_BETA+18);
+		g.drawOval(	MARGEM + (MARGEM_ASPECTOS / 2),
+					MARGEM + (MARGEM_ASPECTOS / 2),
+					SIZE - MARGEM_ASPECTOS,
+					SIZE - MARGEM_ASPECTOS);
 
-          String xis = new Integer(i+1).toString();
-          g.drawString(xis,
-          		ptLetra.x - (BIG_DOT / 2) - MARGEM,
-          		ptLetra.y - (BIG_DOT / 2));
-          
-          int xIni = ptAlfa.x - MARGEM;
-          int yIni = ptAlfa.y - MARGEM;
-          int xFim = ptBeta.x - MARGEM;
-          int yFim = ptBeta.y - MARGEM;
-          g.drawLine(xIni, yIni, xFim, yFim);
-      }    
+		// CASAS
+		Font font = new Font("TimesRoman", Font.BOLD, 14);
+		g.setFont(font);
+		for (int i = 0; i <= 11; i++) {
+			Point ptAlfa = minToLocation(i*30, DISTANCE_ALFA);
+			Point ptBeta = minToLocation(i*30, DISTANCE_BETA);
+
+			Point ptLetra = minToLocation(i*30+15, DISTANCE_BETA+18);
+
+			String xis = Integer.toString(i+1);
+			g.drawString(xis,
+				ptLetra.x - (BIG_DOT / 2) - MARGEM,
+				ptLetra.y - (BIG_DOT / 2));
+
+			int xIni = ptAlfa.x - MARGEM;
+			int yIni = ptAlfa.y - MARGEM;
+			int xFim = ptBeta.x - MARGEM;
+			int yFim = ptBeta.y - MARGEM;
+			g.drawLine(xIni, yIni, xFim, yFim);
+		}
   }
   
-  private void drawMapaPosicoes(Graphics2D g) {
-	  g.setColor(Color.red);
-	  boolean alternador = false;
-	  Integer acrescimo = 50;
-	  Font font = this.getFontAstrologia();
-	  // Planetas
-      g.setFont(font.deriveFont(28f));
+	private void drawMapaPosicoes(Graphics2D g) {
+		g.setColor(Color.red);
+		boolean alternador = false;
+		Integer acrescimo = 50;
+		Font font = this.getFontAstrologia();
+		// Planetas
+		g.setFont(font.deriveFont(28f));
 
-      // TODO: Lembrar de ordenar conforme os graus pp.getGrau()
-      
-      List<ItemDesenhoMapa> lista = new ArrayList<ItemDesenhoMapa>();
-      for(PlanetaSignoResponse pp : mapa.getPlanetasSignos()){
-		  EnumPlaneta enumPlaneta = EnumPlaneta.getBySigla(pp.getPlaneta());
+		List<ItemDesenhoMapa> lista =
+		mapa.getPlanetasSignos().stream().filter(ps -> {
+			EnumPlaneta enumPlaneta = EnumPlaneta.getBySigla(ps.getPlaneta());
+			return !(EnumPlaneta.ASC.equals(enumPlaneta) || EnumPlaneta.MCE.equals(enumPlaneta));
+		}).map(ps -> {
+			EnumPlaneta enumPlaneta = EnumPlaneta.getBySigla(ps.getPlaneta());
+			return new ItemDesenhoMapa(	enumPlaneta.getLetra(),
+					ps.getG360(),
+					ps.getGg(),
+					ps.getMm()
+			);
+		}).sorted().collect(Collectors.toList());
 
-		  if(EnumPlaneta.ASC.equals(enumPlaneta)) continue;
-		  if(EnumPlaneta.MCE.equals(enumPlaneta)) continue;
+		for ( ItemDesenhoMapa item : lista ) {
+			Integer grau = item.getGrau360()-mapa.getDadosPessoais().getGrausDefasagemAscendente();
 
-		  ItemDesenhoMapa item = new ItemDesenhoMapa(	enumPlaneta.getLetra(),
-				  										pp.getG360(),
-				  										pp.getGg(),
-				  										pp.getMm()
-		  											);
-		  lista.add(item);
-		  
-	  }
-      Collections.sort(lista);
-      for ( ItemDesenhoMapa item : lista ) {
-    	  Integer grau = item.getGrau360()-mapa.getDadosPessoais().getGrausDefasagemAscendente();
-    	  
-    	  alternador = !alternador;
-    	  acrescimo = alternador ? 50 : 90;
-    	  // ATENCAO! REDUZIR A DEFASAGEM DO SIGNO ASCENDENTE!!!
-    	  Point ptLetra = minToLocation(grau, DISTANCE_BETA+acrescimo);
-    	  g.drawString(item.getTexto(),
-    			  ptLetra.x - (BIG_DOT / 2) - MARGEM,
-    			  ptLetra.y - (BIG_DOT / 2));
-    	  
-    	  Point ptBeta = minToLocation(grau, DISTANCE_BETA);
-    	  g.fillOval(	ptBeta.x - (PQ_DOT / 2) - MARGEM,
-    			  ptBeta.y - (PQ_DOT / 2) - MARGEM,
-    			  PQ_DOT,
-    			  PQ_DOT);     
-      }
-	  
-      g.setColor(Color.black);
-      for (int i = 0; i <= 11; i++) {
+			alternador = !alternador;
+			acrescimo = alternador ? 50 : 90;
 
-    	  CuspideResponse c = mapa.getCuspides().get(i);
-    	  
-    	  Point ptLetra = minToLocation(i*30, DISTANCE_ALFA+15);
-          Point ptAntes = minToLocation(i*30-5, DISTANCE_ALFA+15);
-          Point ptDepois = minToLocation(i*30+5, DISTANCE_ALFA+15);
-          g.setFont(font.deriveFont(20f));
+			// ATENCAO! REDUZIR A DEFASAGEM DO SIGNO ASCENDENTE!!!
+			Point ptLetra = minToLocation(grau, DISTANCE_BETA+acrescimo);
+			g.drawString(item.getTexto(),
+						ptLetra.x - (BIG_DOT / 2) - MARGEM,
+			  			ptLetra.y - (BIG_DOT / 2));
 
-		  EnumSigno enumSigno = EnumSigno.getBySigla(c.getSigno());
+			Point ptBeta = minToLocation(grau, DISTANCE_BETA);
+			g.fillOval(	ptBeta.x - (PQ_DOT / 2) - MARGEM,
+					ptBeta.y - (PQ_DOT / 2) - MARGEM,
+					PQ_DOT,
+					PQ_DOT);
+		}
 
-          g.drawString(enumSigno.getLetra() ,
-          		ptLetra.x - (BIG_DOT / 2) - MARGEM,
-          		ptLetra.y - (BIG_DOT / 2));
-          
-          g.setFont(new Font("TimesRoman", Font.PLAIN , 13));
-          
-          String grau = c.getGg()+"°";
-          String minuto = c.getMm().toString()+"'";
-          
-          String txtAntes = grau;
-          String txtDepois = minuto;
-          if (Arrays.asList(8,9,10,11,12).contains(i+1)) {
-        	  txtAntes = minuto;
-        	  txtDepois = grau;
-          }
-          
-          g.drawString(	txtAntes,
-            			ptAntes.x - (BIG_DOT / 2) - MARGEM,
-            			ptAntes.y - (BIG_DOT / 2));
+		g.setColor(Color.black);
+		for (int i = 0; i <= 11; i++) {
+			CuspideResponse c = mapa.getCuspides().get(i);
 
-          g.drawString(	txtDepois,
-      					ptDepois.x - (BIG_DOT / 2) - MARGEM,
-      					ptDepois.y - (BIG_DOT / 2));
-      }    
+			Point ptLetra = minToLocation(i*30, DISTANCE_ALFA+15);
+			Point ptAntes = minToLocation(i*30-5, DISTANCE_ALFA+15);
+			Point ptDepois = minToLocation(i*30+5, DISTANCE_ALFA+15);
+			g.setFont(font.deriveFont(20f));
+
+			EnumSigno enumSigno = EnumSigno.getBySigla(c.getSigno());
+
+			g.drawString(enumSigno.getLetra() ,
+				ptLetra.x - (BIG_DOT / 2) - MARGEM,
+				ptLetra.y - (BIG_DOT / 2));
+
+			g.setFont(new Font("TimesRoman", Font.PLAIN , 13));
+
+			String grau = c.getGg()+"°";
+			String minuto = c.getMm().toString()+"'";
+
+			String txtAntes = grau;
+			String txtDepois = minuto;
+			if (Arrays.asList(8,9,10,11,12).contains(i+1)) {
+			  txtAntes = minuto;
+			  txtDepois = grau;
+			}
+
+			g.drawString(	txtAntes,
+						ptAntes.x - (BIG_DOT / 2) - MARGEM,
+						ptAntes.y - (BIG_DOT / 2));
+
+			g.drawString(	txtDepois,
+						ptDepois.x - (BIG_DOT / 2) - MARGEM,
+						ptDepois.y - (BIG_DOT / 2));
+			}
   }
 
   public static Font getFontAstrologia() {
