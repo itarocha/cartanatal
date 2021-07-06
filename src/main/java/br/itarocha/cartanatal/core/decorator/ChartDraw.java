@@ -21,18 +21,18 @@ import java.util.stream.Collectors;
 public class ChartDraw {
 
 	private static final int SIZE = 600;
-	private static final int MARGEM = 10;
+	private static final int PADDING = 10;
 	private static final int MARGEM_CASA = 60;
 	private static final int MARGEM_INTERNA = 300;
 	private static final int MARGEM_ASPECTOS = 360;
 
+	private static final int WIDTH = 640;
+	private static final int HEIGHT = 640;
+	private static final int CX = WIDTH / 2;
+	private static final int CY = HEIGHT / 2;
 
-	private static final int HORIZONTAL_SIZE = 640;
-	private static final int VERTICAL_SIZE = 640;
-	private static final int DISTANCE_SHAMA = HORIZONTAL_SIZE / 2 - 35;
-
-	private static final int DISTANCE_ALFA = HORIZONTAL_SIZE / 2 - 50;
-	private static final int DISTANCE_BETA = HORIZONTAL_SIZE / 4 - 40;
+	private static final int RAIO_SEGUNDO_CIRCULO = (WIDTH / 2) - 50;
+	private static final int RAIO_CIRCULO_INTERNO = (WIDTH / 4) - 40;
 	private static final int BIG_DOT = 8;
 	private static final int PQ_DOT = 5;
 
@@ -48,12 +48,10 @@ public class ChartDraw {
 	  
 	private void drawMapa() {
 		try {
-			BufferedImage bi = new BufferedImage(HORIZONTAL_SIZE, VERTICAL_SIZE, BufferedImage.TYPE_INT_ARGB);
+			BufferedImage bi = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
 	
 			Graphics2D g = bi.createGraphics();
-	    
 			g.setRenderingHint(	RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	
 		    drawMapaFundo(g);
 		    drawMapaPosicoes(g);
 		    // Escolha o formato: JPEG, GIF ou PNG
@@ -69,17 +67,67 @@ public class ChartDraw {
 		    ie.printStackTrace();
 		  }
 	}
-  
+
+	private void drawMapaFundo(Graphics2D g) {
+		g.setStroke(new BasicStroke(1));
+		g.setColor(Color.WHITE);
+		g.fillOval(PADDING, PADDING, SIZE, SIZE);
+
+		// Circulo Grande
+		g.setColor(Color.BLACK);
+		g.drawOval(PADDING, PADDING, SIZE, SIZE);
+
+		// Segundo círculo
+		int RAIO_MAIOR = PADDING + 30;
+		int RAIO_MAIOR_B = SIZE - (30 * 2);
+		g.setColor(Color.RED);
+		g.drawOval(RAIO_MAIOR, RAIO_MAIOR, RAIO_MAIOR_B, RAIO_MAIOR_B);
+
+		// Media
+		int MARGEM_INTERNA = SIZE / 2;
+		int RAIO_MEDIO = PADDING + (MARGEM_INTERNA / 2);
+		int RAIO_MEDIO_B = SIZE - MARGEM_INTERNA;
+		g.setColor(Color.MAGENTA);
+		g.drawOval(RAIO_MEDIO, RAIO_MEDIO, RAIO_MEDIO_B, RAIO_MEDIO_B);
+
+		g.setColor(Color.BLUE);
+		g.drawOval(	PADDING + (MARGEM_ASPECTOS / 2),
+				PADDING + (MARGEM_ASPECTOS / 2),
+				SIZE - MARGEM_ASPECTOS,
+				SIZE - MARGEM_ASPECTOS);
+
+		// CASAS
+		Font font = new Font("TimesRoman", Font.BOLD, 14);
+		g.setFont(font);
+		for (int i = 0; i <= 11; i++) {
+			Point ptLetra = angleToPoint(CX, CY, i*30+15, RAIO_CIRCULO_INTERNO +18);
+
+			String numeroCasa = Integer.toString(i+1);
+			g.drawString(numeroCasa,
+					ptLetra.x - (BIG_DOT / 2) - PADDING,
+					ptLetra.y - (BIG_DOT / 2));
+
+			Point ptAlfa = angleToPoint(CX, CY, i * 30, RAIO_SEGUNDO_CIRCULO);
+			Point ptBeta = angleToPoint(CX, CY,i * 30, RAIO_CIRCULO_INTERNO);
+
+			int xIni = ptAlfa.x - PADDING;
+			int yIni = ptAlfa.y - PADDING;
+			int xFim = ptBeta.x - PADDING;
+			int yFim = ptBeta.y - PADDING;
+
+			g.drawLine(xIni, yIni, xFim, yFim);
+		}
+	}
+
 	private void drawAspectos() {
 		try {
 			int largura = 500 + 300;
 			int altura = 300;
 			
 			BufferedImage bi = new BufferedImage(largura, altura, BufferedImage.TYPE_INT_ARGB);
-	
 			Graphics2D g = bi.createGraphics();
 	    
-			g.setRenderingHint(	RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	
 		    drawAspectosFundo(g, largura, altura);
 		    //desenharPosicoesPlanetas(g);
@@ -190,53 +238,7 @@ public class ChartDraw {
 	    			       30 + ((y+1) * h)  -4);
 	      }
 	  }
-	
-	private void drawMapaFundo(Graphics2D g) {
-		g.setStroke(new BasicStroke(1));
-		g.setColor(Color.WHITE);
-		g.fillOval(MARGEM, MARGEM, SIZE, SIZE);
 
-		g.setColor(Color.BLACK);
-		// Circulo Grande
-		g.drawOval(MARGEM, MARGEM, SIZE, SIZE);
-
-		// Maior
-		int RAIO_MAIOR = MARGEM + (MARGEM_CASA / 2);
-		int RAIO_MAIOR_B = SIZE - MARGEM_CASA;
-		g.drawOval(RAIO_MAIOR, RAIO_MAIOR, RAIO_MAIOR_B, RAIO_MAIOR_B);
-
-		// Media
-		int RAIO_MEDIO = MARGEM + (MARGEM_INTERNA / 2);
-		int RAIO_MEDIO_B = SIZE - MARGEM_INTERNA;
-		g.drawOval(RAIO_MEDIO, RAIO_MEDIO, RAIO_MEDIO_B, RAIO_MEDIO_B);
-
-		g.drawOval(	MARGEM + (MARGEM_ASPECTOS / 2),
-					MARGEM + (MARGEM_ASPECTOS / 2),
-					SIZE - MARGEM_ASPECTOS,
-					SIZE - MARGEM_ASPECTOS);
-
-		// CASAS
-		Font font = new Font("TimesRoman", Font.BOLD, 14);
-		g.setFont(font);
-		for (int i = 0; i <= 11; i++) {
-			Point ptAlfa = minToLocation(i*30, DISTANCE_ALFA);
-			Point ptBeta = minToLocation(i*30, DISTANCE_BETA);
-
-			Point ptLetra = minToLocation(i*30+15, DISTANCE_BETA+18);
-
-			String xis = Integer.toString(i+1);
-			g.drawString(xis,
-				ptLetra.x - (BIG_DOT / 2) - MARGEM,
-				ptLetra.y - (BIG_DOT / 2));
-
-			int xIni = ptAlfa.x - MARGEM;
-			int yIni = ptAlfa.y - MARGEM;
-			int xFim = ptBeta.x - MARGEM;
-			int yFim = ptBeta.y - MARGEM;
-			g.drawLine(xIni, yIni, xFim, yFim);
-		}
-  }
-  
 	private void drawMapaPosicoes(Graphics2D g) {
 		g.setColor(Color.red);
 		boolean alternador = false;
@@ -265,14 +267,14 @@ public class ChartDraw {
 			acrescimo = alternador ? 50 : 90;
 
 			// ATENCAO! REDUZIR A DEFASAGEM DO SIGNO ASCENDENTE!!!
-			Point ptLetra = minToLocation(grau, DISTANCE_BETA+acrescimo);
+			Point ptLetra = angleToPoint(CX, CY, grau, RAIO_CIRCULO_INTERNO +acrescimo);
 			g.drawString(item.getTexto(),
-						ptLetra.x - (BIG_DOT / 2) - MARGEM,
+						ptLetra.x - (BIG_DOT / 2) - PADDING,
 			  			ptLetra.y - (BIG_DOT / 2));
 
-			Point ptBeta = minToLocation(grau, DISTANCE_BETA);
-			g.fillOval(	ptBeta.x - (PQ_DOT / 2) - MARGEM,
-					ptBeta.y - (PQ_DOT / 2) - MARGEM,
+			Point ptBeta = angleToPoint(CX, CY, grau, RAIO_CIRCULO_INTERNO);
+			g.fillOval(	ptBeta.x - (PQ_DOT / 2) - PADDING,
+					ptBeta.y - (PQ_DOT / 2) - PADDING,
 					PQ_DOT,
 					PQ_DOT);
 		}
@@ -281,15 +283,15 @@ public class ChartDraw {
 		for (int i = 0; i <= 11; i++) {
 			CuspideResponse c = mapa.getCuspides().get(i);
 
-			Point ptLetra = minToLocation(i*30, DISTANCE_ALFA+15);
-			Point ptAntes = minToLocation(i*30-5, DISTANCE_ALFA+15);
-			Point ptDepois = minToLocation(i*30+5, DISTANCE_ALFA+15);
+			Point ptLetra = angleToPoint(CX, CY, i*30, RAIO_SEGUNDO_CIRCULO + 15);
+			Point ptAntes = angleToPoint(CX, CY,i*30-5, RAIO_SEGUNDO_CIRCULO + 15);
+			Point ptDepois = angleToPoint(CX, CY,i*30+5, RAIO_SEGUNDO_CIRCULO + 15);
 			g.setFont(font.deriveFont(20f));
 
 			EnumSigno enumSigno = EnumSigno.getBySigla(c.getSigno());
 
 			g.drawString(enumSigno.getLetra() ,
-				ptLetra.x - (BIG_DOT / 2) - MARGEM,
+				ptLetra.x - (BIG_DOT / 2) - PADDING,
 				ptLetra.y - (BIG_DOT / 2));
 
 			g.setFont(new Font("TimesRoman", Font.PLAIN , 13));
@@ -305,11 +307,11 @@ public class ChartDraw {
 			}
 
 			g.drawString(	txtAntes,
-						ptAntes.x - (BIG_DOT / 2) - MARGEM,
+						ptAntes.x - (BIG_DOT / 2) - PADDING,
 						ptAntes.y - (BIG_DOT / 2));
 
 			g.drawString(	txtDepois,
-						ptDepois.x - (BIG_DOT / 2) - MARGEM,
+						ptDepois.x - (BIG_DOT / 2) - PADDING,
 						ptDepois.y - (BIG_DOT / 2));
 			}
   }
@@ -332,11 +334,11 @@ public class ChartDraw {
 	    return font;
   }  
 
-  private Point minToLocation(int angulo, int radius) {
-	double t = 2 * Math.PI * (angulo - 90) / 360;
-    int x = (int)(HORIZONTAL_SIZE / 2 + radius * Math.sin(t));
-    int y = (int)(VERTICAL_SIZE / 2 + radius * Math.cos(t));
-    return new Point(x, y);
-  }    
-  
+  private Point angleToPoint(int x, int y, int angulo, int radius) {
+	double a = 2 * Math.PI * (angulo - 90) / 360;
+	int ptX = (int)(radius * Math.sin(a) + x);
+	int ptY = (int)(radius * Math.cos(a) + y);
+    return new Point(ptX, ptY);
+  }
+
 }
