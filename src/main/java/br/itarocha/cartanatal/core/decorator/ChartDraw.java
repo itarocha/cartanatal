@@ -5,6 +5,7 @@ import br.itarocha.cartanatal.core.model.presenter.AspectoResponse;
 import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
 import br.itarocha.cartanatal.core.model.presenter.CuspideResponse;
 import br.itarocha.cartanatal.core.model.presenter.PlanetaSignoResponse;
+import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -17,13 +18,11 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// É para ser @Service
+@Service
 public class ChartDraw {
 
 	private static final int SIZE = 600;
 	private static final int PADDING = 10;
-	private static final int MARGEM_CASA = 60;
-	private static final int MARGEM_INTERNA = 300;
 	private static final int MARGEM_ASPECTOS = 360;
 
 	private static final int WIDTH = 640;
@@ -36,29 +35,19 @@ public class ChartDraw {
 	private static final int BIG_DOT = 8;
 	private static final int PQ_DOT = 5;
 
-	private CartaNatalResponse mapa;
-	private String pathToSave;
-
-	public ChartDraw(CartaNatalResponse mapa, String path) {
-		this.mapa = mapa;
-		this.pathToSave = path;
-		drawMapa();
-		drawAspectos();
-	}
-	  
-	private void drawMapa() {
+	public void drawMapa(CartaNatalResponse mapa, String path) {
 		try {
 			BufferedImage bi = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
 	
 			Graphics2D g = bi.createGraphics();
 			g.setRenderingHint(	RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		    drawMapaFundo(g);
-		    drawMapaPosicoes(g);
+		    drawMapaPosicoes(mapa, g);
 		    // Escolha o formato: JPEG, GIF ou PNG
 		    
 		    String nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toUpperCase();
 		    String url = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-		    url = this.pathToSave;
+		    url = path;
 		    //String dest = String.format("%s/map_%s.png",url,nome);		    
 		    String dest = String.format("%s/mapa.png",url);		    
 		    ImageIO.write(bi, "png",  new File(dest));
@@ -78,17 +67,17 @@ public class ChartDraw {
 		g.drawOval(PADDING, PADDING, SIZE, SIZE);
 
 		// Segundo círculo
-		int RAIO_MAIOR = PADDING + 30;
+		int RAIO_MAIOR_A = PADDING + 30;
 		int RAIO_MAIOR_B = SIZE - (30 * 2);
 		g.setColor(Color.RED);
-		g.drawOval(RAIO_MAIOR, RAIO_MAIOR, RAIO_MAIOR_B, RAIO_MAIOR_B);
+		g.drawOval(RAIO_MAIOR_A, RAIO_MAIOR_A, RAIO_MAIOR_B, RAIO_MAIOR_B);
 
 		// Media
 		int MARGEM_INTERNA = SIZE / 2;
-		int RAIO_MEDIO = PADDING + (MARGEM_INTERNA / 2);
+		int RAIO_MEDIO_A = PADDING + (MARGEM_INTERNA / 2);
 		int RAIO_MEDIO_B = SIZE - MARGEM_INTERNA;
 		g.setColor(Color.MAGENTA);
-		g.drawOval(RAIO_MEDIO, RAIO_MEDIO, RAIO_MEDIO_B, RAIO_MEDIO_B);
+		g.drawOval(RAIO_MEDIO_A, RAIO_MEDIO_A, RAIO_MEDIO_B, RAIO_MEDIO_B);
 
 		g.setColor(Color.BLUE);
 		g.drawOval(	PADDING + (MARGEM_ASPECTOS / 2),
@@ -119,7 +108,7 @@ public class ChartDraw {
 		}
 	}
 
-	private void drawAspectos() {
+	public void drawAspectos(CartaNatalResponse mapa, String path) {
 		try {
 			int largura = 500 + 300;
 			int altura = 300;
@@ -129,13 +118,13 @@ public class ChartDraw {
 	    
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	
-		    drawAspectosFundo(g, largura, altura);
+		    drawAspectosFundo(mapa, g, largura, altura);
 		    //desenharPosicoesPlanetas(g);
 		    // Escolha o formato: JPEG, GIF ou PNG
-		    String nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toUpperCase();
+		    //String nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toUpperCase();
 		    
 		    String url = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-		    url = this.pathToSave;
+		    url = path;
 		    //String dest = String.format("%s/asp_%s.png",url,nome);		    
 		    String dest = String.format("%s/aspectos.png",url);		    
 		    ImageIO.write(bi, "png",  new File(dest));
@@ -146,15 +135,13 @@ public class ChartDraw {
 		  }
 	}
 
-	private void drawAspectosFundo(Graphics2D g, int largura, int altura) {
+	private void drawAspectosFundo(CartaNatalResponse mapa, Graphics2D g, int largura, int altura) {
 	      g.setStroke(new BasicStroke(1));
 	      g.setColor(Color.white );
 	      //g.fillRect(0, 0, 500, 380);
 	      g.fillRect(0, 0, largura, altura);
 	      
-	      //int margemX = 40;
 	      int margemX = 40 + 320;
-	      int margemY = 10;
 	      g.setColor(Color.black );
 	      
 	      int w = 35; // pode ser a largura da letra "W"
@@ -239,7 +226,7 @@ public class ChartDraw {
 	      }
 	  }
 
-	private void drawMapaPosicoes(Graphics2D g) {
+	private void drawMapaPosicoes(CartaNatalResponse mapa, Graphics2D g) {
 		g.setColor(Color.red);
 		boolean alternador = false;
 		Integer acrescimo = 50;
@@ -314,31 +301,29 @@ public class ChartDraw {
 						ptDepois.x - (BIG_DOT / 2) - PADDING,
 						ptDepois.y - (BIG_DOT / 2));
 			}
-  }
+	}
 
-  public static Font getFontAstrologia() {
-	    Font font = null;
-	  	//String fName = "/fonts/AstroDotBasic.ttf";
-	  String fName = "/fonts/AstroDotBasic.ttf";
-	  URL arquivoFonte = ChartDraw.class.getClassLoader().getResource("fonts/AstroDotBasic.ttf");
-	    try {
-	      InputStream is = ChartDraw.class.getResourceAsStream(fName);
-	      File file = new File(arquivoFonte.getFile());
+	public static Font getFontAstrologia() {
+		Font font = null;
+		String fName = "/fonts/AstroDotBasic.ttf";
+		URL arquivoFonte = ChartDraw.class.getClassLoader().getResource("fonts/AstroDotBasic.ttf");
+		try {
+			InputStream is = ChartDraw.class.getResourceAsStream(fName);
+			File file = new File(arquivoFonte.getFile());
 			font = Font.createFont(Font.TRUETYPE_FONT, file);
-			//font = Font.createFont(Font.TRUETYPE_FONT, is);
-	    } catch (Exception ex) {
-	      ex.printStackTrace();
-	      System.err.println(arquivoFonte.getFile() + " nao carregada. Usando fonte serif.");
-	      font = new Font("TimesRoman", Font.PLAIN, 12);
-	    }
-	    return font;
-  }  
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.err.println(arquivoFonte.getFile() + " nao carregada. Usando fonte serif.");
+			font = new Font("TimesRoman", Font.PLAIN, 12);
+		}
+		return font;
+  	}
 
-  private Point angleToPoint(int x, int y, int angulo, int radius) {
-	double a = 2 * Math.PI * (angulo - 90) / 360;
-	int ptX = (int)(radius * Math.sin(a) + x);
-	int ptY = (int)(radius * Math.cos(a) + y);
-    return new Point(ptX, ptY);
-  }
+	private Point angleToPoint(int x, int y, int angulo, int radius) {
+		double a = 2 * Math.PI * (angulo - 90) / 360;
+		int ptX = (int)(radius * Math.sin(a) + x);
+		int ptY = (int)(radius * Math.cos(a) + y);
+		return new Point(ptX, ptY);
+	}
 
 }

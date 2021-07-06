@@ -41,6 +41,9 @@ public class MapaController {
     @Autowired
     private TextFileExporter textFileExporter;
 
+    @Autowired
+    private ChartDraw chartDraw;
+
     @PostMapping
     @RequestMapping("/single")
     public ResponseEntity<CartaNatalResponse> getMapa(@RequestBody DadosPessoais model){
@@ -53,7 +56,8 @@ public class MapaController {
     public ResponseEntity<InputStreamResource> getMapaText(@RequestBody DadosPessoais model) throws FileNotFoundException {
         CartaNatalResponse response = calcular(model);
 
-        ChartDraw cd = new ChartDraw(response, "target");
+        chartDraw.drawMapa(response, "target");
+        chartDraw.drawAspectos(response, "target");
 
         Map<String, String> mapa = interpretador.gerarInterpretacoes(response);
 
