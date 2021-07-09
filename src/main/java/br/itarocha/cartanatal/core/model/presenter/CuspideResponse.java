@@ -12,4 +12,5 @@ public class CuspideResponse {
     private Integer gg;
     private Integer mm;
     private Integer ss;
+    private String descricao;
 }
