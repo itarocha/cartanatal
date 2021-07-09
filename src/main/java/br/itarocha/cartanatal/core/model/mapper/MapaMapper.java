@@ -60,6 +60,9 @@ public class MapaMapper {
                 .gg(Integer.parseInt(pp.getGnc()))
                 .mm(Integer.parseInt(pp.getM()))
                 .ss(Integer.parseInt(pp.getS()))
+                .direcao(pp.getStatusRetrogrado())
+                .descricao(String.format("%s%s%s%s", pp.getGnc(), pp.getEnumSigno().getSiglaCapitalized() ,
+                                                     pp.getM(), "R".equals(pp.getStatusRetrogrado()) ? "R" : " " ))
                 .build();
     }
 
@@ -83,6 +86,7 @@ public class MapaMapper {
                 .gg(Integer.parseInt(gms[0]))
                 .mm(Integer.parseInt(gms[1]))
                 .ss(Integer.parseInt(gms[2]))
+                .descricao(String.format("%s%s%s", c.getGnc(), c.getEnumSigno().getSiglaCapitalized() , c.getM()))
                 .build();
     }
 

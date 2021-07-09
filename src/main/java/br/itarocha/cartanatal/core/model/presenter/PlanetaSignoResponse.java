@@ -14,4 +14,6 @@ public class PlanetaSignoResponse {
     private Integer gg;
     private Integer mm;
     private Integer ss;
+    private String direcao;
+    private String descricao;
 }

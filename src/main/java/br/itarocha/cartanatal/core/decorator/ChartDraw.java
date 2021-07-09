@@ -247,6 +247,7 @@ public class ChartDraw {
 			);
 		}).sorted().collect(Collectors.toList());
 
+		System.out.println("defasagem ascendente (shift) = "+mapa.getDadosPessoais().getGrausDefasagemAscendente());
 		for ( ItemDesenhoMapa item : lista ) {
 			Integer grau = item.getGrau360()-mapa.getDadosPessoais().getGrausDefasagemAscendente();
 
@@ -327,3 +328,9 @@ public class ChartDraw {
 	}
 
 }
+
+/*
+
+<path d="M 405.344799471418, 706.2033566416449 l 0.7635427816311477, 43.743336663092116 A 350, 350,0 ,0, 0, 580.2633262185191, 700.0085552457392 l -22.53291577731488, -37.50106940571741 A 306.25, 306.25,0 ,0, 1, 405.344799471418, 706.2033566416449" fill="none"></path>
+
+ */

@@ -26,7 +26,7 @@ public class InterpretadorService {
 		Map<String, String> map = new LinkedHashMap<>();
 
 		// CABECALHO
-		map.putAll(buildDadosPessoais(cartaNatal.getDadosPessoais()));
+		map.putAll(buildCabecalho(cartaNatal.getDadosPessoais()));
 
 		// SIGNO SOLAR
 		map.putAll(interpretarSignoSolar(cartaNatal.getPlanetasSignos()));
@@ -57,11 +57,17 @@ public class InterpretadorService {
 		return map;
 	 }
 
-	private Map<String, String> buildDadosPessoais(DadoPessoalResponse dadosPessoais) {
+	private Map<String, String> buildCabecalho(DadoPessoalResponse dadosPessoais) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(dadosPessoais.getNome() + "\r\n\r\n");
 		sb.append(dadosPessoais.getData() + " "  + dadosPessoais.getHora() + "\r\n\r\n");
 		sb.append(dadosPessoais.getCidade() + "\r\n\r\n");
+		sb.append(String.format("Latitude: %s \r\n\r\n", dadosPessoais.getLat()));
+		sb.append(String.format("Longitude: %s \r\n\r\n", dadosPessoais.getLon()));
+		///sb.append(String.format("Julian Day: %s \r\n\r\n", dadosPessoais.getJulDay()));
+		//////sb.append(String.format("Delta T: %s seg.\r\n\r\n", dadosPessoais.getDeltaT()));
+
+
 		Map<String, String> map = new LinkedHashMap<>();
 		map.put("Carta Natal", sb.toString());
 		return map;

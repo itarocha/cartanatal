@@ -3,6 +3,7 @@ package br.itarocha.cartanatal.core.service;
 import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
+import br.itarocha.cartanatal.core.model.DadosPessoais;
 import br.itarocha.cartanatal.core.model.domain.*;
 import br.itarocha.cartanatal.core.util.Funcoes;
 import de.thmac.swisseph.SweConst;
@@ -50,12 +51,12 @@ public class MapaBuilder {
 		}
 	}
 
-	public Mapa build(String nome, LocalDateTime dataHora, String cidade, String uf) {
+	public Mapa build(DadosPessoais dadosPessoais) {
 		MapeadorCidades mapeador = MapeadorCidades.getInstance();
 		
-		Cidade c = mapeador.getCidade(cidade, uf);
+		Cidade c = mapeador.getCidade(dadosPessoais.getCidade(), dadosPessoais.getUf());
 		if (c != null) {
-			Mapa m = new Mapa(nome, dataHora, c);
+			Mapa m = new Mapa(dadosPessoais.getNome(), dadosPessoais.getDataHoraNascimento(), c);
 			calcular(m); 
 			return m;
 		}
