@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -16,10 +17,19 @@ public class CartaNatalResponse {
     @JsonProperty(value = "planetas_signos", index = 2)
     private List<PlanetaSignoResponse> planetasSignos;
 
-    @JsonProperty(index = 3)
+    @JsonProperty(value = "elementos", index = 3)
+    private Map<String, Integer> elementos;
+
+    @JsonProperty(value = "qualidades", index = 4)
+    private Map<String, Integer> qualidades;
+
+    @JsonProperty(value = "polaridades", index = 5)
+    private Map<String, Integer> polaridades;
+
+    @JsonProperty(index = 6)
     private List<CuspideResponse> cuspides;
 
-    @JsonProperty(index = 4)
+    @JsonProperty(index = 7)
     private List<AspectoResponse> aspectos;
 
 /*

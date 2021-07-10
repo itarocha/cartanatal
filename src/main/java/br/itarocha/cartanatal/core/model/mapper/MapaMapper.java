@@ -1,15 +1,14 @@
 package br.itarocha.cartanatal.core.model.mapper;
 
-import br.itarocha.cartanatal.core.model.domain.Mapa;
-import br.itarocha.cartanatal.core.model.domain.CuspideCasa;
-import br.itarocha.cartanatal.core.model.domain.ItemAspecto;
-import br.itarocha.cartanatal.core.model.domain.PlanetaPosicao;
+import br.itarocha.cartanatal.core.model.domain.*;
 import br.itarocha.cartanatal.core.model.presenter.*;
 import br.itarocha.cartanatal.core.util.Funcoes;
 import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -20,6 +19,9 @@ public class MapaMapper {
                 .dadosPessoais(buildDadosPessoais(mapa))
                 .planetasSignos(buildPlanetasSignos(mapa))
                 .cuspides(buildCuspides(mapa))
+                .elementos(buildElementos(mapa))
+                .qualidades(buildQualidades(mapa))
+                .polaridades(buildPolaridades(mapa))
                 .aspectos(buildAspectos(mapa))
                 .build();
     }
@@ -48,6 +50,77 @@ public class MapaMapper {
                 .stream()
                 .map(this::planetaPosicaoToPlanetaSigno)
                 .collect(Collectors.toList());
+    }
+
+    private Map<String, Integer> buildQualidades(Mapa mapa) {
+        Map<String, Integer> mapaQualidades = new HashMap<>();
+
+        Long totCardinais = mapa.getPosicoesPlanetas()
+                .stream()
+                .filter(pp -> EnumQualidade.CARDINAL.equals(pp.getEnumSigno().getQualidade()) )
+                .count();
+        Long totFixos = mapa.getPosicoesPlanetas()
+                .stream()
+                .filter(pp -> EnumQualidade.FIXO.equals(pp.getEnumSigno().getQualidade()) )
+                .count();
+        Long totMutaveis = mapa.getPosicoesPlanetas()
+                .stream()
+                .filter(pp -> EnumQualidade.MUTAVEL.equals(pp.getEnumSigno().getQualidade()) )
+                .count();
+
+        mapaQualidades.put("Cardinais", totCardinais.intValue());
+        mapaQualidades.put("Fixos", totFixos.intValue());
+        mapaQualidades.put("Mutáveis", totMutaveis.intValue());
+
+        return mapaQualidades;
+    }
+    private Map<String, Integer> buildPolaridades(Mapa mapa) {
+        Map<String, Integer> mapaPolaridades = new HashMap<>();
+
+        Long totPositivas = mapa.getPosicoesPlanetas()
+                .stream()
+                .filter(pp -> EnumPolaridade.POSITIVA.equals(pp.getEnumSigno().getPolaridade()) )
+                .count();
+        Long totNegativas = mapa.getPosicoesPlanetas()
+                .stream()
+                .filter(pp -> EnumPolaridade.NEGATIVA.equals(pp.getEnumSigno().getPolaridade()) )
+                .count();
+
+        mapaPolaridades.put("Positivas", totPositivas.intValue());
+        mapaPolaridades.put("Negativas", totNegativas.intValue());
+
+        return mapaPolaridades;
+    }
+
+    private Map<String, Integer> buildElementos(Mapa mapa) {
+        Map<String, Integer> mapaElementos = new HashMap<>();
+
+        Long totFogo = mapa.getPosicoesPlanetas()
+                .stream()
+                .filter(pp -> EnumElemento.FOGO.equals(pp.getEnumSigno().getElemento()) )
+                .count();
+
+        Long totTerra = mapa.getPosicoesPlanetas()
+                .stream()
+                .filter(pp -> EnumElemento.TERRA.equals(pp.getEnumSigno().getElemento()) )
+                .count();
+
+        Long totAgua = mapa.getPosicoesPlanetas()
+                .stream()
+                .filter(pp -> EnumElemento.AGUA.equals(pp.getEnumSigno().getElemento()) )
+                .count();
+
+        Long totAr = mapa.getPosicoesPlanetas()
+                .stream()
+                .filter(pp -> EnumElemento.AR.equals(pp.getEnumSigno().getElemento()) )
+                .count();
+
+        mapaElementos.put("Fogo", totFogo.intValue());
+        mapaElementos.put("Terra", totTerra.intValue());
+        mapaElementos.put("Água", totAgua.intValue());
+        mapaElementos.put("Ar", totAr.intValue());
+
+        return mapaElementos;
     }
 
     private PlanetaSignoResponse planetaPosicaoToPlanetaSigno(PlanetaPosicao pp){
