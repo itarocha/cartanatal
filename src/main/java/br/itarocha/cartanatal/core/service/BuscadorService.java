@@ -2,6 +2,7 @@ package br.itarocha.cartanatal.core.service;
 
 import br.itarocha.cartanatal.core.model.*;
 import br.itarocha.cartanatal.core.model.domain.EnumElemento;
+import br.itarocha.cartanatal.core.model.domain.EnumQualidade;
 import br.itarocha.cartanatal.core.model.interpretacao.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +26,7 @@ public class BuscadorService {
     private List<PlanetaCasa> listaPlanetasCasas;
     private List<PlanetaSigno> listaPlanetasSignos;
     private List<MapaElemento> listaMapaElementos;
+    private List<MapaQualidade> listaMapaQualidades;
 
     public BuscadorService(){
         restaurarSignosSolares();
@@ -33,6 +35,7 @@ public class BuscadorService {
         restaurarPlanetasCasas();
         restaurarPlanetasSignos();
         restaurarMapaElementos();
+        restaurarMapaQualidades();
     }
 
     public SignoSolar findSignoSolar(String signo) {
@@ -47,6 +50,14 @@ public class BuscadorService {
         EnumElemento el = EnumElemento.getBySigla(elemento);
         return listaMapaElementos.stream()
                 .filter(me -> me.getElemento().equals(el))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public MapaQualidade findQualidade(String qualidade) {
+        EnumQualidade q = EnumQualidade.getBySigla(qualidade);
+        return listaMapaQualidades.stream()
+                .filter(mq -> mq.getQualidade().equals(q))
                 .findFirst()
                 .orElse(null);
     }
@@ -307,6 +318,56 @@ public class BuscadorService {
                 .textoEstiloVida(sbEstiloVida.toString())
                 .textoEquilibrio(sbEquilibrio.toString())
                 .textoDesequilibrio(sbDesquilibrio.toString())
+                .build();
+    }
+
+    private void restaurarMapaQualidades() {
+        this.listaMapaQualidades = new ArrayList<>();
+        listaMapaQualidades.add(buildQualidadeCardinal());
+        listaMapaQualidades.add(buildQualidadeFixo());
+        listaMapaQualidades.add(buildQualidadeMutavel());
+        System.out.println("QUALIDADES RESTAURADO COM SUCESSO");
+    }
+
+    private MapaQualidade buildQualidadeCardinal() {
+        return MapaQualidade.builder()
+                .qualidade(EnumQualidade.CARDINAL)
+                .signos("Áries, Câncer, Libra, Capricórnio")
+                .casas("Primeira, Quarta, Sétima, Décima")
+                .palavrasChave("Ação, iniciativa, desafio, asserção, iniciação, mudança, liderança, impetuosidade.")
+                .personalidade("Iniciam mudanças e pões as coisas em movimento. São mais empreendedores, "+
+                        "vigorosos e pró-ativos. Valente, assertivo e às vezes agressivo pode levar outras pessoas à ação. "+
+                        "Líderes naturais, têm dificuldades de aceitar ordens.")
+                .build();
+    }
+
+    private MapaQualidade buildQualidadeFixo() {
+        return MapaQualidade.builder()
+                .qualidade(EnumQualidade.FIXO)
+                .signos("Touro, Leão, Escorpião, Aquário")
+                .casas("Segunda, Quinta, Oitava, Décima primeira")
+                .palavrasChave("Consistência, obstinado, rígido, resistente, estável, firme, leal, arraigado, previsível, fixação.")
+                .personalidade("São resistentes à mudanças, preferindo uma rotina rígida e um estilo de vida estável. "+
+                        "Prefere que tudo continue igual - sempre. Essa qualidade se reflete na força e na consistência, "+
+                        "tornando - o mais confiável entre os outros. É uma personalidade leal, que leva tudo até o fim, "+
+                        "mesmo quando o mais sensato seria desistir.")
+                .build();
+    }
+
+    private MapaQualidade buildQualidadeMutavel() {
+        return MapaQualidade.builder()
+                .qualidade(EnumQualidade.MUTAVEL)
+                .signos("Gêmeos, Virgem, Sagitário, Peixes")
+                .casas("Terceira, Sexta, Nona, Décima segunda")
+                .palavrasChave("Flexível, adaptável, versátil, mutável, imprevisível, instável, superficial")
+                .personalidade("Gêmeos, Sagitário e Peixes são mutáveis duais, ou seja, tem por natureza dois lados "+
+                        "distintos, movendo-se facilmente entre os dois ou assumindo duas perspectivas diferentes. "+
+                        "Virgem é a exceção, pois prefere um único ponto de vista. "+
+                        "Essa qualidade se adapta e reage às necessidade do ambiente, criando personalidades versáteis. "+
+                        "Os signos mutáveis se divertem com exploração e mudança. "+
+                        "Tem dificuldade de manter uma rotina porque logo se entediam. "+
+                        "Não gostam de seguir ordens ou protocolos, principalmente quando lhes parece sem sentido. "+
+                        "São excelentes numa equipe porque trabalham para o bem de todos.")
                 .build();
     }
 

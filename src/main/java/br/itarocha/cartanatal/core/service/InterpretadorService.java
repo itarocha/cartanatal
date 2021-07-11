@@ -1,10 +1,7 @@
 package br.itarocha.cartanatal.core.service;
 
 import br.itarocha.cartanatal.core.model.*;
-import br.itarocha.cartanatal.core.model.domain.EnumAspecto;
-import br.itarocha.cartanatal.core.model.domain.EnumElemento;
-import br.itarocha.cartanatal.core.model.domain.EnumPlaneta;
-import br.itarocha.cartanatal.core.model.domain.EnumSigno;
+import br.itarocha.cartanatal.core.model.domain.*;
 import br.itarocha.cartanatal.core.model.interpretacao.*;
 import br.itarocha.cartanatal.core.model.presenter.*;
 import br.itarocha.cartanatal.core.util.Simbolos;
@@ -174,9 +171,18 @@ public class InterpretadorService {
 		map.put("As Qualidades", sbQualidade.toString());
 
 		if (nonNull(enumSigno) && nonNull(enumSigno.getQualidade()) ){
-			map.put("Sua qualidade: "+enumSigno.getQualidade().getNome(),""+LF);
-		}
+			EnumQualidade qualidade = enumSigno.getQualidade();
 
+			MapaQualidade q = buscadorServide.findQualidade(qualidade.getSigla());
+			if (nonNull(q)){
+				StringBuilder sb = new StringBuilder();
+				sb.append(String.format("Signos: %s"+LF, q.getSignos()));
+				sb.append(String.format("Casas: %s"+LF, q.getCasas()));
+				sb.append(String.format("Palavras chave: %s"+LF, q.getPalavrasChave()));
+				sb.append(String.format("Personalidade: %s"+LF, q.getPersonalidade() ));
+				map.put("Sua qualidade: "+enumSigno.getQualidade().getNome(),sb.toString()+LF);
+			}
+		}
 		return map;
 	}
 
