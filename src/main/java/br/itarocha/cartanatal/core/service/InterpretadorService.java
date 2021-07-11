@@ -2,8 +2,10 @@ package br.itarocha.cartanatal.core.service;
 
 import br.itarocha.cartanatal.core.model.*;
 import br.itarocha.cartanatal.core.model.domain.EnumAspecto;
+import br.itarocha.cartanatal.core.model.domain.EnumElemento;
 import br.itarocha.cartanatal.core.model.domain.EnumPlaneta;
 import br.itarocha.cartanatal.core.model.domain.EnumSigno;
+import br.itarocha.cartanatal.core.model.interpretacao.*;
 import br.itarocha.cartanatal.core.model.presenter.*;
 import br.itarocha.cartanatal.core.util.Simbolos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +14,13 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 public class InterpretadorService {
 
 	private static final String NOT_FOUND = "<NOT_FOUND>";
+	private static final String LF = "\r\n\r\n";
 
 	@Autowired
 	private BuscadorService buscadorServide;
@@ -27,6 +31,12 @@ public class InterpretadorService {
 
 		// CABECALHO
 		map.putAll(buildCabecalho(cartaNatal.getDadosPessoais()));
+
+		map.putAll(this.buildIntroducao());
+
+		map.putAll(interpretarElemento(cartaNatal.getPlanetasSignos()));
+
+		map.putAll(interpretarQualidade(cartaNatal.getPlanetasSignos()));
 
 		// SIGNO SOLAR
 		map.putAll(interpretarSignoSolar(cartaNatal.getPlanetasSignos()));
@@ -48,14 +58,16 @@ public class InterpretadorService {
 
 		// para cada chave de mapa, tratar paragrafos
 		//retorno.add(this.tratarParagrafos(keyCabecalho, signoSolarCabecalho.getTexto()));
+		/*
 		List<Interpretacao> retorno = new LinkedList<>();
 
 		map.entrySet().stream().forEach(entry -> {
 			retorno.add(this.tratarParagrafos(entry.getKey(), entry.getValue() ));
 		});
-
+		 */
 		return map;
 	 }
+
 
 	private Map<String, String> buildCabecalho(DadoPessoalResponse dadosPessoais) {
 		StringBuilder sb = new StringBuilder();
@@ -64,12 +76,107 @@ public class InterpretadorService {
 		sb.append(dadosPessoais.getCidade() + "\r\n\r\n");
 		sb.append(String.format("Latitude: %s \r\n\r\n", dadosPessoais.getLat()));
 		sb.append(String.format("Longitude: %s \r\n\r\n", dadosPessoais.getLon()));
-		///sb.append(String.format("Julian Day: %s \r\n\r\n", dadosPessoais.getJulDay()));
-		//////sb.append(String.format("Delta T: %s seg.\r\n\r\n", dadosPessoais.getDeltaT()));
-
+		sb.append(String.format("Julian Day: %s \r\n\r\n", dadosPessoais.getJulDay()));
+		sb.append(String.format("Delta T: %s seg.\r\n\r\n", dadosPessoais.getDeltaT()));
 
 		Map<String, String> map = new LinkedHashMap<>();
 		map.put("Carta Natal", sb.toString());
+		return map;
+	}
+
+	private Map<String, String> buildIntroducao() {
+		Map<String, String> map = new LinkedHashMap<>();
+		StringBuilder sbAstrologia = new StringBuilder();
+		sbAstrologia.append("A astrologia (do grego astron, \"astros\", \"estrelas\" ou \"corpo celeste\"; e logos, \"palavra\", \"estudo\") é uma ferramenta matemática, segundo a qual as posições relativas das estrelas poderiam prover informação sobre a personalidade, as relações humanas, e outros assuntos relacionados à vida do ser humano."+LF);
+		sbAstrologia.append("Os astrólogos estudam, há milhares de anos, os efeitos da atividade planetária e as suas correspondências com o comportamento humano. Durante séculos, a astrologia se baseou na observação de objetos celestes e no registro de seus movimentos. Mais recentemente, os astrólogos têm usado dados coletados pelos astrônomos e organizados em tabelas chamadas efemérides, que mostram as posições dos corpos celestes."+LF);
+		map.put("Astrologia", sbAstrologia.toString());
+
+		StringBuilder sbMapaNatal = new StringBuilder();
+		sbMapaNatal.append("O Mapa Natal mostra a posição correta dos astros em relação à Terra no momento de nascimento "+
+				"de uma determinada pessoa. Ele captura o momento no tempo e o congela. Da sua perspectiva na Terra, os "+
+				"planetas parecem se mover à sua volta, de modo que você está no centro do seu mapa astral. "+
+				"As configurações de um Mapa Natal se repetem apenas a cada 26.000 anos, portanto ele é quase como uma "+
+				"impressão digital - não existe um igual ao outro."+LF);
+		map.put("O Mapa Natal", sbMapaNatal.toString());
+
+		StringBuilder sbZodiaco = new StringBuilder();
+		sbZodiaco.append("A palavra zodíaco (do latim zodiacus - significa \"círculo de animais\") é uma faixa imaginária "+
+				"do céu que inclui as órbitas aparentes do Sol, da Lua e dos planetas Mercúrio, Vênus, Marte, Júpiter, "+
+				"Saturno, Urano e Netuno.");
+		sbZodiaco.append("As divisões do zodíaco representam constelações na astronomia e signos na astrologia, que são "+
+				"(Áries ou Carneiro, Touro, Gêmeos, Câncer ou Caranguejo, Leão, Virgem, Libra ou Balança, Escorpião, "+
+				"Sagitário, Capricórnio, Aquário e Peixes).");
+		return map;
+	}
+
+	private Map<String, String> interpretarElemento(List<PlanetaSignoResponse> planetasSignos) {
+		EnumSigno enumSigno = planetasSignos.stream()
+					.filter(ps -> EnumPlaneta.SOL.equals( EnumPlaneta.getBySigla(ps.getPlaneta()) ))
+					.map(ps -> EnumSigno.getBySigla(ps.getSigno()))
+					.findFirst()
+				.orElse(null);
+
+
+		Map<String, String> map = new LinkedHashMap<>();
+		StringBuilder sbElemento = new StringBuilder();
+
+		sbElemento.append("A energia dos planetas é filtrada pelos quatro elementos da natureza (terra, água, ar e fogo). "+
+				"Cada um está relacionado com uma determinada função. A terra é relacionada ao corpo. "+
+				"A água às emoções. O ar à mente, ou  intelecto. O fogo ao espírito. Os elementos podem representar "+
+				"diferentes maneiras de se perceber a vida. A classificação por elementos é algo fundamental na "+
+				"Astrologia e ela é decidida por meio dos dez planetas que compõe o sistema astrológico e mais o Ascendente."+LF);
+		map.put("Os Elementos", sbElemento.toString());
+
+		if (nonNull(enumSigno) && nonNull(enumSigno.getElemento()) ){
+			EnumElemento elemento = enumSigno.getElemento();
+
+			MapaElemento me = buscadorServide.findElemento(elemento.getSigla());
+			if (nonNull(me)){
+				StringBuilder sb = new StringBuilder();
+				sb.append(String.format("Signos: %s"+LF, me.getSignos()));
+				sb.append(String.format("Planetas: %s"+LF, me.getPlanetas()));
+				sb.append(String.format("Tipo: %s"+LF, me.getTipo() ));
+				sb.append(String.format("Polaridade: %s"+LF, me.getPolaridade() ));
+				sb.append(String.format("Palavras chave: %s"+LF, me.getPalavrasChave()));
+				sb.append(String.format("Fisiologia: %s"+LF, me.getFisiologia() ));
+				sb.append(String.format("Aparência: %s"+LF, me.getAparencia() ));
+				sb.append(String.format("Temperamento: %s"+LF, me.getTemperamento() ));
+				sb.append(String.format("Associações: %s"+LF, me.getAssociacoes() ));
+				map.put("Seu Elemento: "+elemento.getNome().toUpperCase(Locale.ROOT), sb.toString());
+
+				// replace LF ???
+				map.put(me.getEstiloVida(), me.getTextoEstiloVida()+LF);
+				map.put(String.format("%s em equilíbrio",elemento.getNome()), me.getTextoEquilibrio() +LF);
+				map.put(String.format("%s em desequilíbrio",elemento.getNome()), me.getTextoDesequilibrio() +LF);
+			}
+		}
+
+		return map;
+	}
+
+	private Map<String, String> interpretarQualidade(List<PlanetaSignoResponse> planetasSignos) {
+		EnumSigno enumSigno = planetasSignos.stream()
+				.filter(ps -> EnumPlaneta.SOL.equals( EnumPlaneta.getBySigla(ps.getPlaneta()) ))
+				.map(ps -> EnumSigno.getBySigla(ps.getSigno()))
+				.findFirst()
+				.orElse(null);
+
+
+		Map<String, String> map = new LinkedHashMap<>();
+		StringBuilder sbQualidade = new StringBuilder();
+
+		sbQualidade.append("As qualidades regulam sutilmente a energia astrológica. "+
+				"As quatro estações e cada um desses períodos de três meses de duração é composto de um começo, meio e fim. "+
+				"Todo mês eles se manifestam na natureza de uma maneira variada."+LF);
+		sbQualidade.append("Cada um dos quatro elementos apresenta uma expressão cardinal, uma expressão fixa e uma "+
+				"expressão mutável. As qualidades influenciam a maneira da pessoa interagir com o ambiente e as pessoas."+LF);
+
+		map.put("As Qualidades", sbQualidade.toString());
+
+		if (nonNull(enumSigno) && nonNull(enumSigno.getQualidade()) ){
+			map.put("Sua qualidade: "+enumSigno.getQualidade().getNome(),""+LF);
+		}
+
 		return map;
 	}
 
@@ -191,12 +298,12 @@ public class InterpretadorService {
 	}
 
 	private Interpretacao tratarParagrafos(String titulo, String texto) {
-		 List<String> textos = new LinkedList<String>();
+		 List<String> textos = new LinkedList<>();
 		 String[] aaa = texto.split("\n\\s+");
 		 for (int i = 0; i < aaa.length; i++ ) {
 			 textos.add(aaa[i]);
 		 }
-		 return  new Interpretacao(titulo, textos);
+		 return Interpretacao.builder().titulo(titulo).paragrafos(textos).build();
 	 }
 	 
 	 private List<String> tratarParagrafos(String texto){

@@ -1,12 +1,13 @@
-package br.itarocha.cartanatal.core.model;
+package br.itarocha.cartanatal.core.model.interpretacao;
 
-public class SignoSolar {
+import br.itarocha.cartanatal.core.model.TipoSigno;
+
+public class MapaCuspide {
 	
 	private Long id;
 	private TipoSigno signo;
-	private String descricao;
+	private Integer casa;
 	private String texto;
-	private TipoLogico conferido;
 
 	public Long getId() {
 		return id;
@@ -24,12 +25,12 @@ public class SignoSolar {
 		this.signo = signo;
 	}
 
-	public String getDescricao() {
-		return descricao;
+	public Integer getCasa() {
+		return casa;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setCasa(Integer casa) {
+		this.casa = casa;
 	}
 
 	public String getTexto() {
@@ -38,13 +39,5 @@ public class SignoSolar {
 
 	public void setTexto(String texto) {
 		this.texto = texto;
-	}
-
-	public TipoLogico getConferido() {
-		return conferido;
-	}
-
-	public void setConferido(TipoLogico conferido) {
-		this.conferido = conferido;
 	}
 }

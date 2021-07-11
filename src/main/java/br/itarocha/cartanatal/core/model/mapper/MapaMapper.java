@@ -179,3 +179,10 @@ public class MapaMapper {
                 .build();
     }
 }
+
+/*
+paragrafo:
+    titulo
+    comum
+    tabela
+*/

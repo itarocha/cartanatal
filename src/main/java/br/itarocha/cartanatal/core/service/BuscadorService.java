@@ -1,6 +1,8 @@
 package br.itarocha.cartanatal.core.service;
 
 import br.itarocha.cartanatal.core.model.*;
+import br.itarocha.cartanatal.core.model.domain.EnumElemento;
+import br.itarocha.cartanatal.core.model.interpretacao.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import static br.itarocha.cartanatal.core.service.ArquivosConstantes.*;
@@ -21,6 +24,7 @@ public class BuscadorService {
     private List<MapaPlanetaAspecto> listaAspectos;
     private List<PlanetaCasa> listaPlanetasCasas;
     private List<PlanetaSigno> listaPlanetasSignos;
+    private List<MapaElemento> listaMapaElementos;
 
     public BuscadorService(){
         restaurarSignosSolares();
@@ -28,12 +32,21 @@ public class BuscadorService {
         restaurarAspectos();
         restaurarPlanetasCasas();
         restaurarPlanetasSignos();
+        restaurarMapaElementos();
     }
 
     public SignoSolar findSignoSolar(String signo) {
         TipoSigno ts = getTipoSigno(signo);
         return listaSignosSolares.stream()
                 .filter(s -> ts.equals(s.getSigno()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public MapaElemento findElemento(String elemento) {
+        EnumElemento el = EnumElemento.getBySigla(elemento);
+        return listaMapaElementos.stream()
+                .filter(me -> me.getElemento().equals(el))
                 .findFirst()
                 .orElse(null);
     }
@@ -127,6 +140,174 @@ public class BuscadorService {
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
+    }
+
+    private void restaurarMapaElementos() {
+        this.listaMapaElementos = new ArrayList<>();
+        listaMapaElementos.add(buildElementoFogo());
+        listaMapaElementos.add(buildElementoTerra());
+        listaMapaElementos.add(buildElementoAgua());
+        listaMapaElementos.add(buildElementoAr());
+        System.out.println("ELEMENTOS RESTAURADO COM SUCESSO");
+    }
+
+    private MapaElemento buildElementoFogo() {
+        StringBuilder sbEstiloVida = new StringBuilder();
+        sbEstiloVida.append("Os signos do fogo são ávidos por experiências e tem uma atitude alegre diante da vida. "+
+                        "O fogo é o elemento da criação, da força vital que se manifesta. "+
+                        "É a energia mais ativa e intensa, por isso vai em busca de inspiração e significado. "+
+                        "Tem uma visão para novos horizontes, possibilidades  e regeneração.\n"+
+                        "As pessoas nascidas sob o elemento fogo tem processos rápidos de pensamento e agem, muitas vezes,"+
+                        " intuitivamente. São mentes capaz de tirar inspiração \"do nada\". "+
+                "Dando grandes saltos de compreensão ou conclusões imediatas.\n");
+
+        StringBuilder sbEquilibrio = new StringBuilder();
+        sbEquilibrio.append("Quando os planetas estão situados no mapa de modo que o efeito do fogo fique equilibrado, "+
+                "a personalidade é otimista, intuitiva, espontânea afetiva e inspiradora. ");
+
+        StringBuilder sbDesquilibrio = new StringBuilder();
+        sbDesquilibrio.append("Em excesso é furioso, violento e propenso a acidentes. "+
+                "Fogo demais pode levar ao entusiasmo exagerado e a uma série de projetos que nunca são concluídos. "+
+                "Já a deficiência de fogo pode resultar em baixa resistência à infecção, má digestão, frieza, apatia, "+
+                "falta de ímpeto coragem e perseverança. Sem energia e criatividade, não há regeneração.");
+
+        return MapaElemento.builder()
+                .elemento(EnumElemento.FOGO)
+                .signos("Áries, Leão, Sagitário")
+                .planetas("Sol, Marte, Júpiter, Quíron (asteroide) ")
+                .tipo("Intuitivo")
+                .polaridade("Positiva")
+                .palavrasChave("Energia, visão, criatividade, intuição, conquista, entusiasmo, motivação, aspirações, "+
+                        "esgotamento, volátil, impaciente")
+                .fisiologia("Digestão, pela, temperatura corporal, febre, inflamação, cortes, contusões, cicatrizes")
+                .aparencia("Estatura média, verrugas, sardas, espinhas, tendência à vermelhidão")
+                .temperamento("Corajoso, esquentado, dominador, espontâneo")
+                .associacoes("Criatividade, força vital, intuição, otimismo, conhecimento, inteligência, calor, fruta e sementes.")
+                .estiloVida("Vivendo do espírito")
+                .textoEstiloVida(sbEstiloVida.toString())
+                .textoEquilibrio(sbEquilibrio.toString())
+                .textoDesequilibrio(sbDesquilibrio.toString())
+                .build();
+    }
+
+    private MapaElemento buildElementoAr() {
+        StringBuilder sbEstiloVida = new StringBuilder();
+
+        sbEstiloVida.append("O ar é o mais intelectual e inovador dos elementos. "+
+                        "Despreocupado com o lado material da vida, é um elemento de conexão, movido pelo desejo de se "+
+                        "comunicar e de compartilhar o pensamento. O ar é estimulado pela discussão e põe a "+
+                        "concordância mental acima da paixão.\n");
+        sbEstiloVida.append("Um mapa com ênfase no ar indica uma pessoa inovadora e idealista. Embora não seja o mais "+
+                        "prático dos elementos - em geral precisa dos outros para concluir as coisas - o ar é instigante. "+
+                        "A personalidade é racional, porém intuitiva, capaz de reunir uma grande quantidade de dados e "+
+                        "então os processar para dar saltos de compreensão, sem perceber todas as pessoas e conexões envolvidos.");
+
+        StringBuilder sbEquilibrio = new StringBuilder();
+        sbEquilibrio.append("O ar é gracioso, objetivo, sociável e justo. Quando a influência do ar é ótima, "+
+                "a comunicação é aberta e honesta. A mente é vivaz e intuitiva e ainda assim racional.");
+
+        StringBuilder sbDesquilibrio = new StringBuilder();
+        sbDesquilibrio.append("O ar em excesso é inquieto, nervoso, ansioso, instável e distante. Ar demais resulta numa "+
+                "mente borbulhante incapaz de se concentrar. O discurso é rápido e nem sempre lúcido, havendo "+
+                "probabilidade de problemas como gagueira e dislexia. A deficiência de ar resulta em lassidão, "+
+                "introversão, estagnação e falta de percepção. Sem ar, a mente tende a ser irracional ou lenta. "+
+                "Esse estado é também associado à dificuldade de se fazer entender.");
+
+        return MapaElemento.builder()
+                .elemento(EnumElemento.AR)
+                .signos("Gêmeos, Libra, Aquário")
+                .planetas("Mercúrio, Urano")
+                .tipo("Pensador")
+                .polaridade("Positiva")
+                .palavrasChave("Intelecto, comunicação, ideias, concordância mental, tecnologia, conceitos, conhecimento, inovação, planejamento")
+                .fisiologia("Sistema nervoso, condutores, canais e cavidades, processos cognitivos, respiração, coordenação, movimento, eliminação")
+                .aparencia("Magro, delgado, delicado, cabelo fino")
+                .temperamento("Vivo e mercurial, com um jeito rápido de falar")
+                .associacoes("Mente, movimento, comunicação, livros, graça, companheirismo, aversão ao frio, computadores, televisão, clima do deserto, flores")
+                .estiloVida("Vivendo da mente")
+                .textoEstiloVida(sbEstiloVida.toString())
+                .textoEquilibrio(sbEquilibrio.toString())
+                .textoDesequilibrio(sbDesquilibrio.toString())
+                .build();
+    }
+
+    private MapaElemento buildElementoAgua() {
+        StringBuilder sbEstiloVida = new StringBuilder();
+        sbEstiloVida.append("A água é o mais sutil e sensitivo dos elementos. Os três introspectivos signos da água fluem com o próprio "+
+        "ritmo interior, atentos ao chamado de fortes emoções. A água é associada a sentimentos, ciclos e flutuações. "+
+        "A motivação vem de dentro, sendo muitas vezes uma reação inconsciente a um estímulo emocional. "+
+        "É o elemento mais irracional e o que menos consciência tem do que lhe é exterior. "+
+        "Sintonizadas com nuances delicadas, podem se dependentes e vulneráveis, às vezes interpretando mal os sinais, "+
+        "que enxergam por meio das lentes das próprias emoções. Seu nível interior de conhecimento que vai além "+
+        "dos cinco sentidos. É o elemento da percepção e da precognição.");
+
+        StringBuilder sbEquilibrio = new StringBuilder();
+        sbEquilibrio.append("A água é calma, suave, gentil, sensível e empática, com temperamento sereno. "+
+                "Nesse elemento, a harmonia se traduz em alguém que é emocional, mas não é governado pelas emoções.");
+
+        StringBuilder sbDesquilibrio = new StringBuilder();
+        sbDesquilibrio.append("Em excesso, a água é muito emocional, apreensiva, atenta demais à segurança, auto-indulgente, "+
+                "sonhadora e sensual, podendo tender a sobrepeso. A deficiência de água leva à rigidez e à falta de "+
+                "ritmo, de empatia e de ligações emocionais. Sem água suficiente, as emoções caem na indiferença, "+
+                "uma tendência que se disfarça de objetividade imparcial.");
+
+        return MapaElemento.builder()
+                .elemento(EnumElemento.AGUA)
+                .signos("Câncer, Escorpião, Peixes")
+                .planetas("Lua, Netuno")
+                .tipo("Sensível")
+                .polaridade("Negativa")
+                .palavrasChave("Sentimentos, fluidez, ciclos, passividade, sensitividade, empatia, reflexão, compaixão, "+
+                        "imaginação, intuição, ilusão")
+                .fisiologia("Sistema de lubrificação e resfriamento; linfa, sangue, plasma secreções")
+                .aparencia("Roliça, carnuda, com olhos grandes e suaves e pele brilhante")
+                .temperamento("Tranquilo, suave, com fala monótona")
+                .associacoes("Emoções, limpeza, empatia, suavidade, umidade, nutrição, tronco das árvores ou caule das flores")
+                .estiloVida("Vivendo das emoções")
+                .textoEstiloVida(sbEstiloVida.toString())
+                .textoEquilibrio(sbEquilibrio.toString())
+                .textoDesequilibrio(sbDesquilibrio.toString())
+                .build();
+    }
+
+    private MapaElemento buildElementoTerra() {
+        StringBuilder sbEstiloVida = new StringBuilder();
+        sbEstiloVida.append("A terra é o elemento que prioriza a segurança e é o mais prático dos elementos. "+
+                "É o elemento que extrai a forma do caos e molda a matéria. As pessoas nascidas sob a terra podem ter "+
+                "características sólidas e duradouras. Fértil e tangível, esse elemento é relacionado ao corpo físico, "+
+                "sentidos e a sensualidade. As pessoas com ênfase no elemento terra usam os cinco sentidos para "+
+                "interagir com o mundo a sua volta e compreendê-lo, concentrando-se nas necessidades básicas, "+
+                "como sobrevivência, segurança, alimentação e calor. "+
+                "Geralmente são determinados e comprometidos em \"levar as coisas até o fim\".");
+
+        StringBuilder sbEquilibrio = new StringBuilder();
+        sbEquilibrio.append("Se configura como tolerante, paciente, constante e realista, com sólido sistema de valores. "+
+                "Com a terra funcionando em níveis ótimos, as tarefas são realizadas com eficiência e concluídas.");
+
+        StringBuilder sbDesquilibrio = new StringBuilder();
+        sbEquilibrio.append("O excesso de terra é inflexível e lento para pensar e compreender. Indica uma tendência a "+
+                        "dormir demais e uma forte resistência à mudança. O corpo e as emoções se tornam tóxicos, "+
+                        "exigindo uma limpeza constante.\n");
+        sbDesquilibrio.append("A deficiência de terra resulta em toxicidade em todos os níveis, especialmente no corpo. "+
+                "Essa personalidade tende a ser instável, com energia dispersa e a visão tolhida. "+
+                "A falta de terra favorece o comportamento irracional de alguém que vive totalmente dentro da cabeça, ou imerso em emoções.");
+
+        return MapaElemento.builder()
+                .elemento(EnumElemento.TERRA)
+                .signos("Touro, Virgem, Capricórnio")
+                .planetas("Saturno")
+                .tipo("Sensorial")
+                .polaridade("Negativa")
+                .palavrasChave("Forma, produtividade, praticidade, fertilidade, sensualidade, necessidades básicas, segurança, o corpo, prudência")
+                .fisiologia("Processos anabólicos, olfato, ossos, dentes, unhas, estrutura")
+                .aparencia("Corpo firme e sólido, com um físico bem desenvolvido")
+                .temperamento("Digno e conservador, com um jeito lento e ponderado de falar")
+                .associacoes("O corpo físico e os sentidos, fertilidade, coragem, permanência, praticidade, fincar raízes")
+                .estiloVida("Vivendo da matéria")
+                .textoEstiloVida(sbEstiloVida.toString())
+                .textoEquilibrio(sbEquilibrio.toString())
+                .textoDesequilibrio(sbDesquilibrio.toString())
+                .build();
     }
 
     private TipoAspecto getTipoAspecto(String aspecto) {

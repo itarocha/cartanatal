@@ -1,4 +1,9 @@
-package br.itarocha.cartanatal.core.model;
+package br.itarocha.cartanatal.core.model.interpretacao;
+
+import br.itarocha.cartanatal.core.model.TipoAspecto;
+import br.itarocha.cartanatal.core.model.TipoLogico;
+import br.itarocha.cartanatal.core.model.TipoPlaneta;
+import br.itarocha.cartanatal.core.model.TipoRelacao;
 
 public class MapaPlanetaAspecto {
 
