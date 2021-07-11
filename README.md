@@ -1,9 +1,16 @@
 # CartaNatal
 
+git pull
+
 docker build . -t cartanatal-docker
 
 docker run --name cartanatal -p 8080:8080 cartanatal-docker 
 
+-----
+
+docker stop cartanatal
+docker rm cartanatal
+docker rmi cartanatal-docker:latest
 
 
 ##Referências

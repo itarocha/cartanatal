@@ -78,11 +78,12 @@ public class MapaController {
         Map<String, String> mapa = interpretador.gerarInterpretacoes(response);
         String fileContent = interpretador.buildConteudoArquivoTxt(response, mapa);
 
-        chartDraw.drawMapa(response, "target");
-        chartDraw.drawAspectos(response, "target");
+        //chartDraw.drawMapa(response, "/usr/local/");
+        //chartDraw.drawAspectos(response, "/usr/local/");
 
         // Create text file
         Path exportedPath = textFileExporter.export(fileContent, FILE_NAME_TXT);
+        System.out.println("Gerando arquivo de saída : "+exportedPath.toString());
 
         // Download file with InputStreamResource
         File exportedFile = exportedPath.toFile();

@@ -1,6 +1,5 @@
 package br.itarocha.cartanatal.core.service;
 
-import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 import br.itarocha.cartanatal.core.model.DadosPessoais;
@@ -42,11 +41,14 @@ public class MapaBuilder {
 	}
 
 	private MapaBuilder() throws Exception {
-		String path = getClass().getClassLoader().getResource("").getPath()+"ephe";
-		log.info("PATH: "+path);
+		//TODO transpor para variáveis de ambiente
+		String path = "/usr/local/lib/ephe";
+
+		log.info("CARREGANDO PATH: "+path);
 		try {
 			sw = new SwissEph(path);
 		} catch (Exception e) {
+			System.out.println("NÃO FOI POSSÍVEL CARREGAR ARQUIVOS DO PATH "+path);
 			throw e;
 		}
 	}
@@ -69,12 +71,9 @@ public class MapaBuilder {
 		this.sweDate.setCalendarType(this.sweDate.SE_GREG_CAL, this.sweDate.SE_KEEP_DATE);
 		this.ayanamsa = this.sw.swe_get_ayanamsa_ut(this.sweDate.getJulDay());
 		
-		double tmp = sweDate.getDeltaT(sweDate.getJulDay());
-		
-		System.out.println(tmp);
-		
+		double deltaT = sweDate.getDeltaT(sweDate.getJulDay());
 		mapa.setDeltaTSec(this.sweDate.getDeltaT() * 86400);
-		mapa.setJulDay(this.sweDate.getJulDay()+tmp);
+		mapa.setJulDay(this.sweDate.getJulDay()+deltaT);
 		
 		// Rigorosamente nesta ordem
 		buildCasas(mapa);
@@ -108,7 +107,6 @@ public class MapaBuilder {
     	}
     	mapa.setGrausDefasagemAscendente(intGrauDef);
 	}
-	
 
 	// Do the coordinate calculation for this planet p
 	// x2[0] = longitude (Planeta)

@@ -20,7 +20,7 @@ public class InterpretadorService {
 	private static final String LF = "\r\n\r\n";
 
 	@Autowired
-	private BuscadorService buscadorServide;
+	private BuscadorService buscador;
 
     public Map<String, String> gerarInterpretacoes(CartaNatalResponse cartaNatal) {
 
@@ -127,7 +127,7 @@ public class InterpretadorService {
 		if (nonNull(enumSigno) && nonNull(enumSigno.getElemento()) ){
 			EnumElemento elemento = enumSigno.getElemento();
 
-			MapaElemento me = buscadorServide.findElemento(elemento.getSigla());
+			MapaElemento me = buscador.findElemento(elemento.getSigla());
 			if (nonNull(me)){
 				StringBuilder sb = new StringBuilder();
 				sb.append(String.format("Signos: %s"+LF, me.getSignos()));
@@ -173,7 +173,7 @@ public class InterpretadorService {
 		if (nonNull(enumSigno) && nonNull(enumSigno.getQualidade()) ){
 			EnumQualidade qualidade = enumSigno.getQualidade();
 
-			MapaQualidade q = buscadorServide.findQualidade(qualidade.getSigla());
+			MapaQualidade q = buscador.findQualidade(qualidade.getSigla());
 			if (nonNull(q)){
 				StringBuilder sb = new StringBuilder();
 				sb.append(String.format("Signos: %s"+LF, q.getSignos()));
@@ -192,12 +192,12 @@ public class InterpretadorService {
 		planetasSignos.stream()
 				.filter(ps -> EnumPlaneta.SOL.equals( EnumPlaneta.getBySigla(ps.getPlaneta()) ))
 				.forEach( ps -> {
-					SignoSolar signoSolarCabecalho = buscadorServide.findSignoSolar("XX");
+					SignoSolar signoSolarCabecalho = buscador.findSignoSolar("XX");
 					String keyCabecalho = "O Signo Solar";
 					map.put(keyCabecalho, isNull(signoSolarCabecalho) ? NOT_FOUND : signoSolarCabecalho.getTexto() );
 
 					EnumSigno enumSigno = EnumSigno.getBySigla(ps.getSigno());
-					SignoSolar signoSolar = buscadorServide.findSignoSolar(enumSigno.getSigla());
+					SignoSolar signoSolar = buscador.findSignoSolar(enumSigno.getSigla());
 					String key = String.format("%s %s", enumSigno.getNome(), Simbolos.getSimboloSigno(enumSigno.getSigla()));
 					map.put(key, isNull(signoSolar) ? NOT_FOUND : signoSolar.getTexto());
 				});
@@ -214,11 +214,11 @@ public class InterpretadorService {
 				.filter(ps -> !desconsiderados.contains(EnumPlaneta.getBySigla(ps.getPlaneta())) )
 				.forEach(pp -> {
 					EnumPlaneta enumPlaneta = EnumPlaneta.getBySigla(pp.getPlaneta());
-					PlanetaSigno psTitulo = buscadorServide.findPlanetaSigno(pp.getPlaneta(), "XX");
+					PlanetaSigno psTitulo = buscador.findPlanetaSigno(pp.getPlaneta(), "XX");
 					String keyTitulo = String.format("%s nos Signos", enumPlaneta.getNome());
 					map.put(keyTitulo, isNull(psTitulo) ? NOT_FOUND : psTitulo.getTexto());
 
-					PlanetaSigno ps = buscadorServide.findPlanetaSigno(pp.getPlaneta(), pp.getSigno() );
+					PlanetaSigno ps = buscador.findPlanetaSigno(pp.getPlaneta(), pp.getSigno() );
 					EnumSigno enumSigno = EnumSigno.getBySigla(pp.getSigno());
 					String key = String.format("%s em %s (%s %s)", 	enumPlaneta.getNome(),
 																	enumSigno.getNome(),
@@ -246,7 +246,7 @@ public class InterpretadorService {
 																	Simbolos.getSimboloPlaneta(enumPlanetaDestino.getSigla())
 
 																	);
-			MapaPlanetaAspecto a = buscadorServide.findAspecto(ia.getPlanetaOrigem(), ia.getPlanetaDestino(), enumAspecto.getSigla() );
+			MapaPlanetaAspecto a = buscador.findAspecto(ia.getPlanetaOrigem(), ia.getPlanetaDestino(), enumAspecto.getSigla() );
 			map.put(key, isNull(a) ? NOT_FOUND : a.getTexto());
 		});
     	return map;
@@ -265,11 +265,11 @@ public class InterpretadorService {
 					String casa = Casa.getByNumero(pp.getCasa());
 
 					String keyTitulo = String.format("%s nas Casas %s", enumPlaneta.getNome(), Simbolos.getSimboloPlaneta(enumPlaneta.getSigla()) );
-					PlanetaCasa pcTitulo = buscadorServide.findPlanetaCasa(pp.getPlaneta(), 0);
+					PlanetaCasa pcTitulo = buscador.findPlanetaCasa(pp.getPlaneta(), 0);
 					map.put(keyTitulo, isNull(pcTitulo) ? NOT_FOUND : pcTitulo.getTexto());
 
 					String key = String.format("%s na %s Casa %s", enumPlaneta.getNome(), casa, Simbolos.getSimboloPlaneta(enumPlaneta.getSigla()));
-					PlanetaCasa pc = buscadorServide.findPlanetaCasa(pp.getPlaneta(), pp.getCasa());
+					PlanetaCasa pc = buscador.findPlanetaCasa(pp.getPlaneta(), pp.getCasa());
 					map.put(key, isNull(pc) ? NOT_FOUND : pc.getTexto());
 				});
 		return map;
@@ -282,13 +282,13 @@ public class InterpretadorService {
 				.filter(c -> c.getCasa() <= 12)
 				.forEach(c -> {
 					String keyTitulo = String.format("Casa %s", c.getCasa());
-					MapaCuspide mcTitulo = buscadorServide.findCuspide("XX", c.getCasa());
+					MapaCuspide mcTitulo = buscador.findCuspide("XX", c.getCasa());
 					map.put(keyTitulo, isNull(mcTitulo) ? NOT_FOUND : mcTitulo.getTexto());
 
 					EnumSigno enumSigno = EnumSigno.getBySigla(c.getSigno());
 					String casa = Casa.getByNumero(c.getCasa());
 					String key = String.format("%s na Cúspide da %s Casa (%s %s)", enumSigno.getNome(), casa, Simbolos.getSimboloSigno(enumSigno.getSigla()), c.getCasa() );
-					MapaCuspide mc = buscadorServide.findCuspide(enumSigno.getSigla(), c.getCasa());
+					MapaCuspide mc = buscador.findCuspide(enumSigno.getSigla(), c.getCasa());
 
 					map.put(key, isNull(mc) ? NOT_FOUND : mc.getTexto());
 				});
@@ -298,7 +298,7 @@ public class InterpretadorService {
 	private Map<String, String> interpretarCuspidesTituloGeral() {
 		Map<String, String> map = new LinkedHashMap<>();
 		String keyCasas = "As Casas";
-		MapaCuspide mc = buscadorServide.findCuspide("XX", 0);
+		MapaCuspide mc = buscador.findCuspide("XX", 0);
 		map.put(keyCasas, isNull(mc) ? NOT_FOUND : mc.getTexto());
 		return map;
 	}

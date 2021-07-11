@@ -11,7 +11,7 @@ import java.nio.file.StandardOpenOption;
 @Service
 public class TextFileExporter implements FileExporter {
 
-    private static final String EXPORT_DIRECTORY = "target";
+    private static final String EXPORT_DIRECTORY = "/usr/local/";
 
     @Override
     public Path export(String fileContent, String fileName) {
