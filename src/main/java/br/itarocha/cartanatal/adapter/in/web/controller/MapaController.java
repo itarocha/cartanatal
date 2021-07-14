@@ -2,14 +2,14 @@ package br.itarocha.cartanatal.adapter.in.web.controller;
 
 import br.itarocha.cartanatal.core.decorator.ChartDraw;
 import br.itarocha.cartanatal.core.model.DadosPessoais;
-import br.itarocha.cartanatal.core.service.CartaNatalService;
+import br.itarocha.cartanatal.core.model.presenter.Paragrafo;
+import br.itarocha.cartanatal.core.service.*;
 import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
-import br.itarocha.cartanatal.core.service.InterpretadorService;
-import br.itarocha.cartanatal.core.service.TextFileExporter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,6 +28,7 @@ import java.util.Map;
 public class MapaController {
 
     private static final String FILE_NAME_TXT = "mapa.txt";
+    private static final String FILE_NAME_DOC = "mapa.docx";
 
     @Autowired
     private CartaNatalService service;
@@ -35,7 +37,13 @@ public class MapaController {
     private InterpretadorService interpretador;
 
     @Autowired
+    private InterpretadorServiceNew interpretadorNew;
+
+    @Autowired
     private TextFileExporter textFileExporter;
+
+    @Autowired
+    private WordFileExporter wordFileExporter;
 
     @Autowired
     private ChartDraw chartDraw;
@@ -76,10 +84,7 @@ public class MapaController {
         CartaNatalResponse response = calcular(model);
 
         Map<String, String> mapa = interpretador.gerarInterpretacoes(response);
-        String fileContent = interpretador.buildConteudoArquivoTxt(response, mapa);
-
-        //chartDraw.drawMapa(response, "/usr/local/");
-        //chartDraw.drawAspectos(response, "/usr/local/");
+        String fileContent = interpretador.buildConteudoArquivoTxt(mapa);
 
         // Create text file
         Path exportedPath = textFileExporter.export(fileContent, FILE_NAME_TXT);
@@ -90,11 +95,32 @@ public class MapaController {
         FileInputStream fileInputStream = new FileInputStream(exportedFile);
         InputStreamResource inputStreamResource = new InputStreamResource(fileInputStream);
 
+
+        //chartDraw.drawMapa(response, "/usr/local/");
+        //chartDraw.drawAspectos(response, "/usr/local/");
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + FILE_NAME_TXT)
                 .contentType(MediaType.TEXT_PLAIN)
                 .contentLength(exportedFile.length())
                 .body(inputStreamResource);
+    }
+
+    @PostMapping
+    @RequestMapping("/wordfile")
+    public ResponseEntity<Resource> getMapaDocFile(@RequestBody DadosPessoais model) throws FileNotFoundException {
+        CartaNatalResponse response = calcular(model);
+        List<Paragrafo> lista = interpretadorNew.gerarInterpretacoes(response);
+        Path exportedPath = wordFileExporter.export(lista, FILE_NAME_DOC);
+        File file = exportedPath.toFile();
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + FILE_NAME_DOC)
+                .contentLength(file.length())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 
     @PostMapping

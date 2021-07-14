@@ -1,6 +1,7 @@
 package br.itarocha.cartanatal.core.service;
 
-import br.itarocha.cartanatal.core.model.*;
+import br.itarocha.cartanatal.core.model.Casa;
+import br.itarocha.cartanatal.core.model.Interpretacao;
 import br.itarocha.cartanatal.core.model.domain.*;
 import br.itarocha.cartanatal.core.model.interpretacao.*;
 import br.itarocha.cartanatal.core.model.presenter.*;
@@ -14,7 +15,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Service
-public class InterpretadorService {
+public class InterpretadorServiceNew {
 
 	private static final String NOT_FOUND = "<NOT_FOUND>";
 	private static final String LF = "\r\n\r\n";
@@ -22,13 +23,14 @@ public class InterpretadorService {
 	@Autowired
 	private BuscadorService buscador;
 
-    public Map<String, String> gerarInterpretacoes(CartaNatalResponse cartaNatal) {
+    public List<Paragrafo> gerarInterpretacoes(CartaNatalResponse cartaNatal) {
 
-		Map<String, String> map = new LinkedHashMap<>();
+    	List<Paragrafo> retorno = new ArrayList<>();
 
 		// CABECALHO
-		map.putAll(buildCabecalho(cartaNatal.getDadosPessoais()));
+		retorno.addAll(buildCabecalho(cartaNatal.getDadosPessoais()));
 
+		/*
 		map.putAll(this.buildIntroducao());
 
 		map.putAll(interpretarElemento(cartaNatal.getPlanetasSignos()));
@@ -62,23 +64,20 @@ public class InterpretadorService {
 			retorno.add(this.tratarParagrafos(entry.getKey(), entry.getValue() ));
 		});
 		 */
-		return map;
+		return retorno;
 	 }
 
+	private List<Paragrafo> buildCabecalho(DadoPessoalResponse dadosPessoais) {
+		List<Paragrafo> lista = new ArrayList<>();
+    	lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PRINCIPAL).texto(dadosPessoais.getNome()).build());
+		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(dadosPessoais.getData() + " "  + dadosPessoais.getHora()).build());
+		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(dadosPessoais.getCidade()).build());
 
-	private Map<String, String> buildCabecalho(DadoPessoalResponse dadosPessoais) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(dadosPessoais.getNome() + "\r\n\r\n");
-		sb.append(dadosPessoais.getData() + " "  + dadosPessoais.getHora() + "\r\n\r\n");
-		sb.append(dadosPessoais.getCidade() + "\r\n\r\n");
-		sb.append(String.format("Latitude: %s \r\n\r\n", dadosPessoais.getLat()));
-		sb.append(String.format("Longitude: %s \r\n\r\n", dadosPessoais.getLon()));
-		sb.append(String.format("Julian Day: %s \r\n\r\n", dadosPessoais.getJulDay()));
-		sb.append(String.format("Delta T: %s seg.\r\n\r\n", dadosPessoais.getDeltaT()));
-
-		Map<String, String> map = new LinkedHashMap<>();
-		map.put("Carta Natal", sb.toString());
-		return map;
+		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Latitude: %s", dadosPessoais.getLat())).build());
+		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Longitude: %s", dadosPessoais.getLon())).build());
+		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Julian Day: %s", dadosPessoais.getJulDay())).build());
+		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Delta T: %s sec", dadosPessoais.getDeltaT())).build());
+		return lista;
 	}
 
 	private Map<String, String> buildIntroducao() {
