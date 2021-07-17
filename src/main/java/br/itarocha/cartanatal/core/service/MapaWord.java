@@ -12,6 +12,8 @@ import java.util.List;
 
 public class MapaWord {
 
+    private static final String FONT_NAME = "Roboto";
+
     public static void _____main(String[] args) throws Exception {
         List<Paragrafo> lista = new ArrayList<>();
         lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PRINCIPAL ).texto("O velho macdonalds tinha uma fazenda") .build());
@@ -28,9 +30,13 @@ public class MapaWord {
             paragrafos.stream().forEach(p -> {
                 switch (p.getEstilo()){
                     case TITULO_PRINCIPAL:
-                    case TITULO_SIMPLES:
-                    case TITULO_PARAGRAFO:
                         imprimirTitulo(doc, p.getTexto());
+                        break;
+                    case TITULO_PARAGRAFO:
+                        imprimirTituloParagrafo(doc, p.getTexto());
+                        break;
+                    case TITULO_SIMPLES:
+                        imprimirTituloSimples(doc, p.getTexto());
                         break;
                     case PARAGRAFO_NORMAL:
                     case PARAGRAFO_ITALICO:
@@ -197,7 +203,7 @@ public class MapaWord {
         _p3.setAlignment(ParagraphAlignment.BOTH);
         _p3.setIndentationFirstLine(600);
         XWPFRun _r3 = _p3.createRun();
-        _r3.setFontFamily("Calibri");
+        _r3.setFontFamily(FONT_NAME);
         _r3.setText(s);
         _r3.setFontSize(12);
         _r3.addBreak();
@@ -207,9 +213,29 @@ public class MapaWord {
         XWPFParagraph p = doc.createParagraph();
         XWPFRun r = p.createRun();
         r.setBold(true);
-        r.setFontFamily("Calibri");
+        r.setFontFamily(FONT_NAME);
         r.setText(texto);
         r.setFontSize(16);
+        r.addBreak();
+    }
+
+    private static void imprimirTituloParagrafo(XWPFDocument doc, String texto) {
+        XWPFParagraph p = doc.createParagraph();
+        XWPFRun r = p.createRun();
+        r.setBold(true);
+        r.setFontFamily(FONT_NAME);
+        r.setText(texto);
+        r.setFontSize(14);
+        r.addBreak();
+    }
+
+    private static void imprimirTituloSimples(XWPFDocument doc, String texto) {
+        XWPFParagraph p = doc.createParagraph();
+        XWPFRun r = p.createRun();
+        p.setIndentationFirstLine(0);
+        r.setFontFamily(FONT_NAME);
+        r.setText(texto);
+        r.setFontSize(12);
         r.addBreak();
     }
 
@@ -229,7 +255,7 @@ public class MapaWord {
         XWPFRun paragraphOneRunOne = paragraph.createRun();
         paragraphOneRunOne.setBold(true);
         paragraphOneRunOne.setItalic(true);
-        paragraphOneRunOne.setFontFamily("Calibri");
+        paragraphOneRunOne.setFontFamily(FONT_NAME);
         paragraphOneRunOne.setText("Font Style");
         paragraphOneRunOne.addBreak();
 
