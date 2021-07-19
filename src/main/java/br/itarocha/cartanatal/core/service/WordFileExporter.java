@@ -11,7 +11,8 @@ import java.util.List;
 @Service
 public class WordFileExporter implements NewFileExporter {
 
-    private static final String EXPORT_DIRECTORY = "/usr/local/";
+    //private static final String EXPORT_DIRECTORY = "/usr/local/";
+    private static final String EXPORT_DIRECTORY = "/home/itamar/astrologia/";
 
     @Override
     public Path export(List<Paragrafo> paragrafos, String fileName) {

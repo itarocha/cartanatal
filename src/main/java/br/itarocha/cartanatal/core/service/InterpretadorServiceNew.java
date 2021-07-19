@@ -1,7 +1,7 @@
 package br.itarocha.cartanatal.core.service;
 
 import br.itarocha.cartanatal.core.model.Casa;
-import br.itarocha.cartanatal.core.model.Interpretacao;
+import br.itarocha.cartanatal.core.model.Pair;
 import br.itarocha.cartanatal.core.model.domain.*;
 import br.itarocha.cartanatal.core.model.interpretacao.*;
 import br.itarocha.cartanatal.core.model.presenter.*;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static br.itarocha.cartanatal.core.model.presenter.EstiloParagrafo.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -27,56 +28,29 @@ public class InterpretadorServiceNew {
 
     	List<Paragrafo> retorno = new ArrayList<>();
 
-		// CABECALHO
 		retorno.addAll(buildCabecalho(cartaNatal.getDadosPessoais()));
-
 		retorno.addAll(buildIntroducao());
-
 		retorno.addAll(interpretarElemento(cartaNatal.getPlanetasSignos()));
-
 		retorno.addAll(interpretarQualidade(cartaNatal.getPlanetasSignos()));
-
-		// SIGNO SOLAR
 		retorno.addAll(interpretarSignoSolar(cartaNatal.getPlanetasSignos()));
-
-		// PLANETAS NOS SIGNOS
 		retorno.addAll(interpretarPlanetasSignos(cartaNatal.getPlanetasSignos()));
-
-		// CÚSPIDES - TÍTULO GERAL
 		retorno.addAll(interpretarCuspidesTituloGeral());
-
-		// CÚSPIDES
 		retorno.addAll(interpretarCuspides(cartaNatal.getCuspides()));
-
-		// PLANETAS NAS CASAS
 		retorno.addAll(interpretarPlanetasCasas(cartaNatal.getPlanetasSignos()));
-
-		// ASPECTOS
 		retorno.addAll(interpretarAspectos(cartaNatal.getAspectos()));
 
-		/*
-		// para cada chave de mapa, tratar paragrafos
-		//retorno.add(this.tratarParagrafos(keyCabecalho, signoSolarCabecalho.getTexto()));
-		/*
-		List<Interpretacao> retorno = new LinkedList<>();
-
-		map.entrySet().stream().forEach(entry -> {
-			retorno.add(this.tratarParagrafos(entry.getKey(), entry.getValue() ));
-		});
-		 */
 		return retorno;
 	 }
 
 	private List<Paragrafo> buildCabecalho(DadoPessoalResponse dadosPessoais) {
 		List<Paragrafo> lista = new ArrayList<>();
-    	lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PRINCIPAL).texto(dadosPessoais.getNome()).build());
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(dadosPessoais.getData() + " "  + dadosPessoais.getHora()).build());
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(dadosPessoais.getCidade()).build());
-
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Latitude: %s", dadosPessoais.getLat())).build());
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Longitude: %s", dadosPessoais.getLon())).build());
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Julian Day: %s", dadosPessoais.getJulDay())).build());
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Delta T: %s sec", dadosPessoais.getDeltaT())).build());
+    	lista.add(buildParagrafo(TITULO_PRINCIPAL,dadosPessoais.getNome()));
+		lista.add(buildParagrafo(TITULO_PARAGRAFO,dadosPessoais.getData() + " "  + dadosPessoais.getHora()));
+		lista.add(buildParagrafo(TITULO_PARAGRAFO,dadosPessoais.getCidade()));
+		lista.add(buildParagrafo(TITULO_SIMPLES,String.format("Latitude: %s", dadosPessoais.getLat())));
+		lista.add(buildParagrafo(TITULO_SIMPLES,String.format("Longitude: %s", dadosPessoais.getLon())));
+		lista.add(buildParagrafo(TITULO_SIMPLES,String.format("Julian Day: %s", dadosPessoais.getJulDay())));
+		lista.add(buildParagrafo(TITULO_SIMPLES,String.format("Delta T: %s sec", dadosPessoais.getDeltaT())));
 		return lista;
 	}
 
@@ -86,8 +60,10 @@ public class InterpretadorServiceNew {
 		StringBuilder sbAstrologia = new StringBuilder();
 		sbAstrologia.append("A astrologia (do grego astron, \"astros\", \"estrelas\" ou \"corpo celeste\"; e logos, \"palavra\", \"estudo\") é uma ferramenta matemática, segundo a qual as posições relativas das estrelas poderiam prover informação sobre a personalidade, as relações humanas, e outros assuntos relacionados à vida do ser humano.");
 		sbAstrologia.append("Os astrólogos estudam, há milhares de anos, os efeitos da atividade planetária e as suas correspondências com o comportamento humano. Durante séculos, a astrologia se baseou na observação de objetos celestes e no registro de seus movimentos. Mais recentemente, os astrólogos têm usado dados coletados pelos astrônomos e organizados em tabelas chamadas efemérides, que mostram as posições dos corpos celestes.");
-		lista.add(this.buildParagrafo(EstiloParagrafo.TITULO_PARAGRAFO,"Astrologia"));
-		lista.add(this.buildParagrafo(EstiloParagrafo.PARAGRAFO_NORMAL,sbAstrologia.toString()));
+
+		lista.add(buildParagrafo(TITULO_PARAGRAFO,"Astrologia"));
+		lista.add(buildParagrafo(PARAGRAFO_NORMAL,sbAstrologia.toString()));
+
 
 		StringBuilder sbMapaNatal = new StringBuilder();
 		sbMapaNatal.append("O Mapa Natal mostra a posição correta dos astros em relação à Terra no momento de nascimento "+
@@ -95,8 +71,9 @@ public class InterpretadorServiceNew {
 				"planetas parecem se mover à sua volta, de modo que você está no centro do seu mapa astral. "+
 				"As configurações de um Mapa Natal se repetem apenas a cada 26.000 anos, portanto ele é quase como uma "+
 				"impressão digital - não existe um igual ao outro.");
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto("O Mapa Natal").build());
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(sbMapaNatal.toString()).build());
+
+		lista.add(buildParagrafo(TITULO_PARAGRAFO,"O Mapa Natal"));
+		lista.add(buildParagrafo(PARAGRAFO_NORMAL,sbMapaNatal.toString()));
 
 		StringBuilder sbZodiaco = new StringBuilder();
 		sbZodiaco.append("A palavra zodíaco (do latim zodiacus - significa \"círculo de animais\") é uma faixa imaginária "+
@@ -106,8 +83,8 @@ public class InterpretadorServiceNew {
 				"(Áries ou Carneiro, Touro, Gêmeos, Câncer ou Caranguejo, Leão, Virgem, Libra ou Balança, Escorpião, "+
 				"Sagitário, Capricórnio, Aquário e Peixes).");
 
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto("O Zodíaco").build());
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(sbZodiaco.toString()).build());
+		lista.add(buildParagrafo(TITULO_PARAGRAFO,"O Zodíaco"));
+		lista.add(buildParagrafo(PARAGRAFO_NORMAL,sbZodiaco.toString()));
 
 		return lista;
 	}
@@ -129,42 +106,42 @@ public class InterpretadorServiceNew {
 				"diferentes maneiras de se perceber a vida. A classificação por elementos é algo fundamental na "+
 				"Astrologia e ela é decidida por meio dos dez planetas que compõe o sistema astrológico e mais o Ascendente.");
 
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto("Os Elementos").build());
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(sbElemento.toString()).build());
-
+		lista.add(buildParagrafo(TITULO_PARAGRAFO,"Os Elementos"));
+		lista.add(buildParagrafo(PARAGRAFO_NORMAL,sbElemento.toString()));
 
 		if (nonNull(enumSigno) && nonNull(enumSigno.getElemento()) ){
 			EnumElemento elemento = enumSigno.getElemento();
 
 			MapaElemento me = buscador.findElemento(elemento.getSigla());
 			if (nonNull(me)){
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO)
+				lista.add(Paragrafo.builder().estilo(TITULO_PARAGRAFO)
 						.texto("Seu Elemento: "+elemento.getNome().toUpperCase(Locale.ROOT)).build());
 
-				// TODO será table
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Signos: %s", me.getSignos())).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Planetas: %s", me.getPlanetas())).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Tipo: %s", me.getTipo())).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Polaridade: %s", me.getPolaridade() )).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Palavras chave: %s", me.getPalavrasChave())).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Fisiologia: %s", me.getFisiologia() )).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Aparência: %s", me.getAparencia() )).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Temperamento: %s", me.getTemperamento() )).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Associações: %s", me.getAssociacoes() )).build());
+				List<Pair> tabela = new ArrayList<>();
+				tabela.add(new Pair("Signos",me.getSignos()));
+				tabela.add(new Pair("Planetas",me.getPlanetas()));
+				tabela.add(new Pair("Tipo",me.getTipo()));
+				tabela.add(new Pair("Polaridade",me.getPolaridade()));
+				tabela.add(new Pair("Palavras chave",me.getPalavrasChave()));
+				tabela.add(new Pair("Fisiologia",me.getFisiologia()));
+				tabela.add(new Pair("Aparência",me.getAparencia()));
+				tabela.add(new Pair("Temperamento",me.getTemperamento()));
+				tabela.add(new Pair("Temperamento",me.getTemperamento()));
+				tabela.add(new Pair("Associações",me.getAssociacoes()));
+				Paragrafo paragrafo = Paragrafo.builder().estilo(TABELA).tabela(tabela).build();
+				lista.add(paragrafo);
 
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(String.format("%s em equilíbrio",elemento.getNome())).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(me.getTextoEquilibrio()).build());
+				lista.add(buildParagrafo(TITULO_PARAGRAFO,String.format("%s em equilíbrio",elemento.getNome())));
+				lista.add(buildParagrafo(PARAGRAFO_NORMAL,me.getTextoEquilibrio()));
 
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(String.format("%s em desequilíbrio",elemento.getNome())).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(me.getTextoDesequilibrio()).build());
+				lista.add(buildParagrafo(TITULO_PARAGRAFO,String.format("%s em desequilíbrio",elemento.getNome())));
+				lista.add(buildParagrafo(PARAGRAFO_NORMAL,me.getTextoDesequilibrio()));
 			}
 		}
-
 		return lista;
 	}
 
-
-	private List<Paragrafo>  interpretarQualidade(List<PlanetaSignoResponse> planetasSignos) {
+	private List<Paragrafo> interpretarQualidade(List<PlanetaSignoResponse> planetasSignos) {
 		List<Paragrafo> lista = new ArrayList<>();
 
 		EnumSigno enumSigno = planetasSignos.stream()
@@ -181,11 +158,11 @@ public class InterpretadorServiceNew {
 		sbQualidade.append("Cada um dos quatro elementos apresenta uma expressão cardinal, uma expressão fixa e uma "+
 				"expressão mutável. As qualidades influenciam a maneira da pessoa interagir com o ambiente e as pessoas.");
 
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto("As Qualidades").build());
+		lista.add(buildParagrafo(TITULO_PARAGRAFO,"As Qualidades"));
 
 		List<String> lst = quebrarParagrafos(sbQualidade.toString());
 		lst.stream().forEach(s -> {
-			lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(s).build());
+			lista.add(buildParagrafo(PARAGRAFO_NORMAL,s));
 		});
 
 		if (nonNull(enumSigno) && nonNull(enumSigno.getQualidade()) ){
@@ -193,48 +170,47 @@ public class InterpretadorServiceNew {
 
 			MapaQualidade q = buscador.findQualidade(qualidade.getSigla());
 			if (nonNull(q)){
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO)
-						.texto("Sua qualidade: "+enumSigno.getQualidade().getNome()).build());
+				lista.add(buildParagrafo(TITULO_PARAGRAFO,"Sua qualidade: "+enumSigno.getQualidade().getNome()));
 
-				// TODO será table
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Signos: %s", q.getSignos())).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Casas: %s", q.getCasas())).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Palavras chave: %s", q.getPalavrasChave())).build());
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_SIMPLES).texto(String.format("Personalidade: %s", q.getPersonalidade() )).build());
+				List<Pair> tabela = new ArrayList<>();
+				tabela.add(new Pair("Signos", q.getSignos()));
+				tabela.add(new Pair("Casas", q.getCasas()));
+				tabela.add(new Pair("Palavras chave", q.getPalavrasChave() ));
+				tabela.add(new Pair("Personalidade", q.getPersonalidade()));
+				Paragrafo paragrafo = Paragrafo.builder().estilo(TABELA).tabela(tabela).build();
+				lista.add(paragrafo);
 			}
 		}
 		return lista;
 	}
 
 	private List<Paragrafo> interpretarSignoSolar(List<PlanetaSignoResponse> planetasSignos) {
-		List<Paragrafo> lista = new ArrayList<>();
+    	List<Paragrafo> lista = new ArrayList<>();
 
 		planetasSignos.stream()
 				.filter(ps -> EnumPlaneta.SOL.equals( EnumPlaneta.getBySigla(ps.getPlaneta()) ))
 				.forEach( ps -> {
 					SignoSolar signoSolarCabecalho = buscador.findSignoSolar("XX");
 
-					lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto("O Signo Solar").build());
-					lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(isNull(signoSolarCabecalho) ? NOT_FOUND : signoSolarCabecalho.getTexto()).build());
+					String textoCabecalho = isNull(signoSolarCabecalho) ? null : signoSolarCabecalho.getTexto();
+					lista.addAll(buildParagrafos("O Signo Solar", textoCabecalho));
 
 					EnumSigno enumSigno = EnumSigno.getBySigla(ps.getSigno());
 					SignoSolar signoSolar = buscador.findSignoSolar(enumSigno.getSigla());
 					String key = String.format("%s %s", enumSigno.getNome(), Simbolos.getSimboloSigno(enumSigno.getSigla()));
 
-					lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(key).build());
+					String texto = isNull(signoSolar) ? null : signoSolar.getTexto();
+					lista.addAll(buildParagrafos(key, texto));
 
-					if (isNull(signoSolar)){
-						lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(NOT_FOUND).build());
-					} else {
-						//TODO: Já deveria estar apenas com \n ao invés de \r\n\r\n
-						List<String> lst = quebrarParagrafos(signoSolar.getTexto());
-						lst.stream().forEach(s -> {
-							lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(s).build());
-						});
-					}
 				});
 		return lista;
 	}
+
+	/*
+	public <T extends Building> void genericMethod(T t) {
+    ...
+	}
+	*/
 
 	private List<Paragrafo> interpretarPlanetasSignos(List<PlanetaSignoResponse> planetasSignos) {
 		List<Paragrafo> lista = new ArrayList<>();
@@ -249,16 +225,8 @@ public class InterpretadorServiceNew {
 					PlanetaSigno psTitulo = buscador.findPlanetaSigno(pp.getPlaneta(), "XX");
 					String keyTitulo = String.format("%s nos Signos", enumPlaneta.getNome());
 
-					lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(keyTitulo).build());
-					if (isNull(psTitulo)){
-						lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(NOT_FOUND).build());
-					} else {
-						//TODO: Já deveria estar apenas com \n ao invés de \r\n\r\n
-						List<String> lst = quebrarParagrafos(psTitulo.getTexto());
-						lst.stream().forEach(s -> {
-							lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(s).build());
-						});
-					}
+					String textoTitulo = isNull(psTitulo) ? null : psTitulo.getTexto();
+					lista.addAll(buildParagrafos(keyTitulo, textoTitulo));
 
 					PlanetaSigno ps = buscador.findPlanetaSigno(pp.getPlaneta(), pp.getSigno() );
 					EnumSigno enumSigno = EnumSigno.getBySigla(pp.getSigno());
@@ -267,35 +235,21 @@ public class InterpretadorServiceNew {
 																	Simbolos.getSimboloPlaneta(enumPlaneta.getSigla()),
 																	Simbolos.getSimboloSigno(enumSigno.getSigla()));
 
-					lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(key).build());
-					if (isNull(ps)){
-						lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(NOT_FOUND).build());
-					} else {
-						//TODO: Já deveria estar apenas com \n ao invés de \r\n\r\n
-						List<String> lst = quebrarParagrafos(ps.getTexto());
-						lst.stream().forEach(s -> {
-							lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(s).build());
-						});
-					}
+					String texto = isNull(ps) ? null : ps.getTexto();
+					lista.addAll(buildParagrafos(key, texto));
 				});
 		return lista;
 	}
 
 	private List<Paragrafo> interpretarCuspidesTituloGeral() {
 		List<Paragrafo> lista = new ArrayList<>();
-		String keyCasas = "As Casas";
-		lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(keyCasas).build());
-
+		String keyTitulo = "As Casas";
+		lista.add(Paragrafo.builder().estilo(TITULO_PARAGRAFO).texto(keyTitulo).build());
 		MapaCuspide mc = buscador.findCuspide("XX", 0);
-		if (isNull(mc)){
-			lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(NOT_FOUND).build());
-		} else {
-			//TODO: Já deveria estar apenas com \n ao invés de \r\n\r\n
-			List<String> lst = quebrarParagrafos(mc.getTexto());
-			lst.stream().forEach(s -> {
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(s).build());
-			});
-		}
+
+		String textoTitulo = isNull(mc) ? null : mc.getTexto();
+		lista.addAll(buildParagrafos(keyTitulo, textoTitulo));
+
 		return lista;
 	}
 
@@ -317,18 +271,8 @@ public class InterpretadorServiceNew {
 
 																	);
 			MapaPlanetaAspecto a = buscador.findAspecto(ia.getPlanetaOrigem(), ia.getPlanetaDestino(), enumAspecto.getSigla() );
-
-			lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(key).build());
-
-			if (isNull(a)){
-				lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(NOT_FOUND).build());
-			} else {
-				//TODO: Já deveria estar apenas com \n ao invés de \r\n\r\n
-				List<String> lst = quebrarParagrafos(a.getTexto());
-				lst.stream().forEach(s -> {
-					lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(s).build());
-				});
-			}
+			String textoTitulo = isNull(a) ? null : a.getTexto();
+			lista.addAll(buildParagrafos(key, textoTitulo));
 		});
     	return lista;
 	}
@@ -341,32 +285,17 @@ public class InterpretadorServiceNew {
 				.forEach(c -> {
 					String keyTitulo = String.format("Casa %s", c.getCasa());
 					MapaCuspide mcTitulo = buscador.findCuspide("XX", c.getCasa());
-					lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(keyTitulo).build());
-					if (isNull(mcTitulo)){
-						lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(NOT_FOUND).build());
-					} else {
-						//TODO: Já deveria estar apenas com \n ao invés de \r\n\r\n
-						List<String> lst = quebrarParagrafos(mcTitulo.getTexto());
-						lst.stream().forEach(s -> {
-							lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(s).build());
-						});
-					}
+
+					String textoTitulo = isNull(mcTitulo) ? null : mcTitulo.getTexto();
+					lista.addAll(buildParagrafos(keyTitulo, textoTitulo));
 
 					EnumSigno enumSigno = EnumSigno.getBySigla(c.getSigno());
 					String casa = Casa.getByNumero(c.getCasa());
 					String key = String.format("%s na Cúspide da %s Casa (%s %s)", enumSigno.getNome(), casa, Simbolos.getSimboloSigno(enumSigno.getSigla()), c.getCasa() );
 					MapaCuspide mc = buscador.findCuspide(enumSigno.getSigla(), c.getCasa());
 
-					lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto(key).build());
-					if (isNull(mc)){
-						lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(NOT_FOUND).build());
-					} else {
-						//TODO: Já deveria estar apenas com \n ao invés de \r\n\r\n
-						List<String> lst = quebrarParagrafos(mc.getTexto());
-						lst.stream().forEach(s -> {
-							lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(s).build());
-						});
-					}
+					String texto = isNull(mc) ? null : mc.getTexto();
+					lista.addAll(buildParagrafos(key, texto));
 				});
 		return lista;
 	}
@@ -385,47 +314,38 @@ public class InterpretadorServiceNew {
 
 					String keyTitulo = String.format("%s nas Casas %s", enumPlaneta.getNome(), Simbolos.getSimboloPlaneta(enumPlaneta.getSigla()) );
 					PlanetaCasa pcTitulo = buscador.findPlanetaCasa(pp.getPlaneta(), 0);
-					lista.add(buildParagrafo(EstiloParagrafo.TITULO_PARAGRAFO,keyTitulo));
-					if (isNull(pcTitulo)){
-						lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(NOT_FOUND).build());
-					} else {
-						//TODO: Já deveria estar apenas com \n ao invés de \r\n\r\n
-						List<String> lst = quebrarParagrafos(pcTitulo.getTexto());
-						lst.stream().forEach(s -> {
-							lista.add(buildParagrafo(EstiloParagrafo.PARAGRAFO_NORMAL,s));
-						});
-					}
+
+					String textoTitulo = isNull(pcTitulo) ? null : pcTitulo.getTexto();
+					lista.addAll(buildParagrafos(keyTitulo, textoTitulo));
 
 					String key = String.format("%s na %s Casa (%s %d)", enumPlaneta.getNome(), casa, Simbolos.getSimboloPlaneta(enumPlaneta.getSigla()), pp.getCasa());
 					PlanetaCasa pc = buscador.findPlanetaCasa(pp.getPlaneta(), pp.getCasa());
 
-					lista.add(buildParagrafo(EstiloParagrafo.TITULO_PARAGRAFO,key));
-					if (isNull(pc)){
-						lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto(NOT_FOUND).build());
-					} else {
-						//TODO: Já deveria estar apenas com \n ao invés de \r\n\r\n
-						List<String> lst = quebrarParagrafos(pc.getTexto());
-						lst.stream().forEach(s -> {
-							lista.add(buildParagrafo(EstiloParagrafo.PARAGRAFO_NORMAL,s));
-						});
-					}
+					String texto = isNull(pc) ? null : pc.getTexto();
+					lista.addAll(buildParagrafos(key, texto));
 
 				});
+		return lista;
+	}
+
+	private List<Paragrafo> buildParagrafos(String titulo, String texto) {
+		List<Paragrafo> lista = new ArrayList<>();
+		lista.add(buildParagrafo(TITULO_PARAGRAFO,titulo));
+		if (isNull(texto)){
+			lista.add(buildParagrafo(PARAGRAFO_NORMAL,NOT_FOUND));
+		} else {
+			//TODO: Já deveria estar apenas com \n ao invés de \r\n\r\n
+			List<String> lst = quebrarParagrafos(texto);
+			lst.stream().forEach(s -> {
+				lista.add(buildParagrafo(PARAGRAFO_NORMAL,s));
+			});
+		}
 		return lista;
 	}
 
 	private Paragrafo buildParagrafo(EstiloParagrafo estilo, String texto){
 		return Paragrafo.builder().estilo(estilo).texto(texto).build();
 	}
-
-	private Interpretacao tratarParagrafos(String titulo, String texto) {
-		 List<String> textos = new LinkedList<>();
-		 String[] aaa = texto.split("\n\\s+");
-		 for (int i = 0; i < aaa.length; i++ ) {
-			 textos.add(aaa[i]);
-		 }
-		 return Interpretacao.builder().titulo(titulo).paragrafos(textos).build();
-	 }
 
 	private List<String> quebrarParagrafos(String texto){
 		List<String> retorno = new LinkedList<>();
@@ -437,99 +357,47 @@ public class InterpretadorServiceNew {
 		return retorno;
 	}
 
-	 private List<String> tratarParagrafos(String texto){
-		 List<String> retorno = new LinkedList<>();
-		 String[] aaa = texto.split("\n\\s+");
-		 for (int i = 0; i < aaa.length; i++ ) {
-			 retorno.add(aaa[i]);
-		 }
-		 return retorno;
-	 }
+}
 
-	public String buildConteudoArquivoTxt(Map<String, String> map) {
-		//String  nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toLowerCase();
+/*
 
-		//String url = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-		//String dest = String.format("%s/file_%s.txt",url,nome);
-		//String dest = String.format("d:/%s.txt",nome);
-
-		///////FileWriter arq = new FileWriter(dest);
-		///////PrintWriter gravarArq = new PrintWriter(arq);
-
-		StringBuilder sb = new StringBuilder();
-
-		for(String k : map.keySet()) {
-			//Paragraph p = new Paragraph();
-			//p.add(new Text(k)).setFontSize(14).setBold();
-			// título
-			sb.append(k+"\n");
-			sb.append("---------------------------------------------------\n");
-			///////////////document.add(p);
-
-			// Remover enter
-			String texto = map.get(k);
-			texto = texto.replace("\n", "");//.replace("\r", "");
-			sb.append(texto);
-			sb.append("\n\n");
-
-			//p = new Paragraph();
-			//p.add(new Text(texto).setFontSize(10) );
-
-			///////////////document.add(p);
+class StrategyContext {
+    double price; // price for some item or air ticket etc.
+    Map<String,OfferStrategy> strategyContext = new HashMap<String,OfferStrategy>();
+    StrategyContext(double price){
+        this.price= price;
+        strategyContext.put(NoDiscountStrategy.class.getName(),new NoDiscountStrategy());
+        strategyContext.put(QuarterDiscountStrategy.class.getName(),new QuarterDiscountStrategy());
+    }
+    public void applyStrategy(OfferStrategy strategy){
+        //Currently applyStrategy has simple implementation. You can Context for populating some more information,
+        //which is required to call a particular operation
+        System.out.println("Price before offer :"+price);
+				double finalPrice = price - (price*strategy.getDiscountPercentage());
+				System.out.println("Price after offer:"+finalPrice);
+				}
+public OfferStrategy getStrategy(int monthNo){
+            //In absence of this Context method, client has to import relevant concrete Strategies everywhere.
+            //Context acts as single point of contact for the Client to get relevant Strategy
+		if ( monthNo < 6 )  {
+		return strategyContext.get(NoDiscountStrategy.class.getName());
+		}else{
+		return strategyContext.get(QuarterDiscountStrategy.class.getName());
 		}
-		return sb.toString();
-	}
 
-	public String buildConteudoArquivoWord(CartaNatalResponse mapa, Map<String, String> map) {
-		StringBuilder sb = new StringBuilder();
-
-		for(String k : map.keySet()) {
-			// título
-			sb.append(k+"\n");
-			sb.append("---------------------------------------------------\n");
-
-			// Remover enter
-			String texto = map.get(k);
-			texto = texto.replace("\n", "");//.replace("\r", "");
-			sb.append(texto);
-			sb.append("\n\n");
 		}
-		return sb.toString();
-	}
-
-
-	/*
-	private void montarArquivoTxt(CartaNatalResponse mapa, Map<String, String> map)  throws IOException {
-		String  nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toLowerCase();
-
-		String url = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-		String dest = String.format("%s/file_%s.txt",url,nome);
-		//String dest = String.format("d:/%s.txt",nome);
-
-		FileWriter arq = new FileWriter(dest);
-		PrintWriter gravarArq = new PrintWriter(arq);
-
-		for(String k : map.keySet()) {
-			//Paragraph p = new Paragraph();
-			//p.add(new Text(k)).setFontSize(14).setBold();
-			// título
-			gravarArq.printf(k+"\n");
-			gravarArq.printf("---------------------------------------------------\n");
-			///////////////document.add(p);
-
-			// Remover enter
-			String texto = map.get(k);
-			texto = texto.replace("\n", "");//.replace("\r", "");
-			gravarArq.printf(texto);
-			gravarArq.printf("\n\n");
-
-			//p = new Paragraph();
-			//p.add(new Text(texto).setFontSize(10) );
-
-			///////////////document.add(p);
 		}
-		arq.close();
-	}
-	*/
+
+public class StrategyDemo{
+    public static void main(String args[]){
+        StrategyContext context = new StrategyContext(100);
+        System.out.println("Enter month number between 1 and 12");
+        int month = Integer.parseInt(args[0]);
+        System.out.println("Month ="+month);
+        OfferStrategy strategy = context.getStrategy(month);
+        context.applyStrategy(strategy);
+    }
 
 }
+
+ */

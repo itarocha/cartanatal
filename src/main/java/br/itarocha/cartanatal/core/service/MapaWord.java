@@ -1,14 +1,18 @@
 package br.itarocha.cartanatal.core.service;
 
+import br.itarocha.cartanatal.core.model.Pair;
 import br.itarocha.cartanatal.core.model.presenter.EstiloParagrafo;
 import br.itarocha.cartanatal.core.model.presenter.Paragrafo;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.math.BigInteger;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+// https://www.tutorialspoint.com/apache_poi_word/index.htm
 
 public class MapaWord {
 
@@ -27,6 +31,9 @@ public class MapaWord {
     public static void gerarWord(String fileName, List<Paragrafo> paragrafos) throws Exception{
         try (XWPFDocument doc = new XWPFDocument()) {
 
+            inserirImagem(doc, "/home/itamar/astrologia/mapa.png", 400, 400);
+            inserirImagem(doc, "/home/itamar/astrologia/aspectos.png", 500, 150);
+
             paragrafos.stream().forEach(p -> {
                 switch (p.getEstilo()){
                     case TITULO_PRINCIPAL:
@@ -41,6 +48,9 @@ public class MapaWord {
                     case PARAGRAFO_NORMAL:
                     case PARAGRAFO_ITALICO:
                         imprimirParagrafo(doc, p.getTexto());
+                        break;
+                    case TABELA:
+                        imprimirTabela(doc, p.getTabela());
                 }
             });
             try (FileOutputStream out = new FileOutputStream(fileName)) {
@@ -49,6 +59,23 @@ public class MapaWord {
         }
     }
 
+    private static void inserirImagem(XWPFDocument doc, String imgFile, int width, int height) {
+        XWPFParagraph title = doc.createParagraph();
+        XWPFRun run = title.createRun();
+        //run.setText("Fig.1 A Natural Scene");
+        run.setBold(true);
+        title.setAlignment(ParagraphAlignment.CENTER);
+
+        FileInputStream is = null;
+        try {
+            is = new FileInputStream(imgFile);
+            run.addBreak();
+            run.addPicture(is, XWPFDocument.PICTURE_TYPE_PNG, imgFile, Units.toEMU(width), Units.toEMU(height)); // 200x200 pixels
+            is.close();
+        } catch (IOException | InvalidFormatException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) throws Exception {
         try (XWPFDocument doc = new XWPFDocument()) {
@@ -86,16 +113,6 @@ public class MapaWord {
             _r3.addBreak();
             */
 
-
-
-
-
-
-
-
-
-
-
             XWPFParagraph p1 = doc.createParagraph();
             p1.setAlignment(ParagraphAlignment.CENTER);
             //p1.setBorderBottom(Borders.DOUBLE);
@@ -114,9 +131,6 @@ public class MapaWord {
             r1.setBold(true);
             r1.setUnderline(UnderlinePatterns.DOT_DOT_DASH);
             r1.setTextPosition(100);
-
-
-
 
 
             XWPFParagraph p2 = doc.createParagraph();
@@ -237,6 +251,24 @@ public class MapaWord {
         r.setText(texto);
         r.setFontSize(12);
         r.addBreak();
+    }
+
+
+    private static void imprimirTabela(XWPFDocument doc, List<Pair> tabela) {
+        XWPFTable table = doc.createTable();
+
+        AtomicInteger index = new AtomicInteger(0);
+        tabela.stream().forEach(p -> {
+            if (index.getAndAdd(1) == 0){
+                XWPFTableRow tableRowOne = table.getRow(0);
+                tableRowOne.getCell(0).setText(p.getKey());
+                tableRowOne.addNewTableCell().setText(p.getValue());
+            } else {
+                XWPFTableRow tableRowTwo = table.createRow();
+                tableRowTwo.getCell(0).setText(p.getKey());
+                tableRowTwo.getCell(1).setText(p.getValue());
+            }
+        });
     }
 
     public static void outroArquivo()throws Exception {
