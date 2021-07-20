@@ -7,6 +7,7 @@ import br.itarocha.cartanatal.core.model.interpretacao.*;
 import br.itarocha.cartanatal.core.model.presenter.*;
 import br.itarocha.cartanatal.core.util.Simbolos;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,12 +22,21 @@ public class InterpretadorServiceNew {
 	private static final String NOT_FOUND = "<NOT_FOUND>";
 	private static final String LF = "\r\n\r\n";
 
+	@Value("${parametros.arquivoImagemMapa}")
+	private String arquivoImagemMapa;
+
+	@Value("${parametros.arquivoImagemAspectos}")
+	private String arquivoImagemAspectos;
+
 	@Autowired
 	private BuscadorService buscador;
 
     public List<Paragrafo> gerarInterpretacoes(CartaNatalResponse cartaNatal) {
 
     	List<Paragrafo> retorno = new ArrayList<>();
+
+		retorno.add(buildParagrafoImagem(arquivoImagemMapa, 400, 400));
+		retorno.add(buildParagrafoImagem(arquivoImagemAspectos, 350, 150));
 
 		retorno.addAll(buildCabecalho(cartaNatal.getDadosPessoais()));
 		retorno.addAll(buildIntroducao());
@@ -52,6 +62,17 @@ public class InterpretadorServiceNew {
 		lista.add(buildParagrafo(TITULO_SIMPLES,String.format("Julian Day: %s", dadosPessoais.getJulDay())));
 		lista.add(buildParagrafo(TITULO_SIMPLES,String.format("Delta T: %s sec", dadosPessoais.getDeltaT())));
 		return lista;
+	}
+
+	private Paragrafo buildParagrafoImagem(String fileName, int width, int height) {
+    	return Paragrafo.builder()
+				.estilo(IMAGEM)
+				.imagem(ParagrafoImagem.builder()
+						.fileName(fileName)
+						.width(width)
+						.height(height)
+						.build())
+				.build();
 	}
 
 	private List<Paragrafo> buildIntroducao() {

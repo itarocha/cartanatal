@@ -3,6 +3,7 @@ package br.itarocha.cartanatal.core.service;
 import br.itarocha.cartanatal.core.model.Pair;
 import br.itarocha.cartanatal.core.model.presenter.EstiloParagrafo;
 import br.itarocha.cartanatal.core.model.presenter.Paragrafo;
+import br.itarocha.cartanatal.core.model.presenter.ParagrafoImagem;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.*;
@@ -12,30 +13,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.Objects.isNull;
+
 // https://www.tutorialspoint.com/apache_poi_word/index.htm
 
 public class MapaWord {
 
     private static final String FONT_NAME = "Roboto";
 
-    public static void _____main(String[] args) throws Exception {
-        List<Paragrafo> lista = new ArrayList<>();
-        lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PRINCIPAL ).texto("O velho macdonalds tinha uma fazenda") .build());
-        lista.add(Paragrafo.builder().estilo(EstiloParagrafo.TITULO_PARAGRAFO).texto("O velho macdonalds tinha uma fazenda") .build());
-        lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_NORMAL).texto("O velho macdonalds tinha uma fazenda") .build());
-        lista.add(Paragrafo.builder().estilo(EstiloParagrafo.PARAGRAFO_ITALICO).texto("O velho macdonalds tinha uma fazenda") .build());
-
-        gerarWord("/home/itamar/teste/abc.docx", lista);
-    }
-
     public static void gerarWord(String fileName, List<Paragrafo> paragrafos) throws Exception{
         try (XWPFDocument doc = new XWPFDocument()) {
 
-            inserirImagem(doc, "/home/itamar/astrologia/mapa.png", 400, 400);
-            inserirImagem(doc, "/home/itamar/astrologia/aspectos.png", 500, 150);
-
             paragrafos.stream().forEach(p -> {
                 switch (p.getEstilo()){
+                    case IMAGEM:
+                        imprimirImagem(doc, p);
+                        break;
                     case TITULO_PRINCIPAL:
                         imprimirTitulo(doc, p.getTexto());
                         break;
@@ -59,7 +52,12 @@ public class MapaWord {
         }
     }
 
-    private static void inserirImagem(XWPFDocument doc, String imgFile, int width, int height) {
+    private static void imprimirImagem(XWPFDocument doc, Paragrafo p) {
+        ParagrafoImagem imagem = p.getImagem();
+        if (isNull(imagem)) {
+            return;
+        }
+
         XWPFParagraph title = doc.createParagraph();
         XWPFRun run = title.createRun();
         //run.setText("Fig.1 A Natural Scene");
@@ -68,13 +66,19 @@ public class MapaWord {
 
         FileInputStream is = null;
         try {
-            is = new FileInputStream(imgFile);
+            is = new FileInputStream(imagem.getFileName());
             run.addBreak();
-            run.addPicture(is, XWPFDocument.PICTURE_TYPE_PNG, imgFile, Units.toEMU(width), Units.toEMU(height)); // 200x200 pixels
+            run.addPicture(is, XWPFDocument.PICTURE_TYPE_PNG,
+                    imagem.getFileName(),
+                    Units.toEMU(imagem.getWidth()),
+                    Units.toEMU(imagem.getHeight())); // pixels
             is.close();
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void inserirImagem(XWPFDocument doc, String imgFile, int width, int height) {
     }
 
     public static void main(String[] args) throws Exception {

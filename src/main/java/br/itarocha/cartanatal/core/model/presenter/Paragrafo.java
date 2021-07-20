@@ -12,4 +12,5 @@ public class Paragrafo {
     private EstiloParagrafo estilo;
     private String texto;
     private List<Pair> tabela;
+    private ParagrafoImagem imagem;
 }

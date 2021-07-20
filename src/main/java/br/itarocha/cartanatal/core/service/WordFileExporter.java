@@ -1,6 +1,7 @@
 package br.itarocha.cartanatal.core.service;
 
 import br.itarocha.cartanatal.core.model.presenter.Paragrafo;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -11,8 +12,8 @@ import java.util.List;
 @Service
 public class WordFileExporter implements NewFileExporter {
 
-    //private static final String EXPORT_DIRECTORY = "/usr/local/";
-    private static final String EXPORT_DIRECTORY = "/home/itamar/astrologia/";
+    @Value("${parametros.diretorioExportacao}")
+    private String EXPORT_DIRECTORY;
 
     @Override
     public Path export(List<Paragrafo> paragrafos, String fileName) {

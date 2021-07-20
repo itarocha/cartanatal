@@ -6,5 +6,6 @@ public enum EstiloParagrafo {
     TITULO_SIMPLES,
     PARAGRAFO_NORMAL,
     PARAGRAFO_ITALICO,
-    TABELA
+    TABELA,
+    IMAGEM
 }
