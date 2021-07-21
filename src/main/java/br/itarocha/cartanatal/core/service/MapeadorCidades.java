@@ -112,6 +112,7 @@ public class MapeadorCidades {
 					c.setFuso(mapFuso.get(c.getUF()));
 
 					String key = buildKey(c.getNomeSemAcento(), c.getUF());
+					System.out.println(key);
 					this.mapCidades.put(key,c);
 				}
 			}

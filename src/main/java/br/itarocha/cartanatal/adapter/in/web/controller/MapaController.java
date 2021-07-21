@@ -96,8 +96,8 @@ public class MapaController {
         InputStreamResource inputStreamResource = new InputStreamResource(fileInputStream);
 
 
-        //chartDraw.drawMapa(response, "/usr/local/");
-        //chartDraw.drawAspectos(response, "/usr/local/");
+        chartDraw.drawMapa(response);
+        chartDraw.drawAspectos(response);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + FILE_NAME_TXT)
@@ -110,6 +110,10 @@ public class MapaController {
     @RequestMapping("/wordfile")
     public ResponseEntity<Resource> getMapaDocFile(@RequestBody DadosPessoais model) throws FileNotFoundException {
         CartaNatalResponse response = calcular(model);
+
+        chartDraw.drawMapa(response);
+        chartDraw.drawAspectos(response);
+
         List<Paragrafo> lista = interpretadorNew.gerarInterpretacoes(response);
         Path exportedPath = wordFileExporter.export(lista, FILE_NAME_DOC);
         File file = exportedPath.toFile();

@@ -5,6 +5,7 @@ import br.itarocha.cartanatal.core.model.presenter.AspectoResponse;
 import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
 import br.itarocha.cartanatal.core.model.presenter.CuspideResponse;
 import br.itarocha.cartanatal.core.model.presenter.PlanetaSignoResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -35,7 +36,11 @@ public class ChartDraw {
 	private static final int BIG_DOT = 8;
 	private static final int PQ_DOT = 5;
 
-	public void drawMapa(CartaNatalResponse mapa, String path) {
+	@Value("${parametros.diretorioExportacao}")
+	private String EXPORT_DIRECTORY;
+
+
+	public void drawMapa(CartaNatalResponse mapa) {
 		try {
 			BufferedImage bi = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
 	
@@ -46,15 +51,32 @@ public class ChartDraw {
 		    // Escolha o formato: JPEG, GIF ou PNG
 		    
 		    String nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toUpperCase();
-		    String url = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-		    url = path;
-		    //String dest = String.format("%s/map_%s.png",url,nome);		    
-		    String dest = String.format("%s/mapa.png",url);		    
+		    String dest = String.format("%smapa.png",EXPORT_DIRECTORY);
 		    ImageIO.write(bi, "png",  new File(dest));
 
 		  } catch (IOException ie) {
 		    ie.printStackTrace();
 		  }
+	}
+
+	public void drawAspectos(CartaNatalResponse mapa) {
+		try {
+			int largura = 500 + 300;
+			int altura = 300;
+
+			BufferedImage bi = new BufferedImage(largura, altura, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = bi.createGraphics();
+
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+			drawAspectosFundo(mapa, g, largura, altura);
+			String dest = String.format("%saspectos.png",EXPORT_DIRECTORY);
+			ImageIO.write(bi, "png",  new File(dest));
+
+			//ImageIO.write(bi, "PNG",  file);
+		} catch (IOException ie) {
+			ie.printStackTrace();
+		}
 	}
 
 	private void drawMapaFundo(Graphics2D g) {
@@ -106,33 +128,6 @@ public class ChartDraw {
 
 			g.drawLine(xIni, yIni, xFim, yFim);
 		}
-	}
-
-	public void drawAspectos(CartaNatalResponse mapa, String path) {
-		try {
-			int largura = 500 + 300;
-			int altura = 300;
-			
-			BufferedImage bi = new BufferedImage(largura, altura, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = bi.createGraphics();
-	    
-			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	
-		    drawAspectosFundo(mapa, g, largura, altura);
-		    //desenharPosicoesPlanetas(g);
-		    // Escolha o formato: JPEG, GIF ou PNG
-		    //String nome = mapa.getDadosPessoais().getNome().replaceAll(" ", "_").toUpperCase();
-		    
-		    String url = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-		    url = path;
-		    //String dest = String.format("%s/asp_%s.png",url,nome);		    
-		    String dest = String.format("%s/aspectos.png",url);		    
-		    ImageIO.write(bi, "png",  new File(dest));
-
-		    //ImageIO.write(bi, "PNG",  file);
-		  } catch (IOException ie) {
-		    ie.printStackTrace();
-		  }
 	}
 
 	private void drawAspectosFundo(CartaNatalResponse mapa, Graphics2D g, int largura, int altura) {
