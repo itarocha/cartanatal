@@ -85,10 +85,14 @@ package br.itarocha.cartanatal.core.testesinternos;
 import java.io.*;
 import java.util.Locale;
 
-import br.itarocha.cartanatal.core.service.MapeadorCidades;
 import de.thmac.swisseph.*;
+import org.springframework.beans.factory.annotation.Value;
+
 
 public class Swemini{
+
+  @Value("${parametros.diretorioEphe}")
+  private String DIRETORIO_EPHE;
 
   SweDate sd=new SweDate();
   SwissData swed=new SwissData();
@@ -185,8 +189,7 @@ snam=null; // Realistisch?
         /*
          * do the coordinate calculation for this planet p
          */
-        String path = MapeadorCidades.class.getProtectionDomain().getCodeSource().getLocation().getPath()+"/ephe";
-		sw.swe_set_ephe_path(path);
+		sw.swe_set_ephe_path(DIRETORIO_EPHE);
 
         iflgret = sw.swe_calc(te, p, (int)iflag, x2, serr);
         /*

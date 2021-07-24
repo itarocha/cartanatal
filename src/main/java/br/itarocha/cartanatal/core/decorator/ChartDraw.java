@@ -91,17 +91,17 @@ public class ChartDraw {
 		// Segundo círculo
 		int RAIO_MAIOR_A = PADDING + 30;
 		int RAIO_MAIOR_B = SIZE - (30 * 2);
-		g.setColor(Color.RED);
+		g.setColor(Color.BLACK);
 		g.drawOval(RAIO_MAIOR_A, RAIO_MAIOR_A, RAIO_MAIOR_B, RAIO_MAIOR_B);
 
 		// Media
 		int MARGEM_INTERNA = SIZE / 2;
 		int RAIO_MEDIO_A = PADDING + (MARGEM_INTERNA / 2);
 		int RAIO_MEDIO_B = SIZE - MARGEM_INTERNA;
-		g.setColor(Color.MAGENTA);
+		g.setColor(Color.BLACK);
 		g.drawOval(RAIO_MEDIO_A, RAIO_MEDIO_A, RAIO_MEDIO_B, RAIO_MEDIO_B);
 
-		g.setColor(Color.BLUE);
+		g.setColor(Color.BLACK);
 		g.drawOval(	PADDING + (MARGEM_ASPECTOS / 2),
 				PADDING + (MARGEM_ASPECTOS / 2),
 				SIZE - MARGEM_ASPECTOS,
@@ -222,7 +222,7 @@ public class ChartDraw {
 	  }
 
 	private void drawMapaPosicoes(CartaNatalResponse mapa, Graphics2D g) {
-		g.setColor(Color.red);
+		g.setColor(Color.RED);
 		boolean alternador = false;
 		Integer acrescimo = 50;
 		Font font = this.getFontAstrologia();

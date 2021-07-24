@@ -20,9 +20,6 @@ EXPOSE 8080
 ENTRYPOINT ["java","-jar","/usr/local/lib/cartanatal.jar"]
 
 
-
-
-
 # FROM adoptopenjdk/openjdk11-openj9:jdk-11.0.1.13-alpine-slim
 # WORKDIR /app
 # COPY . ./

@@ -35,8 +35,6 @@ public class MapaBuilder {
 	private SwissEph sw;
 	private double ayanamsa;
 	
-	//private static String imagePath;
-
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	private static final int SID_METHOD = SweConst.SE_SIDM_LAHIRI;
 
@@ -50,28 +48,6 @@ public class MapaBuilder {
 			throw e;
 		}
 	}
-
-	/*
-	private static MapaBuilder instance = null;
-	
-	public static MapaBuilder getInstance(String path) throws Exception{
-		if (instance == null) instance = new MapaBuilder();
-		//imagePath = path;
-		//imagePath = DIRETORIO_EPHE;
-		return instance;
-	}
-	*/
-	/*
-	private MapaBuilder() throws Exception {
-		log.info("CARREGANDO PATH: "+DIRETORIO_EPHE);
-		try {
-			sw = new SwissEph(DIRETORIO_EPHE);
-		} catch (Exception e) {
-			System.out.println("NÃO FOI POSSÍVEL CARREGAR ARQUIVOS DO PATH "+DIRETORIO_EPHE);
-			throw e;
-		}
-	}
-	*/
 
 	public Mapa build(DadosPessoais dadosPessoais, Cidade cidade) {
 		if (cidade != null) {
@@ -212,7 +188,6 @@ public class MapaBuilder {
 	
 	private void buildAspectos(Mapa mapa){
 		mapa.getListaAspectos().clear();
-		//String aspecto;
 		for (int x=0; x < 11; x++){
 			for(int y=x+1; y < 12; y++){
 				EnumPlaneta eA = EnumPlaneta.getByCodigo(x);

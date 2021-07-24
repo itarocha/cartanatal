@@ -143,17 +143,5 @@ public class MapaController {
         }
     }
 
-    /*
-    @GetMapping(
-            value = "/get-file",
-            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
-    )
-    public @ResponseBody byte[] getFile() throws IOException {
-        InputStream in = getClass()
-                .getResourceAsStream("/com/baeldung/produceimage/data.txt");
-        return IOUtils.toByteArray(in);
-    }
-    */
-
 }
 

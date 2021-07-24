@@ -247,7 +247,7 @@ public class ChartPainter {
   }
   
   private void drawMapaPosicoes(Graphics2D g) {
-	  g.setColor(Color.red);
+	  g.setColor(Color.BLACK);
 	  boolean alternador = false;
 	  Integer acrescimo = 50;
 	  Font font = this.getFontAstrologia();
