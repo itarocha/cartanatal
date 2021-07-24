@@ -26,31 +26,15 @@ public class InterpretadorService {
 
 		Map<String, String> map = new LinkedHashMap<>();
 
-		// CABECALHO
 		map.putAll(buildCabecalho(cartaNatal.getDadosPessoais()));
-
 		map.putAll(this.buildIntroducao());
-
 		map.putAll(interpretarElemento(cartaNatal.getPlanetasSignos()));
-
 		map.putAll(interpretarQualidade(cartaNatal.getPlanetasSignos()));
-
-		// SIGNO SOLAR
 		map.putAll(interpretarSignoSolar(cartaNatal.getPlanetasSignos()));
-
-		// PLANETAS NOS SIGNOS
 		map.putAll(interpretarPlanetasSignos(cartaNatal.getPlanetasSignos()));
-
-		// CÚSPIDES - TÍTULO GERAL
 		map.putAll(interpretarCuspidesTituloGeral());
-
-		// CÚSPIDES
 		map.putAll(interpretarCuspides(cartaNatal.getCuspides()));
-
-		// PLANETAS NAS CASAS
 		map.putAll(interpretarPlanetasCasas(cartaNatal.getPlanetasSignos()));
-
-		// ASPECTOS
 		map.putAll(interpretarAspectos(cartaNatal.getAspectos()));
 
 		// para cada chave de mapa, tratar paragrafos

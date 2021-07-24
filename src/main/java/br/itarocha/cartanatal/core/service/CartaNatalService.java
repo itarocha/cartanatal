@@ -14,12 +14,17 @@ public class CartaNatalService {
 	@Autowired
 	private MapaMapper mapper;
 
+	@Autowired
+	private BuscadorService buscadorService;
+
+	@Autowired
+	MapaBuilder mapaBuilder;
+
 	public CartaNatalResponse buildMapa(DadosPessoais dadosPessoais) throws Exception{
 		Mapa retorno = null;
-		MapaBuilder mapaBuilder = MapaBuilder.getInstance(".");
-		Cidade c = MapeadorCidades.getInstance().getCidade(dadosPessoais.getCidade(), dadosPessoais.getUf());
+		Cidade c = buscadorService.findCidade(dadosPessoais.getCidade(), dadosPessoais.getUf());
 		if (c != null){
-    		retorno = mapaBuilder.build(dadosPessoais);
+    		retorno = mapaBuilder.build(dadosPessoais, c);
 		} else {
 			System.out.println("Nao conseguiu localizar cidade");
 		}

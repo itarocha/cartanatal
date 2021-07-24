@@ -8,13 +8,25 @@ import br.itarocha.cartanatal.core.util.Funcoes;
 import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SweDate;
 import de.thmac.swisseph.SwissEph;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 import static java.util.Objects.isNull;
 
+@Service
 public class MapaBuilder {
-	
+
+	@Value("${parametros.diretorioEphe}")
+	private String DIRETORIO_EPHE;
+
 	private static final Logger	log = Logger.getAnonymousLogger();
-	
+
+	@Autowired
+	private BuscadorService buscadorService;
+
 	private SweDate sweDate; 
 
 	private int[] aspectos_planetas = new int[18];
@@ -23,42 +35,47 @@ public class MapaBuilder {
 	private SwissEph sw;
 	private double ayanamsa;
 	
-	private static String imagePath;
+	//private static String imagePath;
 
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	private static final int SID_METHOD = SweConst.SE_SIDM_LAHIRI;
-	
-	private static MapaBuilder instance = null;
-	
-	public static MapaBuilder getInstance(String path) throws Exception{
-		if (instance == null) instance = new MapaBuilder();
-		imagePath = path;
-		return instance;
-	}
-	
-	public String getPath() {
-		return imagePath;
-	}
 
-	private MapaBuilder() throws Exception {
-		//TODO transpor para variáveis de ambiente
-		String path = "/usr/local/lib/ephe";
-
-		log.info("CARREGANDO PATH: "+path);
+	@PostConstruct
+	public void loadDependencies(){
+		log.info("CARREGANDO PATH: "+DIRETORIO_EPHE);
 		try {
-			sw = new SwissEph(path);
+			sw = new SwissEph(DIRETORIO_EPHE);
 		} catch (Exception e) {
-			System.out.println("NÃO FOI POSSÍVEL CARREGAR ARQUIVOS DO PATH "+path);
+			System.out.println("NÃO FOI POSSÍVEL CARREGAR ARQUIVOS DO PATH "+DIRETORIO_EPHE);
 			throw e;
 		}
 	}
 
-	public Mapa build(DadosPessoais dadosPessoais) {
-		MapeadorCidades mapeador = MapeadorCidades.getInstance();
-		
-		Cidade c = mapeador.getCidade(dadosPessoais.getCidade(), dadosPessoais.getUf());
-		if (c != null) {
-			Mapa m = new Mapa(dadosPessoais.getNome(), dadosPessoais.getDataHoraNascimento(), c);
+	/*
+	private static MapaBuilder instance = null;
+	
+	public static MapaBuilder getInstance(String path) throws Exception{
+		if (instance == null) instance = new MapaBuilder();
+		//imagePath = path;
+		//imagePath = DIRETORIO_EPHE;
+		return instance;
+	}
+	*/
+	/*
+	private MapaBuilder() throws Exception {
+		log.info("CARREGANDO PATH: "+DIRETORIO_EPHE);
+		try {
+			sw = new SwissEph(DIRETORIO_EPHE);
+		} catch (Exception e) {
+			System.out.println("NÃO FOI POSSÍVEL CARREGAR ARQUIVOS DO PATH "+DIRETORIO_EPHE);
+			throw e;
+		}
+	}
+	*/
+
+	public Mapa build(DadosPessoais dadosPessoais, Cidade cidade) {
+		if (cidade != null) {
+			Mapa m = new Mapa(dadosPessoais.getNome(), dadosPessoais.getDataHoraNascimento(), cidade);
 			calcular(m); 
 			return m;
 		}
@@ -270,7 +287,7 @@ public class MapaBuilder {
 
 //http://www.timeanddate.com/worldclock/switzerland/zurich
 //http://www.sadhana.com.br/cgi-local/mapas/mapanow.cgi?indic=10003&ref=http%3A//www.deldebbio.com.br/
-// http://www.astrosage.com/astrology/ayanamsa-calculator.asp
+//http://www.astrosage.com/astrology/ayanamsa-calculator.asp
 //http://www.astro.com/swisseph/swephprg.htm#_Toc471829052
 
 

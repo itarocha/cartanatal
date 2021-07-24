@@ -1,16 +1,16 @@
 package br.itarocha.cartanatal.core.service;
 
 import br.itarocha.cartanatal.core.model.*;
+import br.itarocha.cartanatal.core.model.domain.Cidade;
 import br.itarocha.cartanatal.core.model.domain.EnumElemento;
 import br.itarocha.cartanatal.core.model.domain.EnumQualidade;
 import br.itarocha.cartanatal.core.model.interpretacao.*;
+import br.itarocha.cartanatal.core.util.Funcoes;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,7 @@ import static br.itarocha.cartanatal.core.service.ArquivosConstantes.*;
 @Service
 public class BuscadorService {
 
+    private List<Cidade> listaCidades;
     private List<SignoSolar> listaSignosSolares;
     private List<MapaCuspide> listaCuspides;
     private List<MapaPlanetaAspecto> listaAspectos;
@@ -29,6 +30,7 @@ public class BuscadorService {
     private List<MapaQualidade> listaMapaQualidades;
 
     public BuscadorService(){
+        restaurarCidades();
         restaurarSignosSolares();
         restaurarCuspides();
         restaurarAspectos();
@@ -36,6 +38,21 @@ public class BuscadorService {
         restaurarPlanetasSignos();
         restaurarMapaElementos();
         restaurarMapaQualidades();
+    }
+
+    public Cidade findCidade(String cidade, String uf) {
+        String key = buildKey(cidade, uf);
+
+        return listaCidades.stream()
+                .filter(c -> c.getKey().equals(key))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String buildKey(String cidade, String uf) {
+        String s = Funcoes.removerAcentos(cidade).toUpperCase();
+        s = s.replaceAll(" ","");
+        return String.format("%s.%s", uf, s);
     }
 
     public SignoSolar findSignoSolar(String signo) {
@@ -98,6 +115,17 @@ public class BuscadorService {
                 .orElse(null);
     }
 
+    private void restaurarCidades() {
+        ObjectMapper om = new ObjectMapper();
+        try {
+            URL url = this.getClass().getClassLoader().getResource(ARQUIVO_CIDADES_BRASIL);
+            listaCidades = om.readValue(url, new TypeReference<List<Cidade>>(){});
+            System.out.println("ARQUIVO DE CIDADES RESTAURADO COM SUCESSO");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void restaurarSignosSolares() {
         ObjectMapper om = new ObjectMapper();
         try {
@@ -105,7 +133,7 @@ public class BuscadorService {
             //File f = new File(url);
             listaSignosSolares = om.readValue(url, new TypeReference<List<SignoSolar>>(){});
             //listaSignosSolares = om.readValue(new File(url.toURI()), new TypeReference<List<SignoSolar>>(){});
-            System.out.println("SIGNOS SOLARES RESTAURADO COM SUCESSO");
+            System.out.println("ARQUIVO DE SIGNOS SOLARES RESTAURADO COM SUCESSO");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -117,7 +145,7 @@ public class BuscadorService {
             URL url = this.getClass().getClassLoader().getResource(ARQUIVO_CUSPIDES);
             //listaCuspides = om.readValue(new File(url.toURI()), new TypeReference<List<MapaCuspide>>(){});
             listaCuspides = om.readValue(url, new TypeReference<List<MapaCuspide>>(){});
-            System.out.println("CUSPIDES RESTAURADO COM SUCESSO");
+            System.out.println("ARQUIVO DE CUSPIDES RESTAURADO COM SUCESSO");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -128,7 +156,7 @@ public class BuscadorService {
         try {
             URL url = this.getClass().getClassLoader().getResource(ARQUIVO_ASPECTOS);
             listaAspectos = om.readValue(url, new TypeReference<List<MapaPlanetaAspecto>>(){});
-            System.out.println("ASPECTOS RESTAURADO COM SUCESSO");
+            System.out.println("ARQUIVO DE ASPECTOS RESTAURADO COM SUCESSO");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -139,7 +167,7 @@ public class BuscadorService {
         try {
             URL url = this.getClass().getClassLoader().getResource(ARQUIVO_PLANETAS_CASAS);
             listaPlanetasCasas = om.readValue(url, new TypeReference<List<PlanetaCasa>>(){});
-            System.out.println("PLANETAS CASAS RESTAURADO COM SUCESSO");
+            System.out.println("ARQUIVO DE PLANETAS CASAS RESTAURADO COM SUCESSO");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -150,7 +178,7 @@ public class BuscadorService {
         try {
             URL url = this.getClass().getClassLoader().getResource(ARQUIVO_PLANETAS_SIGNOS);
             listaPlanetasSignos = om.readValue(url, new TypeReference<List<PlanetaSigno>>(){});
-            System.out.println("PLANETAS SIGNOS RESTAURADO COM SUCESSO");
+            System.out.println("ARQUIVO DE PLANETAS SIGNOS RESTAURADO COM SUCESSO");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -162,7 +190,7 @@ public class BuscadorService {
         listaMapaElementos.add(buildElementoTerra());
         listaMapaElementos.add(buildElementoAgua());
         listaMapaElementos.add(buildElementoAr());
-        System.out.println("ELEMENTOS RESTAURADO COM SUCESSO");
+        System.out.println("ARQUIVO DE ELEMENTOS RESTAURADO COM SUCESSO");
     }
 
     private MapaElemento buildElementoFogo() {
