@@ -1,5 +1,5 @@
-# docker build . -t cartanatal-doccker
-# docker run -p 8080:8080 -n cartanatal cartanatal-docker
+# docker build . -t cartanatal-docker
+# docker run -p 8080:8080 --name cartanatal cartanatal-docker
 
 #
 # Build stage

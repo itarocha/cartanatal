@@ -1,7 +1,6 @@
 package br.itarocha.cartanatal.core.service;
 
 import br.itarocha.cartanatal.core.model.Pair;
-import br.itarocha.cartanatal.core.model.presenter.EstiloParagrafo;
 import br.itarocha.cartanatal.core.model.presenter.Paragrafo;
 import br.itarocha.cartanatal.core.model.presenter.ParagrafoImagem;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -9,7 +8,6 @@ import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.*;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 

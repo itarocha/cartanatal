@@ -13,7 +13,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
@@ -39,6 +38,21 @@ public class ChartDraw {
 	@Value("${parametros.diretorioExportacao}")
 	private String EXPORT_DIRECTORY;
 
+	private Font fontRegular = null;
+	private Font fontAstrologia = null;
+
+	public ChartDraw(){
+		fontAstrologia = buildFontAstrologia();
+		fontRegular = buildFontRegular();
+	}
+
+	public Font getFontAstrologia(){
+		return this.fontAstrologia;
+	}
+
+	public Font getFontRegular(){
+		return this.fontRegular;
+	}
 
 	public void drawMapa(CartaNatalResponse mapa) {
 		try {
@@ -108,7 +122,8 @@ public class ChartDraw {
 				SIZE - MARGEM_ASPECTOS);
 
 		// CASAS
-		Font font = new Font("TimesRoman", Font.BOLD, 14);
+		//Font font = new Font("TimesRoman", Font.BOLD, 14);
+		Font font = this.getFontRegular().deriveFont(Font.BOLD, 14f);
 		g.setFont(font);
 		for (int i = 0; i <= 11; i++) {
 			Point ptLetra = angleToPoint(CX, CY, i*30+15, RAIO_CIRCULO_INTERNO +18);
@@ -145,8 +160,9 @@ public class ChartDraw {
 	      //Font fontAstroX = this.getFontAstrologia();
 	      
 	      Font fontAstro = this.getFontAstrologia().deriveFont(20f);
-	      
-	      Font fontTimes = new Font("TimesRoman", Font.BOLD, 14);
+
+		  //Font fontTimes = new Font("TimesRoman", Font.BOLD, 14);
+		  Font fontTimes = this.getFontRegular().deriveFont(Font.BOLD,14f);
 
 		  // Planetas
 	      for(int y = 0; y < 12; y++){
@@ -277,7 +293,8 @@ public class ChartDraw {
 				ptLetra.x - (BIG_DOT / 2) - PADDING,
 				ptLetra.y - (BIG_DOT / 2));
 
-			g.setFont(new Font("TimesRoman", Font.PLAIN , 13));
+			//g.setFont(new Font("TimesRoman", Font.PLAIN , 13));
+			g.setFont(this.getFontRegular().deriveFont(Font.PLAIN, 13f) );
 
 			String grau = c.getGg()+"°";
 			String minuto = c.getMm().toString()+"'";
@@ -299,21 +316,31 @@ public class ChartDraw {
 			}
 	}
 
-	public static Font getFontAstrologia() {
+	public static Font buildFontAstrologia() {
 		Font font = null;
-		String fName = "/fonts/AstroDotBasic.ttf";
 		URL arquivoFonte = ChartDraw.class.getClassLoader().getResource("fonts/AstroDotBasic.ttf");
 		try {
-			InputStream is = ChartDraw.class.getResourceAsStream(fName);
 			File file = new File(arquivoFonte.getFile());
 			font = Font.createFont(Font.TRUETYPE_FONT, file);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			System.err.println(arquivoFonte.getFile() + " nao carregada. Usando fonte serif.");
-			font = new Font("TimesRoman", Font.PLAIN, 12);
 		}
 		return font;
   	}
+
+	public static Font buildFontRegular() {
+		Font font = null;
+		URL arquivoFonte = ChartDraw.class.getClassLoader().getResource("fonts/Roboto-Regular.ttf");
+		try {
+			File file = new File(arquivoFonte.getFile());
+			font = Font.createFont(Font.TRUETYPE_FONT, file);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.err.println(arquivoFonte.getFile() + " nao carregada. Usando fonte serif.");
+		}
+		return font;
+	}
 
 	private Point angleToPoint(int x, int y, int angulo, int radius) {
 		double a = 2 * Math.PI * (angulo - 90) / 360;

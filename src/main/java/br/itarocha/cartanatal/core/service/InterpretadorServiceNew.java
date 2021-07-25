@@ -36,7 +36,7 @@ public class InterpretadorServiceNew {
     	List<Paragrafo> retorno = new ArrayList<>();
 
 		retorno.add(buildParagrafoImagem(arquivoImagemMapa, 400, 400));
-		retorno.add(buildParagrafoImagem(arquivoImagemAspectos, 350, 150));
+		retorno.add(buildParagrafoImagem(arquivoImagemAspectos, 450, 150));
 
 		retorno.addAll(buildCabecalho(cartaNatal.getDadosPessoais()));
 		retorno.addAll(buildIntroducao());
