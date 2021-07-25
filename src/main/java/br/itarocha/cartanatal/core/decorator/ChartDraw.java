@@ -14,12 +14,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static br.itarocha.cartanatal.core.service.ArquivosConstantes.ARQUIVO_CIDADES_BRASIL;
+import static br.itarocha.cartanatal.core.service.ArquivosConstantes.DIRETORIO_FONTS;
 
 @Service
 public class ChartDraw {
@@ -49,8 +53,45 @@ public class ChartDraw {
 
 	@PostConstruct
 	public void carregarFontes(){
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		Font[] fonts = ge.getAllFonts();
+		System.out.println("****************** LISTANDO FONTES **********************");
+		for(Font font : fonts){
+			System.out.print(font.getFontName() + " : ");
+			System.out.println(font.getFamily());
+		}
+		System.out.println("****************** FIM DA LISTAGEM DE FONTES **********************");
+
+
+		// String path = tempFile.getAbsolutePath();
+		//FontFactory.register(path);
+
+		//URL font_path = Thread.currentThread().getContextClassLoader().getResource("fontname");
+		//FontFactory.register(font_path.toString(), "test_font");
+		//FontFactory.getFont("LiberationSans", 8));
+		//fontAstrologia = loadFont("/fonts/AstroDotBasic.ttf"); //buildFontAstrologia();
+		//fontRegular = loadFont("/fonts/Roboto-Regular.ttf"); //buildFontRegular();
+
 		fontAstrologia = buildFontAstrologia();
 		fontRegular = buildFontRegular();
+
+	}
+
+	public Font loadFont(String fontName) {
+		File f = null;
+		try {
+			f = File.createTempFile("dang", "tmp");
+			assert f != null;
+			f.delete();
+			ClassLoader classLoader = getClass().getClassLoader();
+			Font font = Font.createFont(Font.TRUETYPE_FONT, classLoader.getResourceAsStream(fontName));
+			//font.deriveFont(105f);
+			System.out.println(font.getFontName());
+			return font;
+		} catch (IOException | FontFormatException e) {
+			e.printStackTrace();
+		}
+		return new Font("serif", Font.PLAIN, 24);
 	}
 
 	public Font getFontAstrologia(){
@@ -323,21 +364,65 @@ public class ChartDraw {
 			}
 	}
 
+	public static Font getFont(String name) {
+		Font font = null;
+		/*
+		if (cache != null) {
+			if ((font = cache.get(name)) != null) {
+				return font;
+			}
+		}
+		*/
+		String fName = "/fonts/" + name;
+		try {
+			InputStream is = ChartDraw.class.getResourceAsStream(fName);
+			font = Font.createFont(Font.TRUETYPE_FONT, is);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.err.println(fName + " not loaded.  Using serif font.");
+			font = new Font("serif", Font.PLAIN, 24);
+		}
+		return font;
+	}
+
 	public Font buildFontAstrologia() {
+		//String f = DIRETORIO_FONTS + "AstroDotBasic.ttf";
+		//URL url = this.getClass().getClassLoader().getResource(f);
 		Path arquivoFonte = Paths.get(FONTS_DIR, "AstroDotBasic.ttf");
 		try {
+			System.out.println("Tentando carregar fonte de Astrologia: "+arquivoFonte);
+			//File file = new File(url.getFile()); // arquivoFonte.toFile();
 			File file = arquivoFonte.toFile();
 			return Font.createFont(Font.TRUETYPE_FONT, file);
 		} catch (Exception ex) {
-			System.err.println(arquivoFonte.toFile() + " nao carregada. Usando fonte serif.");
+			System.err.println(arquivoFonte + " nao carregada. Usando fonte serif.");
 			ex.printStackTrace();
 		}
 		return null;
   	}
 
 	public Font buildFontRegular() {
+		//String f = DIRETORIO_FONTS + "Roboto-Regular.ttf";
+		//URL url = this.getClass().getClassLoader().getResource(f);
 		Path arquivoFonte = Paths.get(FONTS_DIR, "Roboto-Regular.ttf");
 		try {
+			System.out.println("Tentando carregar fonte de Regular: "+arquivoFonte);
+			//File file = new File(url.getFile()); // arquivoFonte.toFile();
+			File file = arquivoFonte.toFile();
+			System.out.println("Tentando carregar fonte de Regular: "+file.toPath());
+			return Font.createFont(Font.TRUETYPE_FONT, file);
+		} catch (Exception ex) {
+			System.err.println(arquivoFonte + " nao carregada. Usando fonte serif.");
+			ex.printStackTrace();
+		}
+		return null;
+	}
+
+  	/*
+	public Font buildFontRegular() {
+		Path arquivoFonte = Paths.get(FONTS_DIR, "Roboto-Regular.ttf");
+		try {
+			System.err.println("Tentando carregar fonte Regular: "+arquivoFonte.toAbsolutePath());
 			return Font.createFont(Font.TRUETYPE_FONT, arquivoFonte.toFile());
 		} catch (Exception ex) {
 			System.err.println(arquivoFonte.toFile() + " nao carregada. Usando fonte serif.");
@@ -345,6 +430,7 @@ public class ChartDraw {
 		}
 		return null;
 	}
+	*/
 
 	private Point angleToPoint(int x, int y, int angulo, int radius) {
 		double a = 2 * Math.PI * (angulo - 90) / 360;
