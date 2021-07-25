@@ -16,6 +16,7 @@ FROM openjdk:11-jre-slim
 COPY --from=build /home/app/target/*.jar /usr/local/lib/cartanatal.jar
 COPY --from=build /home/app/src/main/resources/book/*.json /usr/local/book/
 COPY --from=build /home/app/src/main/resources/ephe/*.* /usr/local/lib/ephe/
+COPY --from=build /home/app/src/main/resources/fonts/*.* /usr/local/lib/fonts/
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/usr/local/lib/cartanatal.jar"]
 

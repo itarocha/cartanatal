@@ -8,12 +8,15 @@ import br.itarocha.cartanatal.core.model.presenter.PlanetaSignoResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,10 +41,14 @@ public class ChartDraw {
 	@Value("${parametros.diretorioExportacao}")
 	private String EXPORT_DIRECTORY;
 
+	@Value("${parametros.diretorioFonts}")
+	private String FONTS_DIR;
+
 	private Font fontRegular = null;
 	private Font fontAstrologia = null;
 
-	public ChartDraw(){
+	@PostConstruct
+	public void carregarFontes(){
 		fontAstrologia = buildFontAstrologia();
 		fontRegular = buildFontRegular();
 	}
@@ -316,30 +323,27 @@ public class ChartDraw {
 			}
 	}
 
-	public static Font buildFontAstrologia() {
-		Font font = null;
-		URL arquivoFonte = ChartDraw.class.getClassLoader().getResource("fonts/AstroDotBasic.ttf");
+	public Font buildFontAstrologia() {
+		Path arquivoFonte = Paths.get(FONTS_DIR, "AstroDotBasic.ttf");
 		try {
-			File file = new File(arquivoFonte.getFile());
-			font = Font.createFont(Font.TRUETYPE_FONT, file);
+			File file = arquivoFonte.toFile();
+			return Font.createFont(Font.TRUETYPE_FONT, file);
 		} catch (Exception ex) {
+			System.err.println(arquivoFonte.toFile() + " nao carregada. Usando fonte serif.");
 			ex.printStackTrace();
-			System.err.println(arquivoFonte.getFile() + " nao carregada. Usando fonte serif.");
 		}
-		return font;
+		return null;
   	}
 
-	public static Font buildFontRegular() {
-		Font font = null;
-		URL arquivoFonte = ChartDraw.class.getClassLoader().getResource("fonts/Roboto-Regular.ttf");
+	public Font buildFontRegular() {
+		Path arquivoFonte = Paths.get(FONTS_DIR, "Roboto-Regular.ttf");
 		try {
-			File file = new File(arquivoFonte.getFile());
-			font = Font.createFont(Font.TRUETYPE_FONT, file);
+			return Font.createFont(Font.TRUETYPE_FONT, arquivoFonte.toFile());
 		} catch (Exception ex) {
+			System.err.println(arquivoFonte.toFile() + " nao carregada. Usando fonte serif.");
 			ex.printStackTrace();
-			System.err.println(arquivoFonte.getFile() + " nao carregada. Usando fonte serif.");
 		}
-		return font;
+		return null;
 	}
 
 	private Point angleToPoint(int x, int y, int angulo, int radius) {
