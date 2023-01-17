@@ -1,0 +1,174 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2023-01-17T23:42:49.896Z",
+  "__export_source": "insomnia.desktop.app:v2022.7.4",
+  "resources": [
+    {
+      "_id": "req_f9868fead8a24689837595ce75119748",
+      "parentId": "wrk_137a51a810af4dc2936ff78225387bf4",
+      "modified": 1673998165890,
+      "created": 1673995419893,
+      "url": "localhost:8089/api/mapa/",
+      "name": "Mapa Simples",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1673995419893,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "wrk_137a51a810af4dc2936ff78225387bf4",
+      "parentId": null,
+      "modified": 1673995419884,
+      "created": 1673995419884,
+      "name": "New Document",
+      "description": "",
+      "scope": "design",
+      "_type": "workspace"
+    },
+    {
+      "_id": "req_2032c65cced34bf9bb651a8109a3b8b9",
+      "parentId": "wrk_137a51a810af4dc2936ff78225387bf4",
+      "modified": 1673998080578,
+      "created": 1673998080578,
+      "url": "localhost:8089/api/mapa/single",
+      "name": "Mapa Exemplo",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"nome\": \"Itamar Rocha\",\n\t\"data_hora_nascimento\": \"1972-06-29T05:00:00\",\n\t\"cidade\": \"CAXIAS\",\n\t\"uf\": \"MA\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1673995419843,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_4c3b87fef04f4a8288695e64c649fd86",
+      "parentId": "wrk_137a51a810af4dc2936ff78225387bf4",
+      "modified": 1673998222773,
+      "created": 1673998213070,
+      "url": "localhost:8089/api/mapa/textfile",
+      "name": "Mapa Exemplo Textfile",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"nome\": \"Itamar Rocha\",\n\t\"data_hora_nascimento\": \"1972-06-29T05:00:00\",\n\t\"cidade\": \"CAXIAS\",\n\t\"uf\": \"MA\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1673995419793,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_2b9298d1c99c4445ba1de562b4481ffd",
+      "parentId": "wrk_137a51a810af4dc2936ff78225387bf4",
+      "modified": 1673998474238,
+      "created": 1673998464963,
+      "url": "localhost:8089/api/mapa/wordfile",
+      "name": "Mapa Exemplo WordFile",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"nome\": \"Itamar Rocha\",\n\t\"data_hora_nascimento\": \"1972-06-29T05:00:00\",\n\t\"cidade\": \"CAXIAS\",\n\t\"uf\": \"MA\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1673995419743,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "env_7ab6984d46f2fe4a043e8ff1c773f188eadb4401",
+      "parentId": "wrk_137a51a810af4dc2936ff78225387bf4",
+      "modified": 1673995419888,
+      "created": 1673995419888,
+      "name": "Base Environment",
+      "data": {},
+      "dataPropertyOrder": null,
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1673995419888,
+      "_type": "environment"
+    },
+    {
+      "_id": "jar_7ab6984d46f2fe4a043e8ff1c773f188eadb4401",
+      "parentId": "wrk_137a51a810af4dc2936ff78225387bf4",
+      "modified": 1673995419890,
+      "created": 1673995419890,
+      "name": "Default Jar",
+      "cookies": [],
+      "_type": "cookie_jar"
+    },
+    {
+      "_id": "spc_e81f6e9801b34d86b700a8535e21783c",
+      "parentId": "wrk_137a51a810af4dc2936ff78225387bf4",
+      "modified": 1673998894670,
+      "created": 1673995419885,
+      "fileName": "CartaNatal",
+      "contents": "",
+      "contentType": "yaml",
+      "_type": "api_spec"
+    },
+    {
+      "_id": "uts_3da8262e04f64106a92a7003315d24e7",
+      "parentId": "wrk_137a51a810af4dc2936ff78225387bf4",
+      "modified": 1673995419894,
+      "created": 1673995419894,
+      "name": "Example Test Suite",
+      "_type": "unit_test_suite"
+    }
+  ]
+}
