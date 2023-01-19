@@ -31,11 +31,11 @@ public class MapaBuilder {
 
 	private SweDate sweDate; 
 
-	private int[] aspectos_planetas = new int[18];
-	private double[] aspectos_posicoes = new double[18];
+	private final int[] aspectos_planetas = new int[18];
+	private final double[] aspectos_posicoes = new double[18];
 	private double[] casas= new double[23];
 	private SwissEph sw;
-	private double ayanamsa;
+	//private double ayanamsa;
 	
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	private static final int SID_METHOD = SweConst.SE_SIDM_LAHIRI;
@@ -54,19 +54,18 @@ public class MapaBuilder {
 	public Mapa build(DadosPessoais dadosPessoais, Cidade cidade) {
 		if (cidade != null) {
 			Mapa m = new Mapa(dadosPessoais.getNome(), dadosPessoais.getDataHoraNascimento(), cidade);
-			calcular(m); 
-			return m;
+			return calcular(m);
 		}
 		return null;
 	}
 	
 	// TODO: Deve retornar uma classe Mapa
-	private void calcular(Mapa mapa){
-		this.sweDate = new SweDate(mapa.getAnoUT(),mapa.getMesUT(),mapa.getDiaUT(), mapa.getHoraDouble() );
-		this.sweDate.setCalendarType(this.sweDate.SE_GREG_CAL, this.sweDate.SE_KEEP_DATE);
-		this.ayanamsa = this.sw.swe_get_ayanamsa_ut(this.sweDate.getJulDay());
+	private Mapa calcular(Mapa mapa){
+		sweDate = new SweDate(mapa.getAnoUT(),mapa.getMesUT(),mapa.getDiaUT(), mapa.getHoraDouble() );
+		sweDate.setCalendarType(SweDate.SE_GREG_CAL, SweDate.SE_KEEP_DATE);
+		double ayanamsa = this.sw.swe_get_ayanamsa_ut(sweDate.getJulDay());
 		
-		double deltaT = sweDate.getDeltaT(sweDate.getJulDay());
+		double deltaT = SweDate.getDeltaT(sweDate.getJulDay());
 		mapa.setDeltaTSec(this.sweDate.getDeltaT() * 86400);
 		mapa.setJulDay(this.sweDate.getJulDay()+deltaT);
 		
@@ -74,6 +73,7 @@ public class MapaBuilder {
 		buildCasas(mapa);
 		buildPlanetas(mapa);
 		buildAspectos(mapa);
+		return mapa;
 	}
 	
 	// Fabricando Cuspides
@@ -178,36 +178,6 @@ public class MapaBuilder {
 	        double posicao = x2[0];
 			
 	        enumPlaneta = EnumPlaneta.getByCodigo(index);
-//			pp = new PlanetaPosicao(enumPlaneta, posicao);
-//
-//			pp.setRetrogrado(isRetrogrado);
-//			pp.setLatitude(latitude);
-//			pp.setDistancia(distancia);
-//			pp.setDirecao(direcao);
-//			pp.setCasaDouble(casaDouble);
-//			mapa.getPosicoesPlanetas().add(pp);
-
-/*
-
-			int signo = (int)(casas[i] / 30);
-			String grau = Funcoes.grau(casas[i]);
-			String tmpGrau = grau.replace('.', '-');
-			String[] grauNaCasaGms = tmpGrau.split("-");
-			String grauNaCasa = Funcoes.grauNaCasa(casas[i]);
-			String tmp = grauNaCasa.replace('.', '-');
-			String[] gms = tmp.split("-");
-
-		this.enumPlaneta = enumPlaneta;
-		this.posicao = posicao;
-		int signo = (int)(posicao / 30);
-		this.enumSigno = EnumSigno.getByCodigo(signo);
-		this.angulo = new BigDecimal(posicao).setScale(4, RoundingMode.DOWN);
-		this.setGrau( Funcoes.grau(posicao) );
-		this.setGrauNaCasa( Funcoes.grauNaCasa(posicao) );
-
-
- */
-
 			mapa.getPosicoesPlanetas().add(buildPlanetaPosicao(
 					enumPlaneta,
 					posicao,
@@ -216,27 +186,6 @@ public class MapaBuilder {
 					distancia,
 					direcao,
 					isRetrogrado));
-		/*
-			mapa.getPosicoesPlanetas().add(
-					PlanetaPosicao.builder()
-							.enumPlaneta(enumPlaneta)
-							.posicao(posicao)
-							.angulo(BigDecimal.valueOf(posicao).setScale(4, RoundingMode.DOWN))
-							.retrogrado(isRetrogrado)
-							.latitude(latitude)
-							.distancia(distancia)
-							.direcao(direcao)
-							.casaDouble(casaDouble)
-							.casa((int) casaDouble)
-							.grauNaCasa(grauNaCasa)
-							.grau(grau)
-							.gnc(grauNaCasaGms[0])
-							.g(gms[0])
-							.m(gms[1])
-							.s(gms[2])
-							.build()
-			);
-		*/
 
 			aspectos_planetas[index] = enumPlaneta.getCodigo(); //planeta.getId();
 			aspectos_posicoes[index] = posicao; 			
@@ -247,11 +196,6 @@ public class MapaBuilder {
 		aspectos_posicoes[10] = casas[1];
 		
 		enumPlaneta = EnumPlaneta.getByCodigo(10);
-		/*
-		pp = new PlanetaPosicao(enumPlaneta, casas[1]);
-		pp.setCasaDouble(1);
-		mapa.getPosicoesPlanetas().add(pp);
-		*/
 		mapa.getPosicoesPlanetas().add(buildPlanetaPosicao(
 				enumPlaneta,
 				casas[1],
@@ -265,10 +209,6 @@ public class MapaBuilder {
 		aspectos_posicoes[11] = casas[10];
 
 		enumPlaneta = EnumPlaneta.getByCodigo(11);
-		//pp = new PlanetaPosicao(enumPlaneta, casas[10]);
-		//pp.setCasaDouble(10);
-		//mapa.getPosicoesPlanetas().add(pp);
-
 		mapa.getPosicoesPlanetas().add(buildPlanetaPosicao(
 				enumPlaneta,
 				casas[10],
@@ -327,11 +267,8 @@ public class MapaBuilder {
 				EnumAspecto aspecto = Funcoes.buildAspect(eA.getSigla(),eB.getSigla(),aspectos_posicoes[x], aspectos_posicoes[y]);
 				if (!isNull(aspecto)){
 					ItemAspecto item = new ItemAspecto();
-					
 					item.getPlanetaA().setEnumPlaneta(EnumPlaneta.getByCodigo(x));
-					
 					item.getPlanetaA().setPosicao(aspectos_posicoes[x]);
-
 					item.getPlanetaB().setEnumPlaneta(EnumPlaneta.getByCodigo(y));
 					item.getPlanetaB().setPosicao(aspectos_posicoes[y]);
 					
@@ -340,7 +277,6 @@ public class MapaBuilder {
 					item.setAspecto(aspecto);
 					item.getPlanetaA().setCoordenada(x);
 					item.getPlanetaB().setCoordenada(y);
-
 					item.getPlanetaA().setGrau(Funcoes.grau(aspectos_posicoes[x]));
 					item.getPlanetaB().setGrau(Funcoes.grau(aspectos_posicoes[y]));
 					
