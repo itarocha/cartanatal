@@ -1,9 +1,9 @@
 package br.itarocha.cartanatal.core.service;
 
+import br.itarocha.cartanatal.adapter.in.web.controller.dto.*;
 import br.itarocha.cartanatal.core.model.*;
 import br.itarocha.cartanatal.core.model.domain.*;
 import br.itarocha.cartanatal.core.model.interpretacao.*;
-import br.itarocha.cartanatal.core.model.presenter.*;
 import br.itarocha.cartanatal.core.util.Simbolos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

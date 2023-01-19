@@ -1,4 +1,4 @@
-package br.itarocha.cartanatal.core.model.presenter;
+package br.itarocha.cartanatal.adapter.in.web.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

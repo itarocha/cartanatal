@@ -4,7 +4,7 @@ import br.itarocha.cartanatal.core.decorator.ChartDraw;
 import br.itarocha.cartanatal.core.model.DadosPessoais;
 import br.itarocha.cartanatal.core.model.presenter.Paragrafo;
 import br.itarocha.cartanatal.core.service.*;
-import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
+import br.itarocha.cartanatal.adapter.in.web.controller.dto.CartaNatalResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

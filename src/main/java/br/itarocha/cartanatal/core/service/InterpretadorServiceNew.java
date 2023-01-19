@@ -1,5 +1,6 @@
 package br.itarocha.cartanatal.core.service;
 
+import br.itarocha.cartanatal.adapter.in.web.controller.dto.*;
 import br.itarocha.cartanatal.core.model.Casa;
 import br.itarocha.cartanatal.core.model.Pair;
 import br.itarocha.cartanatal.core.model.domain.*;

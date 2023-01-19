@@ -1,10 +1,10 @@
 package br.itarocha.cartanatal.core.decorator;
 
 import br.itarocha.cartanatal.core.model.domain.*;
-import br.itarocha.cartanatal.core.model.presenter.AspectoResponse;
-import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
-import br.itarocha.cartanatal.core.model.presenter.CuspideResponse;
-import br.itarocha.cartanatal.core.model.presenter.PlanetaSignoResponse;
+import br.itarocha.cartanatal.adapter.in.web.controller.dto.AspectoResponse;
+import br.itarocha.cartanatal.adapter.in.web.controller.dto.CartaNatalResponse;
+import br.itarocha.cartanatal.adapter.in.web.controller.dto.CuspideResponse;
+import br.itarocha.cartanatal.adapter.in.web.controller.dto.PlanetaSignoResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,15 +15,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static br.itarocha.cartanatal.core.service.ArquivosConstantes.ARQUIVO_CIDADES_BRASIL;
-import static br.itarocha.cartanatal.core.service.ArquivosConstantes.DIRETORIO_FONTS;
 
 @Service
 public class ChartDraw {

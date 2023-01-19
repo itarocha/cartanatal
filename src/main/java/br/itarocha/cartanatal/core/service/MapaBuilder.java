@@ -1,5 +1,7 @@
 package br.itarocha.cartanatal.core.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.logging.Logger;
 
 import br.itarocha.cartanatal.core.model.DadosPessoais;
@@ -88,7 +90,28 @@ public class MapaBuilder {
 		
 		//for (int i = 1; i < 21; i++){
 		for (int i = 1; i <= 12; i++){
-			mapa.getListaCuspides().add(new CuspideCasa(i, casas[i]));
+			//mapa.getListaCuspides().add(new CuspideCasa(i, casas[i]));
+			int signo = (int)(casas[i] / 30);
+			String grau = Funcoes.grau(casas[i]);
+			String tmpGrau = grau.replace('.', '-');
+			String[] grauNaCasaGms = tmpGrau.split("-");
+			String grauNaCasa = Funcoes.grauNaCasa(casas[i]);
+			String tmp = grauNaCasa.replace('.', '-');
+			String[] gms = tmp.split("-");
+			mapa.getListaCuspides().add(
+					CuspideCasa.builder()
+							.numero(i)
+							.posicao(casas[i])
+							.angulo(BigDecimal.valueOf(casas[i]).setScale(4, RoundingMode.DOWN))
+							.grau(grau)
+							.grauNaCasa(grauNaCasa)
+							.gnc(gms[0])
+							.g(grauNaCasaGms[0])
+							.m(gms[1])
+							.s(gms[2])
+							.enumSigno(EnumSigno.getByCodigo(signo))
+							.build()
+			);
 		}
 
 		int intGrauDef = 0;
@@ -155,14 +178,65 @@ public class MapaBuilder {
 	        double posicao = x2[0];
 			
 	        enumPlaneta = EnumPlaneta.getByCodigo(index);
-			pp = new PlanetaPosicao(enumPlaneta, posicao);
-			
-			pp.setRetrogrado(isRetrogrado);
-			pp.setLatitude(latitude);
-			pp.setDistancia(distancia);
-			pp.setDirecao(direcao);
-			pp.setCasaDouble(casaDouble);
-			mapa.getPosicoesPlanetas().add(pp);
+//			pp = new PlanetaPosicao(enumPlaneta, posicao);
+//
+//			pp.setRetrogrado(isRetrogrado);
+//			pp.setLatitude(latitude);
+//			pp.setDistancia(distancia);
+//			pp.setDirecao(direcao);
+//			pp.setCasaDouble(casaDouble);
+//			mapa.getPosicoesPlanetas().add(pp);
+
+/*
+
+			int signo = (int)(casas[i] / 30);
+			String grau = Funcoes.grau(casas[i]);
+			String tmpGrau = grau.replace('.', '-');
+			String[] grauNaCasaGms = tmpGrau.split("-");
+			String grauNaCasa = Funcoes.grauNaCasa(casas[i]);
+			String tmp = grauNaCasa.replace('.', '-');
+			String[] gms = tmp.split("-");
+
+		this.enumPlaneta = enumPlaneta;
+		this.posicao = posicao;
+		int signo = (int)(posicao / 30);
+		this.enumSigno = EnumSigno.getByCodigo(signo);
+		this.angulo = new BigDecimal(posicao).setScale(4, RoundingMode.DOWN);
+		this.setGrau( Funcoes.grau(posicao) );
+		this.setGrauNaCasa( Funcoes.grauNaCasa(posicao) );
+
+
+ */
+
+			mapa.getPosicoesPlanetas().add(buildPlanetaPosicao(
+					enumPlaneta,
+					posicao,
+					casaDouble,
+					latitude,
+					distancia,
+					direcao,
+					isRetrogrado));
+		/*
+			mapa.getPosicoesPlanetas().add(
+					PlanetaPosicao.builder()
+							.enumPlaneta(enumPlaneta)
+							.posicao(posicao)
+							.angulo(BigDecimal.valueOf(posicao).setScale(4, RoundingMode.DOWN))
+							.retrogrado(isRetrogrado)
+							.latitude(latitude)
+							.distancia(distancia)
+							.direcao(direcao)
+							.casaDouble(casaDouble)
+							.casa((int) casaDouble)
+							.grauNaCasa(grauNaCasa)
+							.grau(grau)
+							.gnc(grauNaCasaGms[0])
+							.g(gms[0])
+							.m(gms[1])
+							.s(gms[2])
+							.build()
+			);
+		*/
 
 			aspectos_planetas[index] = enumPlaneta.getCodigo(); //planeta.getId();
 			aspectos_posicoes[index] = posicao; 			
@@ -173,19 +247,76 @@ public class MapaBuilder {
 		aspectos_posicoes[10] = casas[1];
 		
 		enumPlaneta = EnumPlaneta.getByCodigo(10);
+		/*
 		pp = new PlanetaPosicao(enumPlaneta, casas[1]);
 		pp.setCasaDouble(1);
 		mapa.getPosicoesPlanetas().add(pp);
+		*/
+		mapa.getPosicoesPlanetas().add(buildPlanetaPosicao(
+				enumPlaneta,
+				casas[1],
+				1,
+				0,
+				0,
+				0,
+				false));
 
 		aspectos_planetas[11] = EnumPlaneta.getByCodigo(11).getCodigo();
 		aspectos_posicoes[11] = casas[10];
 
 		enumPlaneta = EnumPlaneta.getByCodigo(11);
-		pp = new PlanetaPosicao(enumPlaneta, casas[10]);
-		pp.setCasaDouble(10);
-		mapa.getPosicoesPlanetas().add(pp);
+		//pp = new PlanetaPosicao(enumPlaneta, casas[10]);
+		//pp.setCasaDouble(10);
+		//mapa.getPosicoesPlanetas().add(pp);
+
+		mapa.getPosicoesPlanetas().add(buildPlanetaPosicao(
+				enumPlaneta,
+				casas[10],
+				10,
+				0,
+				0,
+				0,
+				false));
 	}
-	
+
+	private PlanetaPosicao buildPlanetaPosicao(EnumPlaneta enumPlaneta,
+											   double posicao,
+											   double casaDouble,
+											   double latitude,
+											   double distancia,
+											   double direcao,
+											   boolean isRetrogrado
+											   ) {
+		String grau = Funcoes.grau(posicao);
+		String grauNaCasa =Funcoes.grauNaCasa(posicao);
+		String tmp = grauNaCasa.replace('.', '-');
+		String[] grauNaCasaGms = tmp.split("-");
+		String tmpGrau = grau.replace('.', '-');
+		String[] gms = tmpGrau.split("-");
+
+		int signo = (int)(posicao / 30);
+
+		return PlanetaPosicao.builder()
+				.enumPlaneta(enumPlaneta)
+				.enumSigno(EnumSigno.getByCodigo(signo))
+				.posicao(posicao)
+				.angulo(BigDecimal.valueOf(posicao).setScale(4, RoundingMode.DOWN))
+				.retrogrado(isRetrogrado)
+				.statusRetrogrado(isRetrogrado ? "R" : "D")
+				.latitude(latitude)
+				.distancia(distancia)
+				.direcao(direcao)
+				.casaDouble(casaDouble)
+				.casa((int) casaDouble)
+				.grauNaCasa(grauNaCasa)
+				.grau(grau)
+				.gnc(grauNaCasaGms[0])
+				.g(gms[0])
+				.m(gms[1])
+				.s(gms[2])
+				.build();
+	}
+
 	private void buildAspectos(Mapa mapa){
 		mapa.getListaAspectos().clear();
 		for (int x=0; x < 11; x++){

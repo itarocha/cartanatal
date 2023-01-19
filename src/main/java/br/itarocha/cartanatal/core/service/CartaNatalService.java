@@ -3,8 +3,8 @@ package br.itarocha.cartanatal.core.service;
 import br.itarocha.cartanatal.core.model.DadosPessoais;
 import br.itarocha.cartanatal.core.model.domain.Cidade;
 import br.itarocha.cartanatal.core.model.domain.Mapa;
-import br.itarocha.cartanatal.core.model.mapper.MapaMapper;
-import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
+import br.itarocha.cartanatal.adapter.in.web.controller.mapper.MapaMapper;
+import br.itarocha.cartanatal.adapter.in.web.controller.dto.CartaNatalResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

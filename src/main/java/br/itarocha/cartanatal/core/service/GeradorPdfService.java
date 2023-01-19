@@ -2,8 +2,8 @@ package br.itarocha.cartanatal.core.service;
 
 import br.itarocha.cartanatal.core.model.domain.EnumPlaneta;
 import br.itarocha.cartanatal.core.model.domain.EnumSigno;
-import br.itarocha.cartanatal.core.model.presenter.CartaNatalResponse;
-import br.itarocha.cartanatal.core.model.presenter.PlanetaSignoResponse;
+import br.itarocha.cartanatal.adapter.in.web.controller.dto.CartaNatalResponse;
+import br.itarocha.cartanatal.adapter.in.web.controller.dto.PlanetaSignoResponse;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;

@@ -1,7 +1,7 @@
-package br.itarocha.cartanatal.core.model.mapper;
+package br.itarocha.cartanatal.adapter.in.web.controller.mapper;
 
+import br.itarocha.cartanatal.adapter.in.web.controller.dto.*;
 import br.itarocha.cartanatal.core.model.domain.*;
-import br.itarocha.cartanatal.core.model.presenter.*;
 import br.itarocha.cartanatal.core.util.Funcoes;
 import org.springframework.stereotype.Component;
 
@@ -74,8 +74,8 @@ public class MapaMapper {
 
         return mapaQualidades;
     }
-    private Map<String, Integer> buildPolaridades(Mapa mapa) {
-        Map<String, Integer> mapaPolaridades = new HashMap<>();
+    private Map<String, Long> buildPolaridades(Mapa mapa) {
+        Map<String, Long> mapaPolaridades = new HashMap<>();
 
         Long totPositivas = mapa.getPosicoesPlanetas()
                 .stream()
@@ -86,8 +86,8 @@ public class MapaMapper {
                 .filter(pp -> EnumPolaridade.NEGATIVA.equals(pp.getEnumSigno().getPolaridade()) )
                 .count();
 
-        mapaPolaridades.put("Positivas", totPositivas.intValue());
-        mapaPolaridades.put("Negativas", totNegativas.intValue());
+        mapaPolaridades.put("Positivas", totPositivas);
+        mapaPolaridades.put("Negativas", totNegativas);
 
         return mapaPolaridades;
     }
@@ -128,6 +128,7 @@ public class MapaMapper {
                 .planeta(pp.getEnumPlaneta().getSigla())
                 .signo(pp.getEnumSigno().getSigla())
                 .casa(pp.getCasa())
+                .angulo(pp.getAngulo())
                 .grau(pp.getGrau())
                 .g360(Integer.parseInt(pp.getG()))
                 .gg(Integer.parseInt(pp.getGnc()))
@@ -147,18 +148,14 @@ public class MapaMapper {
     }
 
     private CuspideResponse cuspideCasaToCuspide(CuspideCasa c){
-        String g = c.getGrau();
-        String gnc = c.getGrauNaCasa();
-        gnc = gnc.replace('.', '-');
-        String[] gms = gnc.split("-");
-
         return CuspideResponse.builder()
                 .casa(c.getNumero())
                 .signo(c.getEnumSigno().getSigla())
-                .grau(g)
-                .gg(Integer.parseInt(gms[0]))
-                .mm(Integer.parseInt(gms[1]))
-                .ss(Integer.parseInt(gms[2]))
+                .angulo(c.getAngulo())
+                .grau(c.getGrau())
+                .gg(Integer.parseInt(c.getGnc()))
+                .mm(Integer.parseInt(c.getM()))
+                .ss(Integer.parseInt(c.getS()))
                 .descricao(String.format("%s%s%s", c.getGnc(), c.getEnumSigno().getSiglaCapitalized() , c.getM()))
                 .build();
     }
