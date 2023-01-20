@@ -18,7 +18,7 @@ public class CartaNatalService {
 	private BuscadorService buscadorService;
 
 	@Autowired
-	MapaBuilder mapaBuilder;
+	MapaService mapaBuilder;
 
 	public CartaNatalResponse buildMapa(DadosPessoais dadosPessoais) throws Exception{
 		Mapa retorno = null;

@@ -71,10 +71,10 @@ public class DecoradorMapa {
 					pp.getEnumPlaneta().getSigla(), 	// Planeta
 					pp.getEnumSigno().getSigla(),		// Signo
 					pp.getCasa(),
-					pp.getGrau(),
-					pp.getGnc(),			// gg 
-					pp.getM(),				// mm 
-					pp.getS()				// ss
+					pp.getLocalizacao().getGrau(),
+					pp.getLocalizacao().getGnc(),			// gg
+					pp.getLocalizacao().getM(),				// mm
+					pp.getLocalizacao().getS()				// ss
 					);
 		}
 		retorno =  "\"planetas_signos\":[\n"+
@@ -88,8 +88,8 @@ public class DecoradorMapa {
 		for (CuspideCasa c: mapa.getListaCuspides() ){
 			if (c.getNumero() > 12) { break; }
 			
-			String g = c.getGrau();
-			String gnc = c.getGrauNaCasa();
+			String g = c.getLocalizacao().getGrau();
+			String gnc = c.getLocalizacao().getGrauNaCasa();
 			gnc = gnc.replace('.', '-');
 			String[] gms = gnc.split("-");
 			

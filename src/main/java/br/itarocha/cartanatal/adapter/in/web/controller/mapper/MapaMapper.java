@@ -128,15 +128,15 @@ public class MapaMapper {
                 .planeta(pp.getEnumPlaneta().getSigla())
                 .signo(pp.getEnumSigno().getSigla())
                 .casa(pp.getCasa())
-                .angulo(pp.getAngulo())
-                .grau(pp.getGrau())
-                .g360(Integer.parseInt(pp.getG()))
-                .gg(Integer.parseInt(pp.getGnc()))
-                .mm(Integer.parseInt(pp.getM()))
-                .ss(Integer.parseInt(pp.getS()))
+                .angulo(pp.getLocalizacao().getAngulo())
+                .grau(pp.getLocalizacao().getGrau())
+                .g360(Integer.parseInt(pp.getLocalizacao().getG()))
+                .gg(Integer.parseInt(pp.getLocalizacao().getGnc()))
+                .mm(Integer.parseInt(pp.getLocalizacao().getM()))
+                .ss(Integer.parseInt(pp.getLocalizacao().getS()))
                 .direcao(pp.getStatusRetrogrado())
-                .descricao(String.format("%s%s%s%s", pp.getGnc(), pp.getEnumSigno().getSiglaCapitalized() ,
-                                                     pp.getM(), "R".equals(pp.getStatusRetrogrado()) ? "R" : " " ))
+                .descricao(String.format("%s%s%s%s", pp.getLocalizacao().getGnc(), pp.getEnumSigno().getSiglaCapitalized() ,
+                                                     pp.getLocalizacao().getM(), "R".equals(pp.getStatusRetrogrado()) ? "R" : " " ))
                 .build();
     }
 
@@ -151,12 +151,14 @@ public class MapaMapper {
         return CuspideResponse.builder()
                 .casa(c.getNumero())
                 .signo(c.getEnumSigno().getSigla())
-                .angulo(c.getAngulo())
-                .grau(c.getGrau())
-                .gg(Integer.parseInt(c.getGnc()))
-                .mm(Integer.parseInt(c.getM()))
-                .ss(Integer.parseInt(c.getS()))
-                .descricao(String.format("%s%s%s", c.getGnc(), c.getEnumSigno().getSiglaCapitalized() , c.getM()))
+                .angulo(c.getLocalizacao().getAngulo())
+                .grau(c.getLocalizacao().getGrau())
+                .gg(Integer.parseInt(c.getLocalizacao().getGnc()))
+                .mm(Integer.parseInt(c.getLocalizacao().getM()))
+                .ss(Integer.parseInt(c.getLocalizacao().getS()))
+                .descricao(String.format("%s%s%s", c.getLocalizacao().getGnc(),
+                        c.getEnumSigno().getSiglaCapitalized(),
+                        c.getLocalizacao().getM()))
                 .build();
     }
 

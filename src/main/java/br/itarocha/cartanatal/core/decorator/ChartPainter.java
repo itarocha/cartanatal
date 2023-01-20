@@ -150,7 +150,7 @@ public class ChartPainter {
 
 	    	  // Grau Signo
 	    	  g.setFont(fontTimes);
-	    	  g.drawString(	pp.getGnc() + "°" ,
+	    	  g.drawString(	pp.getLocalizacao().getGnc() + "°" ,
 	       				130 + w,
 	       				26 + (h * (y+1)) );
 	    	  
@@ -161,7 +161,7 @@ public class ChartPainter {
 		       				26 + (h * (y+1)) );
 	    	  
 	    	  g.setFont(fontTimes);
-	    	  g.drawString(	pp.getM()+"'" ,
+	    	  g.drawString(	pp.getLocalizacao().getM()+"'" ,
 	       				176 + w,
 	       				26 + (h * (y+1)) );
 	    	  
@@ -262,7 +262,10 @@ public class ChartPainter {
 		  if("asc".equalsIgnoreCase(pp.getEnumPlaneta().getSigla())) continue;
 		  if("mce".equalsIgnoreCase(pp.getEnumPlaneta().getSigla())) continue;
 
-		  ItemDesenhoMapa item = new ItemDesenhoMapa(pp.getEnumPlaneta().getLetra(), Integer.parseInt(pp.getG()), Integer.parseInt(pp.getGnc()), Integer.parseInt(pp.getM()));		  
+		  ItemDesenhoMapa item = new ItemDesenhoMapa(pp.getEnumPlaneta().getLetra(),
+				  Integer.parseInt(pp.getLocalizacao().getG()),
+				  Integer.parseInt(pp.getLocalizacao().getGnc()),
+				  Integer.parseInt(pp.getLocalizacao().getM()));
 		  lista.add(item);
 		  
 	  }
@@ -300,8 +303,8 @@ public class ChartPainter {
           
           g.setFont(new Font("TimesRoman", Font.PLAIN , 13));
           
-          String grau = c.getGnc()+"°";
-          String minuto = c.getM().toString()+"'";
+          String grau = c.getLocalizacao().getGnc()+"°";
+          String minuto = c.getLocalizacao().getM().toString()+"'";
           
           String txtAntes = grau;
           String txtDepois = minuto;

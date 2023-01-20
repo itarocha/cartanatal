@@ -9,8 +9,10 @@ import java.math.BigDecimal;
 @Getter
 public class CuspideCasa {
 	private int numero;
-	private double posicao;
 	private EnumSigno enumSigno;
+	private Localizacao localizacao;
+	/*
+	private double posicao;
 	private BigDecimal angulo;
 	private String grau;
 	private String grauNaCasa;
@@ -18,4 +20,5 @@ public class CuspideCasa {
 	private String g;
 	private String m;
 	private String s;
+	 */
 }

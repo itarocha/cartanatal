@@ -2,6 +2,8 @@ package br.itarocha.cartanatal.core.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import br.itarocha.cartanatal.core.model.DadosPessoais;
@@ -10,7 +12,6 @@ import br.itarocha.cartanatal.core.util.Funcoes;
 import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SweDate;
 import de.thmac.swisseph.SwissEph;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,17 +20,14 @@ import javax.annotation.PostConstruct;
 import static java.util.Objects.isNull;
 
 @Service
-public class MapaBuilder {
+public class MapaService {
 
 	@Value("${parametros.diretorioEphe}")
 	private String DIRETORIO_EPHE;
 
 	private static final Logger	log = Logger.getAnonymousLogger();
 
-	@Autowired
-	private BuscadorService buscadorService;
-
-	private SweDate sweDate; 
+	private SweDate sweDate;
 
 	private final int[] aspectos_planetas = new int[18];
 	private final double[] aspectos_posicoes = new double[18];
@@ -79,44 +77,33 @@ public class MapaBuilder {
 	// Fabricando Cuspides
 	// Depende do calculo das casas
 	private void buildCasas(Mapa mapa){
-		int sign;
+		//int sign;
 		mapa.getListaCuspides().clear();
-		
-		this.casas = this.getHouses(this.sw, 
+		this.casas = this.getHouses(this.sw,
 									mapa, 
 									sweDate.getJulDay(), 
 									mapa.getLatitude().Coordenada2Graus(),
 									mapa.getLongitude().Coordenada2Graus() );
-		
-		//for (int i = 1; i < 21; i++){
-		for (int i = 1; i <= 12; i++){
-			//mapa.getListaCuspides().add(new CuspideCasa(i, casas[i]));
-			int signo = (int)(casas[i] / 30);
-			String grau = Funcoes.grau(casas[i]);
-			String tmpGrau = grau.replace('.', '-');
-			String[] grauNaCasaGms = tmpGrau.split("-");
-			String grauNaCasa = Funcoes.grauNaCasa(casas[i]);
-			String tmp = grauNaCasa.replace('.', '-');
-			String[] gms = tmp.split("-");
-			mapa.getListaCuspides().add(
-					CuspideCasa.builder()
-							.numero(i)
-							.posicao(casas[i])
-							.angulo(BigDecimal.valueOf(casas[i]).setScale(4, RoundingMode.DOWN))
-							.grau(grau)
-							.grauNaCasa(grauNaCasa)
-							.gnc(gms[0])
-							.g(grauNaCasaGms[0])
-							.m(gms[1])
-							.s(gms[2])
-							.enumSigno(EnumSigno.getByCodigo(signo))
-							.build()
-			);
-		}
 
+		//var lasCasas = Arrays.stream(casas).skip(1).limit(12).boxed().collect(Collectors.toList());
+		//lasCasas.forEach(System.out::println);
+
+		AtomicInteger numeroCasa = new AtomicInteger(1);
+		Arrays.stream(casas)
+				.skip(1)
+				.limit(12)
+				.forEach(c -> {
+					int signo = (int)(c / 30);
+					mapa.getListaCuspides().add(
+							CuspideCasa.builder()
+									.numero(numeroCasa.getAndIncrement())
+									.localizacao(buildLocalizacao(c))
+									.enumSigno(EnumSigno.getByCodigo(signo))
+									.build());
+				});
 		int intGrauDef = 0;
     	if (!mapa.getListaCuspides().isEmpty()) {
-    		String grauDef = mapa.getListaCuspides().get(0).getGrau();
+    		String grauDef = mapa.getListaCuspides().get(0).getLocalizacao().getGrau();
     		grauDef = grauDef.replace('.', '-');
     		String[] gms = grauDef.split("-");
     		intGrauDef = Integer.parseInt(gms[0]);
@@ -227,20 +214,11 @@ public class MapaBuilder {
 											   double direcao,
 											   boolean isRetrogrado
 											   ) {
-		String grau = Funcoes.grau(posicao);
-		String grauNaCasa =Funcoes.grauNaCasa(posicao);
-		String tmp = grauNaCasa.replace('.', '-');
-		String[] grauNaCasaGms = tmp.split("-");
-		String tmpGrau = grau.replace('.', '-');
-		String[] gms = tmpGrau.split("-");
-
 		int signo = (int)(posicao / 30);
 
 		return PlanetaPosicao.builder()
 				.enumPlaneta(enumPlaneta)
 				.enumSigno(EnumSigno.getByCodigo(signo))
-				.posicao(posicao)
-				.angulo(BigDecimal.valueOf(posicao).setScale(4, RoundingMode.DOWN))
 				.retrogrado(isRetrogrado)
 				.statusRetrogrado(isRetrogrado ? "R" : "D")
 				.latitude(latitude)
@@ -248,10 +226,25 @@ public class MapaBuilder {
 				.direcao(direcao)
 				.casaDouble(casaDouble)
 				.casa((int) casaDouble)
-				.grauNaCasa(grauNaCasa)
+				.localizacao(buildLocalizacao(posicao))
+				.build();
+	}
+
+	private Localizacao buildLocalizacao(double position) {
+		String grau = Funcoes.grau(position);
+		String tmpGrau = grau.replace('.', '-');
+		String[] grauNaCasaGms = tmpGrau.split("-");
+		String grauNaCasa = Funcoes.grauNaCasa(position);
+		String tmp = grauNaCasa.replace('.', '-');
+		String[] gms = tmp.split("-");
+
+		return Localizacao.builder()
+				.posicao(position)
+				.angulo(BigDecimal.valueOf(position).setScale(4, RoundingMode.DOWN))
 				.grau(grau)
-				.gnc(grauNaCasaGms[0])
-				.g(gms[0])
+				.grauNaCasa(grauNaCasa)
+				.gnc(gms[0])
+				.g(grauNaCasaGms[0])
 				.m(gms[1])
 				.s(gms[2])
 				.build();
@@ -259,6 +252,7 @@ public class MapaBuilder {
 
 	private void buildAspectos(Mapa mapa){
 		mapa.getListaAspectos().clear();
+
 		for (int x=0; x < 11; x++){
 			for(int y=x+1; y < 12; y++){
 				EnumPlaneta eA = EnumPlaneta.getByCodigo(x);
