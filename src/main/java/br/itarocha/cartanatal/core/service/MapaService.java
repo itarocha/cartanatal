@@ -29,12 +29,10 @@ public class MapaService {
 	private final double[] aspectos_posicoes = new double[18];
 	private double[] casas = new double[23];
 
-	//private double ayanamsa;
-	
-	//private static final String FORMATO_DATA = "dd/MM/yyyy";
 	private static final int SID_METHOD = SweConst.SE_SIDM_LAHIRI;
 
 	public Mapa build(DadosPessoais dadosPessoais, Cidade cidade) {
+		System.out.println("SID_METHOD "+SID_METHOD);
 		if (cidade != null) {
 			Mapa m = new Mapa(dadosPessoais.getNome(), dadosPessoais.getDataHoraNascimento(), cidade);
 			return calcular(m);
@@ -52,15 +50,15 @@ public class MapaService {
 		mapa.setJulDay(this.sweDate.getJulDay()+deltaT);
 		
 		// Rigorosamente nesta ordem
-		buildCasas(mapa);
-		buildPlanetas(mapa);
+		buildCuspides(mapa);
+		buildPosicoesPlanetas(mapa);
 		buildAspectos(mapa);
 		return mapa;
 	}
 	
 	// Fabricando Cuspides
 	// Depende do calculo das casas
-	private void buildCasas(Mapa mapa){
+	private void buildCuspides(Mapa mapa){
 		//int sign;
 		mapa.getListaCuspides().clear();
 		this.casas = this.getHouses(this.swService.getSw(),
@@ -99,7 +97,7 @@ public class MapaService {
 	// x2[3] = velocidade do planeta em longitude // Se negativo, retrogrado
 	// x2[4] = velodicade em latitude
 	// x2[5] = velocidade em distancia???
-	private void buildPlanetas(Mapa mapa){
+	private void buildPosicoesPlanetas(Mapa mapa){
 		long iflag, iflgret;
 		EnumPlaneta enumPlaneta;
 		//PlanetaPosicao pp;

@@ -23,7 +23,7 @@ public class SWService {
         try {
             this.sw = new SwissEph(DIRETORIO_EPHE);
         } catch (Exception e) {
-            System.out.println("NÃO FOI POSSÍVEL CARREGAR ARQUIVOS DO PATH "+DIRETORIO_EPHE);
+            log.info("NÃO FOI POSSÍVEL CARREGAR ARQUIVOS DO PATH "+DIRETORIO_EPHE);
             throw e;
         }
     }
