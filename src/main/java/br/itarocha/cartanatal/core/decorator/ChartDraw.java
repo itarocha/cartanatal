@@ -50,6 +50,7 @@ public class ChartDraw {
 	@PostConstruct
 	public void carregarFontes(){
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		/*
 		Font[] fonts = ge.getAllFonts();
 		System.out.println("****************** LISTANDO FONTES **********************");
 		for(Font font : fonts){
@@ -57,7 +58,7 @@ public class ChartDraw {
 			System.out.println(font.getFamily());
 		}
 		System.out.println("****************** FIM DA LISTAGEM DE FONTES **********************");
-
+		*/
 
 		// String path = tempFile.getAbsolutePath();
 		//FontFactory.register(path);

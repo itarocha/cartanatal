@@ -12,6 +12,7 @@ import br.itarocha.cartanatal.core.util.Funcoes;
 import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SweDate;
 import de.thmac.swisseph.SwissEph;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,35 +20,24 @@ import javax.annotation.PostConstruct;
 
 import static java.util.Objects.isNull;
 
+@RequiredArgsConstructor
 @Service
 public class MapaService {
 
-	@Value("${parametros.diretorioEphe}")
-	private String DIRETORIO_EPHE;
-
-	private static final Logger	log = Logger.getAnonymousLogger();
+	private final SWService swService;
 
 	private SweDate sweDate;
 
+	private static final Logger	log = Logger.getAnonymousLogger();
+
 	private final int[] aspectos_planetas = new int[18];
 	private final double[] aspectos_posicoes = new double[18];
-	private double[] casas= new double[23];
-	private SwissEph sw;
+	private double[] casas = new double[23];
+
 	//private double ayanamsa;
 	
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	private static final int SID_METHOD = SweConst.SE_SIDM_LAHIRI;
-
-	@PostConstruct
-	public void loadDependencies(){
-		log.info("CARREGANDO PATH: "+DIRETORIO_EPHE);
-		try {
-			sw = new SwissEph(DIRETORIO_EPHE);
-		} catch (Exception e) {
-			System.out.println("NÃO FOI POSSÍVEL CARREGAR ARQUIVOS DO PATH "+DIRETORIO_EPHE);
-			throw e;
-		}
-	}
 
 	public Mapa build(DadosPessoais dadosPessoais, Cidade cidade) {
 		if (cidade != null) {
@@ -57,11 +47,10 @@ public class MapaService {
 		return null;
 	}
 	
-	// TODO: Deve retornar uma classe Mapa
 	private Mapa calcular(Mapa mapa){
 		sweDate = new SweDate(mapa.getAnoUT(),mapa.getMesUT(),mapa.getDiaUT(), mapa.getHoraDouble() );
 		sweDate.setCalendarType(SweDate.SE_GREG_CAL, SweDate.SE_KEEP_DATE);
-		double ayanamsa = this.sw.swe_get_ayanamsa_ut(sweDate.getJulDay());
+		double ayanamsa = this.swService.getSw().swe_get_ayanamsa_ut(sweDate.getJulDay());
 		
 		double deltaT = SweDate.getDeltaT(sweDate.getJulDay());
 		mapa.setDeltaTSec(this.sweDate.getDeltaT() * 86400);
@@ -79,14 +68,11 @@ public class MapaService {
 	private void buildCasas(Mapa mapa){
 		//int sign;
 		mapa.getListaCuspides().clear();
-		this.casas = this.getHouses(this.sw,
+		this.casas = this.getHouses(this.swService.getSw(),
 									mapa, 
 									sweDate.getJulDay(), 
 									mapa.getLatitude().Coordenada2Graus(),
 									mapa.getLongitude().Coordenada2Graus() );
-
-		//var lasCasas = Arrays.stream(casas).skip(1).limit(12).boxed().collect(Collectors.toList());
-		//lasCasas.forEach(System.out::println);
 
 		AtomicInteger numeroCasa = new AtomicInteger(1);
 		Arrays.stream(casas)
@@ -135,13 +121,13 @@ public class MapaService {
 
 		mapa.getPosicoesPlanetas().clear();
 		
-		iflgret = sw.swe_calc(te, SweConst.SE_ECL_NUT, (int)iflag, x, serr);
+		iflgret = this.swService.getSw().swe_calc(te, SweConst.SE_ECL_NUT, (int)iflag, x, serr);
 		
 		// O ultimo era SE_CHIRON
 		for(int index = 0; index <= 9; index++){
 			//Planeta planeta = mapPlanetas.get(xis);
 			
-			iflgret = sw.swe_calc(te, index, (int)iflag, x2, serr);
+			iflgret = this.swService.getSw().swe_calc(te, index, (int)iflag, x2, serr);
 			// if there is a problem, a negative value is returned and an errpr message is in serr.
 			if (iflgret < 0)
 				System.out.print("error: "+serr.toString()+"\n");
@@ -157,7 +143,7 @@ public class MapaService {
 			double _armc = mapa.getSideralTime(); // ok
 			double _eps_true = x[0];
 			
-	        double casaDouble = sw.swe_house_pos(_armc, _geolat, _eps_true, 'P', x2, serr);
+	        double casaDouble = this.swService.getSw().swe_house_pos(_armc, _geolat, _eps_true, 'P', x2, serr);
 
 	        double latitude = x2[1];
 	        double distancia = x2[2];
