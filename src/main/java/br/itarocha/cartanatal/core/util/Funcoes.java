@@ -2,6 +2,7 @@ package br.itarocha.cartanatal.core.util;
 
 import br.itarocha.cartanatal.core.model.domain.EnumAspecto;
 
+import java.math.BigDecimal;
 import java.text.Normalizer;
 import java.util.TimeZone;
 
@@ -25,8 +26,7 @@ public class Funcoes {
 	
 	public static String grauNaCasa(double d){
 		//return grau(d % 30);
-
-		int[] g = grauToArray(d % 30);
+		int[] g = grauNaCasaToArray(d);
 		//return String.format("%3d� %02d' %02.0f\"", g[0], g[1], g[2]);
 		return String.format("%02d.%02d.%02d", g[0], g[1], g[2]);
 	}
@@ -40,22 +40,38 @@ public class Funcoes {
 	public static int[] grauToArray(double d){
 		int[] retorno = new int[3];
 
-		d = Math.abs(d);
-		d += 0.5/3600./10000.;	// round to 1/1000 of a second
-		int deg = (int) d;
-		d = (d - deg) * 60;
-		int min = (int) d;
-		d = (d - min) * 60;
-		int sec = (int)d;
+		int g = (int)d;
+		double mDouble = (d - g) * 60;
+		int m = (int)mDouble;
 
-		retorno[0] = deg;
-		retorno[1] = min;
-		retorno[2] = sec;
-		
+		double sDouble =  (mDouble - m) * 60;
+		int s = (int)Math.round(sDouble);
+
+		retorno[0] = g;
+		retorno[1] = m;
+		retorno[2] = s;
+
 		return retorno;
 	}
-	
-    public static String signGlyphFromIndex(int i) {
+
+	public static int[] grauNaCasaToArray(double d){
+		int[] retorno = new int[3];
+
+		int g = (int)d;
+		double mDouble = (d - g) * 60;
+		int m = (int)mDouble;
+
+		double sDouble =  (mDouble - m) * 60;
+		int s = (int)Math.round(sDouble);
+
+		retorno[0] = g % 30;
+		retorno[1] = m;
+		retorno[2] = s;
+
+		return retorno;
+	}
+
+	public static String signGlyphFromIndex(int i) {
         String c;
         switch (i) {
             case 0: c = "AR"; break;

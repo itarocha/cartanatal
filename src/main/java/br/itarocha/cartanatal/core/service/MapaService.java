@@ -223,7 +223,7 @@ public class MapaService {
 
 		return Localizacao.builder()
 				.posicao(position)
-				.angulo(BigDecimal.valueOf(position).setScale(4, RoundingMode.DOWN))
+				.angulo(BigDecimal.valueOf(position).setScale(8, RoundingMode.DOWN))
 				.grau(grau)
 				.grauNaCasa(grauNaCasa)
 				.gnc(gms[0])
