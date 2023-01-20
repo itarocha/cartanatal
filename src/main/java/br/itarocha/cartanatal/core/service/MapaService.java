@@ -4,21 +4,18 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
+import static java.util.Objects.isNull;
 
-import br.itarocha.cartanatal.core.model.DadosPessoais;
-import br.itarocha.cartanatal.core.model.domain.*;
-import br.itarocha.cartanatal.core.util.Funcoes;
 import de.thmac.swisseph.SweConst;
 import de.thmac.swisseph.SweDate;
 import de.thmac.swisseph.SwissEph;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import br.itarocha.cartanatal.core.model.DadosPessoais;
+import br.itarocha.cartanatal.core.model.domain.*;
+import br.itarocha.cartanatal.core.util.Funcoes;
 
-import static java.util.Objects.isNull;
 
 @RequiredArgsConstructor
 @Service
@@ -28,15 +25,13 @@ public class MapaService {
 
 	private SweDate sweDate;
 
-	private static final Logger	log = Logger.getAnonymousLogger();
-
 	private final int[] aspectos_planetas = new int[18];
 	private final double[] aspectos_posicoes = new double[18];
 	private double[] casas = new double[23];
 
 	//private double ayanamsa;
 	
-	private static final String FORMATO_DATA = "dd/MM/yyyy";
+	//private static final String FORMATO_DATA = "dd/MM/yyyy";
 	private static final int SID_METHOD = SweConst.SE_SIDM_LAHIRI;
 
 	public Mapa build(DadosPessoais dadosPessoais, Cidade cidade) {
@@ -107,17 +102,18 @@ public class MapaService {
 	private void buildPlanetas(Mapa mapa){
 		long iflag, iflgret;
 		EnumPlaneta enumPlaneta;
-		PlanetaPosicao pp;
+		//PlanetaPosicao pp;
 		iflag = SweConst.SEFLG_SPEED;
 
 		double tjd, te;
 		tjd=sweDate.getJulDay();
 		te = tjd + sweDate.getDeltaT(tjd);
-		double x[]=new double[6];
-		double x2[]=new double[6];
-		StringBuffer serr=new StringBuffer();
-		boolean isRetrogrado = false;
-		int idxpos = -1;
+
+		double[] x = new double[6];
+		double[] x2 = new double[6];
+		StringBuffer serr= new StringBuffer();
+		boolean isRetrogrado; // = false;
+		//int idxpos = -1;
 
 		mapa.getPosicoesPlanetas().clear();
 		
@@ -130,9 +126,9 @@ public class MapaService {
 			iflgret = this.swService.getSw().swe_calc(te, index, (int)iflag, x2, serr);
 			// if there is a problem, a negative value is returned and an errpr message is in serr.
 			if (iflgret < 0)
-				System.out.print("error: "+serr.toString()+"\n");
+				System.out.print("error: "+serr+"\n");
 			else if (iflgret != iflag)
-				System.out.print("warning: iflgret != iflag. "+serr.toString()+"\n");
+				System.out.print("warning: iflgret != iflag. "+serr+"\n");
 		  
 			//print the coordinates
 			//house = (sign + 12 - signoAscendente) % 12 +1;
@@ -293,16 +289,13 @@ public class MapaService {
         double[] xx = new double[13];
         double[] yy = new double[10];
         double[] zz = new double[23];
-        int flag = sw.swe_houses(jdnr, SweConst.SEFLG_SPEED, lat, lon, 'P', xx, yy);
+
+		sw.swe_houses(jdnr, SweConst.SEFLG_SPEED, lat, lon, 'P', xx, yy);
         
         mapa.setSideralTime(yy[2]);
-        
-        for (int i = 0; i < 13; i++) {
-            zz[i] = xx[i];
-        }
-        for (int i = 0; i < 10; i++) {
-            zz[i + 13] = yy[i];
-        }
+
+		System.arraycopy(xx, 0, zz, 0, 13);
+		System.arraycopy(yy, 0, zz, 13, 10);
         return zz;
     }
 }
