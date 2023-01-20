@@ -25,8 +25,6 @@ public class MapaService {
 
 	private SweDate sweDate;
 
-	private final int[] aspectos_planetas = new int[18];
-	private final double[] aspectos_posicoes = new double[18];
 	private double[] casas = new double[23];
 
 	private static final int SID_METHOD = SweConst.SE_SIDM_LAHIRI;
@@ -51,8 +49,8 @@ public class MapaService {
 		
 		// Rigorosamente nesta ordem
 		buildCuspides(mapa);
-		buildPosicoesPlanetas(mapa);
-		buildAspectos(mapa);
+		double[] aspectos_pos = buildPosicoesPlanetas(mapa);
+		buildAspectos(mapa, aspectos_pos);
 		return mapa;
 	}
 	
@@ -97,14 +95,17 @@ public class MapaService {
 	// x2[3] = velocidade do planeta em longitude // Se negativo, retrogrado
 	// x2[4] = velodicade em latitude
 	// x2[5] = velocidade em distancia???
-	private void buildPosicoesPlanetas(Mapa mapa){
+	private double[] buildPosicoesPlanetas(Mapa mapa){
+		final int[] aspectos_planetas = new int[18];
+		final double[] aspectos_posicoes = new double[18];
+
 		long iflag, iflgret;
 		EnumPlaneta enumPlaneta;
 		//PlanetaPosicao pp;
 		iflag = SweConst.SEFLG_SPEED;
 
 		double tjd, te;
-		tjd=sweDate.getJulDay();
+		tjd = sweDate.getJulDay();
 		te = tjd + sweDate.getDeltaT(tjd);
 
 		double[] x = new double[6];
@@ -184,6 +185,8 @@ public class MapaService {
 				0,
 				0,
 				false));
+
+		return aspectos_posicoes;
 	}
 
 	private PlanetaPosicao buildPlanetaPosicao(EnumPlaneta enumPlaneta,
@@ -230,7 +233,7 @@ public class MapaService {
 				.build();
 	}
 
-	private void buildAspectos(Mapa mapa){
+	private void buildAspectos(Mapa mapa, double[] aspectos_posicoes){
 		mapa.getListaAspectos().clear();
 
 		for (int x=0; x < 11; x++){
@@ -238,7 +241,7 @@ public class MapaService {
 				EnumPlaneta eA = EnumPlaneta.getByCodigo(x);
 				EnumPlaneta eB = EnumPlaneta.getByCodigo(y);
 				
-				EnumAspecto aspecto = Funcoes.buildAspect(eA.getSigla(),eB.getSigla(),aspectos_posicoes[x], aspectos_posicoes[y]);
+				EnumAspecto aspecto = Funcoes.buildAspect(eA.getSigla(),eB.getSigla(), aspectos_posicoes[x], aspectos_posicoes[y]);
 				if (!isNull(aspecto)){
 					ItemAspecto item = new ItemAspecto();
 					item.getPlanetaA().setEnumPlaneta(EnumPlaneta.getByCodigo(x));
@@ -257,7 +260,7 @@ public class MapaService {
 					mapa.getListaAspectos().add(item);
 				}
 			}
-		} // end aspecto
+		}
 	}
 	
     /// <summary>
