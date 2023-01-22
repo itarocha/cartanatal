@@ -22,6 +22,7 @@ public class MapaSimplesController {
     private static final String FILE_NAME_DOC = "mapa.docx";
 
     private final MapaService mapaService;
+    private final GeradorTextoService geradorTextoService;
     private final BuscadorService buscadorService;
     private final MapaMapper mapper;
 
@@ -33,6 +34,7 @@ public class MapaSimplesController {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Cidade inválida");
         }
         Mapa mapa = mapaService.build(dadosPessoais, cidade);
+        geradorTextoService.display(mapa);
         CartaNatalResponse response = mapper.toCartaNatal(mapa);
         return ResponseEntity.ok(response);
     }
