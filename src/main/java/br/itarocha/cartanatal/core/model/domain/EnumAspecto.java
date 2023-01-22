@@ -4,11 +4,11 @@ import java.util.Arrays;
 
 public enum EnumAspecto {
 
-	CJ("cj","m","Conjunção", 0, 10),
-	OP("op","n","Oposição", 180, 10 ),
-	QD("qd","o","Quadratura", 90, 9),
-	TG("tg","p","Trígono", 120, 8),
-	SX("sx","q","Sextil", 60, 5);
+	CJ("cj","m","Conjunção", 0, 9),
+	OP("op","n","Oposição", 180, 8 ),
+	QD("qd","o","Quadratura", 90, 10),
+	TG("tg","p","Trígono", 120, 9),
+	SX("sx","q","Sextil", 60, 6);
 	
 	private String sigla;
 	private String letra;
@@ -45,7 +45,8 @@ public enum EnumAspecto {
 	public int getOrbita() { return this.orbita; }
 
 	public static EnumAspecto getBySigla(String sigla) {
-		return Arrays.stream(EnumAspecto.values()).filter(x -> x.getSigla().equalsIgnoreCase(sigla.toLowerCase()))
+		return Arrays.stream(EnumAspecto.values())
+				.filter(x -> x.getSigla().equalsIgnoreCase(sigla.toLowerCase()))
 				.findFirst()
 				.orElse(EnumAspecto.CJ);
 	}

@@ -111,15 +111,17 @@ public class DecoradorMapa {
 	private String displayAspectos(){
 		String retorno = "";
 		for(ItemAspecto ite : mapa.getListaAspectos()){
-			PlanetaAspecto pA = ite.getPlanetaA();
-			PlanetaAspecto pB = ite.getPlanetaB();
+			//PlanetaAspecto pA = ite.getPlanetaA();
+			//PlanetaAspecto pB = ite.getPlanetaB();
 			
 			retorno += String.format("{\"planeta_origem\":\"%s\", \"planeta_destino\":\"%s\", \"aspecto\":\"%s\", \"x\":\"%s\", \"y\":\"%s\"},\n",
-					pA.getEnumPlaneta().getSigla(), 
-					pB.getEnumPlaneta().getSigla(),
+					ite.getPlanetaOrigem(), // pA.getEnumPlaneta().getSigla(),
+					ite.getPlanetaDestino(), //pB.getEnumPlaneta().getSigla(),
 					ite.getAspecto(),
-					pA.getCoordenada(),
-					pB.getCoordenada()
+					ite.getX(),
+					ite.getY()
+					//pA.getCoordenada(),
+					//pB.getCoordenada()
 					);
 		}
 		retorno = "\"aspectos\":[\n"+

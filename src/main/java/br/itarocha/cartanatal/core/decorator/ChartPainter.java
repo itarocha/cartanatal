@@ -188,8 +188,8 @@ public class ChartPainter {
 
 	      // Aspectos
 	      for (ItemAspecto ite : mapa.getListaAspectos()) {
-	    	  int x = ite.getPlanetaA().getCoordenada();
-	    	  int y = ite.getPlanetaB().getCoordenada();
+	    	  int x = ite.getX();
+	    	  int y = ite.getY();
 	    	  EnumAspecto aspecto = ite.getAspecto();
 	    	  
 	    	  g.drawString(aspecto.getLetra(), 

@@ -14,11 +14,30 @@ public class AspectoResponse {
     private String planetaDestino;
 
     @JsonProperty(index = 3)
-    private String aspecto;
+    private double planetaOrigemAngulo;
 
     @JsonProperty(index = 4)
-    private Integer x;
+    private double planetaDestinoAngulo;
 
     @JsonProperty(index = 5)
+    private String aspecto;
+
+    @JsonProperty(index = 6)
+    private double orbe;
+
+    @JsonProperty(index = 7)
+    private int orbeGrau;
+
+    @JsonProperty(index = 8)
+    private int orbeMinuto;
+
+    @JsonProperty(index = 9)
+    private String orbeDescricao;
+
+    @JsonProperty(index = 10)
+    private Integer x;
+
+    @JsonProperty(index = 11)
     private Integer y;
+
 }

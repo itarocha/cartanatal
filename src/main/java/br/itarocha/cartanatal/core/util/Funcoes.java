@@ -1,9 +1,14 @@
 package br.itarocha.cartanatal.core.util;
 
+import br.itarocha.cartanatal.core.model.AspectoOrbe;
 import br.itarocha.cartanatal.core.model.domain.EnumAspecto;
+import br.itarocha.cartanatal.core.model.domain.EnumPlaneta;
+import br.itarocha.cartanatal.core.model.domain.ItemAspecto;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.Normalizer;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class Funcoes {
@@ -71,6 +76,23 @@ public class Funcoes {
 		return retorno;
 	}
 
+	public static int[] grauNaCasaTruncadoToArray(double d){
+		int[] gmc = grauNaCasaToArray(d);
+		if (gmc[2] >= 30){
+			gmc[2] = 0;
+			gmc[1]++;
+			if (gmc[1] == 0){
+				gmc[0]++;
+			}
+		}
+		if (gmc[1] >= 60){
+			gmc[1] = 0;
+			gmc[0]++;
+		}
+		gmc[0] = gmc[0] % 30;
+		return gmc;
+	}
+
 	public static String signGlyphFromIndex(int i) {
         String c;
         switch (i) {
@@ -91,22 +113,116 @@ public class Funcoes {
         return c;
     }
 
-	public static EnumAspecto buildAspect(String planetaA, String planetaB, double a, double b){
-		if (Math.abs(b-a) > 190) {
-			if (b < a) b += 360;
-		}
-		double resultado = Math.abs(b-a);
+	public static ItemAspecto buildAspect(EnumPlaneta pA, EnumPlaneta pB, double a, double b, int x, int y){
+		double minDist = minDistance(a, b);
 
-		EnumAspecto aspecto = EnumAspecto.getByAngulo(resultado);
-		/*
-		System.out.println(String.format("%s - %s [%s] %s %s => %s",planetaA, planetaB,
-				aspecto == null ? "--" : aspecto.getSigla(),
-				new DecimalFormat("000.0000").format(a),
-				new DecimalFormat("000.0000").format(b),
-				new DecimalFormat("000.0000").format(resultado)
-		));
-		 */
-		return aspecto;
+		String planetaA = pA.getSigla();
+		String planetaB = pB.getSigla();
+
+		// Para teste, desmarque
+		// _aspectos(planetaA, planetaB, a, b);
+
+		EnumAspecto enumAspecto = EnumAspecto.getByAngulo(minDist);
+
+		if (Objects.nonNull(enumAspecto)){
+			double orbe = enumAspecto.getGrau() - minDist;
+			int[] gnc = grauNaCasaTruncadoToArray(Math.abs(orbe));
+
+			return ItemAspecto.builder()
+					.aspecto(enumAspecto)
+					.planetaOrigem(planetaA)
+					.planetaDestino(planetaB)
+					.planetaOrigemAngulo(a)
+					.planetaDestinoAngulo(b)
+					.orbe(orbe)
+					.orbeGrau(gnc[0])
+					.orbeMinuto(gnc[1])
+					.orbeDescricao(String.format("%02d°%02d", gnc[0], gnc[1]))
+					//.flag()
+					.x(x)
+					.y(y)
+					.build();
+		}
+		return null;
 	}
-    
+
+	private static void _aspectos(String planetaA, String planetaB, double a, double b){
+		double minDist = minDistance(a, b);
+
+		AspectoOrbe aspecto = buscarAspecto(minDist);
+		if ( !"".equals(aspecto.getAspecto()) ){
+			int gnc[] = {0,0,0};
+			if (aspecto.getOrbe() != 0.0) {
+				gnc = grauNaCasaTruncadoToArray(Math.abs(aspecto.getOrbe()));
+			}
+			System.out.println(planetaA  + " "+aspecto.getAspecto() + " " + planetaB +
+					" " + String.format("%02d°%02d",gnc[0],gnc[1] ) +
+					" " + BigDecimal.valueOf(a).setScale(6, RoundingMode.HALF_UP) +
+					" " + BigDecimal.valueOf(b).setScale(6, RoundingMode.HALF_UP) +
+					" minDist: "+ BigDecimal.valueOf(minDist).setScale(6, RoundingMode.HALF_UP));
+		}
+	}
+
+	private static AspectoOrbe buscarAspecto(double diff){
+		var dif = (int) diff;
+		// TODO flag calculando errado
+		String flag = "";
+
+		if ( (dif >= 172) && (dif <= 188) ){
+			flag = diff < 180 ? "s" : "a";
+			return AspectoOrbe.builder()
+					.aspecto("OP")
+					.orbe(diff - 180)
+					.flag(flag)
+					.build();
+		} else if ( (dif >= 111) && (dif <= 129) ){
+			flag = diff > 120 ? "s" : "a";
+			return AspectoOrbe.builder()
+					.aspecto("TG")
+					.orbe(diff - 120)
+					.flag(flag)
+					.build();
+		} else if ( (dif >= 54) && (dif <= 66) ){
+			flag = diff < 60 ? "s" : "a";
+			return AspectoOrbe.builder()
+					.aspecto("SX")
+					.orbe(diff - 60)
+					.flag(flag)
+					.build();
+		} else if ( (dif >= 80) && (dif <= 99) ){
+			flag = diff < 90 ? "s" : "a";
+			return AspectoOrbe.builder()
+					.aspecto("QD")
+					.orbe(diff - 90)
+					.flag(flag)
+					.build();
+		} else if ( (dif >= -9) && (dif <= 9) ){
+			flag = diff > 0 ? "s" : "a";
+			return AspectoOrbe.builder()
+					.aspecto("CJ")
+					.orbe(diff)
+					.flag(flag)
+					.build();
+		}
+		return AspectoOrbe.builder().aspecto("").orbe(0).build();
+	}
+
+	private static double minDistance(double deg1, double deg2)
+	{
+		double r;
+
+		r = Math.abs(deg1-deg2);
+		return r <= 180.0 ? r : 360.0 - r;
+	}
+
+	private static double minDifference(double deg1, double deg2)
+	{
+		double r;
+		r = deg2 - deg1;
+		if (Math.abs(r) < 180.0) {
+			return r;
+		}
+		return r >= 0 ? r - 360.0 : r + 360.0;
+	}
+
 }

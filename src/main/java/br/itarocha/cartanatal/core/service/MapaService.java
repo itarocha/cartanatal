@@ -3,6 +3,7 @@ package br.itarocha.cartanatal.core.service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import static java.util.Objects.isNull;
 
@@ -240,8 +241,17 @@ public class MapaService {
 			for(int y=x+1; y < 12; y++){
 				EnumPlaneta eA = EnumPlaneta.getByCodigo(x);
 				EnumPlaneta eB = EnumPlaneta.getByCodigo(y);
-				
-				EnumAspecto aspecto = Funcoes.buildAspect(eA.getSigla(),eB.getSigla(), aspectos_posicoes[x], aspectos_posicoes[y]);
+				ItemAspecto itemAspecto = Funcoes.buildAspect(	eA,
+																eB,
+																aspectos_posicoes[x],
+																aspectos_posicoes[y],
+																x,
+																y);
+				if (Objects.nonNull(itemAspecto)){
+					mapa.getListaAspectos().add(itemAspecto);
+				}
+
+				/*
 				if (!isNull(aspecto)){
 					ItemAspecto item = new ItemAspecto();
 					item.getPlanetaA().setEnumPlaneta(EnumPlaneta.getByCodigo(x));
@@ -259,6 +269,7 @@ public class MapaService {
 					
 					mapa.getListaAspectos().add(item);
 				}
+				*/
 			}
 		}
 	}

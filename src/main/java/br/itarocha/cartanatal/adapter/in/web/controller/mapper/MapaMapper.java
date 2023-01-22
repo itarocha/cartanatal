@@ -170,11 +170,17 @@ public class MapaMapper {
 
     private AspectoResponse itemAspectoToAspecto(ItemAspecto a){
         return AspectoResponse.builder()
-                .planetaOrigem(a.getPlanetaA().getEnumPlaneta().getSigla())
-                .planetaDestino(a.getPlanetaB().getEnumPlaneta().getSigla())
+                .planetaOrigem(a.getPlanetaOrigem())
+                .planetaDestino(a.getPlanetaDestino())
+                .planetaOrigemAngulo(a.getPlanetaOrigemAngulo())
+                .planetaDestinoAngulo(a.getPlanetaDestinoAngulo())
                 .aspecto(a.getAspecto().getSigla())
-                .x(a.getPlanetaA().getCoordenada())
-                .y(a.getPlanetaB().getCoordenada())
+                .x(a.getX())
+                .y(a.getY())
+                .orbe(a.getOrbe())
+                .orbeGrau(a.getOrbeGrau())
+                .orbeMinuto(a.getOrbeMinuto())
+                .orbeDescricao(a.getOrbeDescricao())
                 .build();
     }
 }
