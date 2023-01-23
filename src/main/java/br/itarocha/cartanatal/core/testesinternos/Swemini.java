@@ -112,7 +112,7 @@ public class Swemini{
 
   private void main_start() {
     String sdate="", snam;
-snam=null; // Realistisch?
+    snam=null; // Realistisch?
     StringBuffer serr=new StringBuffer();
     int jday = 1, jmon = 1, jyear = 2000;
     double jut = 0.0; // UT

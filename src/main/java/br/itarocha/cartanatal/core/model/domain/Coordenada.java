@@ -5,21 +5,25 @@ public class Coordenada {
 	private int minuto;
 	private int segundo;
 	private String sinal;
+	private boolean positive;
 	
 	public Coordenada(int g, int m, int s){
 		this.grau = Math.abs(g);
 		this.minuto = m;
 		this.segundo = s;
 		this.sinal = (g < 0) ? "-" : "";
+		this.positive = g > 0;
 	}
-	
+
+	/*
 	public Coordenada(int g, int m, int s, String sinal){
 		this.grau = g;
 		this.minuto = m;
 		this.segundo = s;
 		this.sinal = sinal;
 	}
-	
+	*/
+
 	public int getGrau() {
 		return grau;
 	}
@@ -30,6 +34,10 @@ public class Coordenada {
 
 	public int getSegundo() {
 		return segundo;
+	}
+
+	public boolean isPositive(){
+		return positive;
 	}
 
 	public String getSinal() {

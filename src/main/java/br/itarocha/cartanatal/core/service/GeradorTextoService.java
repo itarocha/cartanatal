@@ -4,6 +4,7 @@ import br.itarocha.cartanatal.core.model.domain.CuspideCasa;
 import br.itarocha.cartanatal.core.model.domain.ItemAspecto;
 import br.itarocha.cartanatal.core.model.domain.Mapa;
 import br.itarocha.cartanatal.core.model.domain.PlanetaPosicao;
+import br.itarocha.cartanatal.core.util.Funcoes;
 import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
@@ -17,23 +18,55 @@ public class GeradorTextoService {
 
     public void display(Mapa mapa){
         sb = new StringBuilder();
+        sb.append("============================================================\n");
+        sb.append("CABECALHO\n");
+        sb.append("------------------------------------------------------------\n");
+        displayCabecalho(mapa);
 
-        sb.append("=================================================================================================\n");
+        sb.append("============================================================\n");
         sb.append("POSICOES DOS PLANETAS\n");
-        sb.append("-------------------------------------------------------------------------------------------------\n");
+        sb.append("------------------------------------------------------------\n");
         mapa.getPosicoesPlanetas().forEach(p -> displayPlanetaPosicao(p));
 
-        sb.append("=================================================================================================\n");
+        sb.append("============================================================\n");
         sb.append("CUSPIDES DAS CASAS\n");
-        sb.append("-------------------------------------------------------------------------------------------------\n");
+        sb.append("------------------------------------------------------------\n");
         mapa.getListaCuspides().forEach(c -> displayCuspides(c));
 
-        sb.append("=================================================================================================\n");
+        sb.append("============================================================\n");
         sb.append("ASPECTOS\n");
-        sb.append("-------------------------------------------------------------------------------------------------\n");
+        sb.append("------------------------------------------------------------\n");
         mapa.getListaAspectos().forEach(this::displayAspecto);
-        sb.append("=================================================================================================\n");
+        sb.append("============================================================\n");
         System.out.println(sb.toString());
+    }
+
+    private void displayCabecalho(Mapa mapa) {
+        sb.append(String.format("%s %s\n", fixedLengthString("Nome:",22), mapa.getNome()));
+        sb.append(String.format("%s %s\n", fixedLengthString("Data Hora Nascimento:",22), mapa.getDataHora()));
+        sb.append(String.format("%s %s\n", fixedLengthString("Cidade Nascimento:",22), mapa.getNomeCidade()));
+
+        String latitude = String.format("%02d%s%02d'%02d",
+                mapa.getLatitude().getGrau(),
+                mapa.getLatitude().isPositive() ? "n" : "s",
+                mapa.getLatitude().getMinuto(),
+                mapa.getLatitude().getSegundo());
+
+        String longitude = String.format("%02d%s%02d'%02d",
+                mapa.getLongitude().getGrau(),
+                mapa.getLongitude().isPositive() ? "e" : "w",
+                mapa.getLongitude().getMinuto(),
+                mapa.getLongitude().getSegundo());
+
+        sb.append(String.format("%s %s, %s\n", fixedLengthString("Coordenadas:",22), longitude, latitude));
+        sb.append(String.format("%s %s\n", fixedLengthString("Jul.Dia:",22), mapa.getJulDay()));
+
+        int[] gnc = Funcoes.grauToArray(mapa.getSideralTime());
+        String horaSideral = String.format("%02d:%02d:%02d", gnc[0],gnc[1],gnc[2]);
+
+        sb.append(String.format("%s %s\n", fixedLengthString("Tempo Sideral:",22), mapa.getSideralTime()));
+        sb.append(String.format("%s %ss\n", fixedLengthString("Delta T:",22), mapa.getDeltaTSec()));
+
     }
 
     private void displayPlanetaPosicao(PlanetaPosicao p) {
