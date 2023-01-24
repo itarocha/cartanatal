@@ -86,6 +86,10 @@ public class GeradorTextoService {
     }
 
     private void displayCuspides(CuspideCasa c) {
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+        DecimalFormat formatter = (DecimalFormat) nf;
+        formatter.applyPattern("000.000000000000000");
+
         String dscCasa = "";
         switch ( c.getNumero() ){
             case 1 : dscCasa = "ASC"; break;
@@ -93,12 +97,13 @@ public class GeradorTextoService {
             case 10 : dscCasa = "MC"; break;
         }
 
-        String dsc = String.format("%02d %s %s°%s'%s\" %s",
+        String dsc = String.format("%02d %s %s°%s'%s\" %s %s",
                 c.getNumero(),
                 c.getEnumSigno().getSigla(),
                 c.getLocalizacao().getGnc(),
                 c.getLocalizacao().getM(),
                 c.getLocalizacao().getS(),
+                formatter.format(c.getLocalizacao().getPosicao()),
                 dscCasa
                 );
         sb.append(dsc+"\n");
