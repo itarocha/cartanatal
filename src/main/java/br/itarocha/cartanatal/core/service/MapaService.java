@@ -107,7 +107,8 @@ public class MapaService {
 
 		double tjd, te;
 		tjd = sweDate.getJulDay();
-		te = tjd + sweDate.getDeltaT(tjd);
+		double deltaT = sweDate.getDeltaT(tjd);
+		te = tjd + deltaT;
 
 		double[] x = new double[6];
 		double[] x2 = new double[6];
@@ -124,6 +125,9 @@ public class MapaService {
 			//Planeta planeta = mapPlanetas.get(xis);
 			
 			iflgret = this.swService.getSw().swe_calc(te, index, (int)iflag, x2, serr);
+			// DEBUG
+			System.out.println(Arrays.toString(x2));
+
 			// if there is a problem, a negative value is returned and an errpr message is in serr.
 			if (iflgret < 0)
 				System.out.print("error: "+serr+"\n");

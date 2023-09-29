@@ -70,17 +70,23 @@ public class GeradorTextoService {
     }
 
     private void displayPlanetaPosicao(PlanetaPosicao p) {
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+        DecimalFormat formatter = (DecimalFormat) nf;
+        formatter.applyPattern("000.000000000000000");
+
         String planeta = fixedLengthString(p.getEnumPlaneta().getNome(), 12);
         String retrogrado = p.isRetrogrado() ? "R" : " ";
 
-        String dsc = String.format("%s %s %s°%s'%s\" %s %02d",
+
+        String dsc = String.format("%s %s %s°%s'%s\" %s %02d %s",
                 planeta,
                 p.getEnumSigno().getSigla(),
                 p.getLocalizacao().getGnc(),
                 p.getLocalizacao().getM(),
                 p.getLocalizacao().getS(),
                 retrogrado,
-                p.getCasa()
+                p.getCasa(),
+                formatter.format(p.getLocalizacao().getPosicao())
         );
         sb.append(dsc+"\n");
     }
